@@ -34,7 +34,25 @@ git clone https://github.com/anttonalberdi/bamse.git
 ```
 
 ### Running
+For running the core workflow of bamse, use the following code:
 
 ```shell
-python bamse.py -f inputdata.txt -d /workdir/ -x /db/taxonomy.db -t 40
+#Declare the bamse directory
+bamsedir=/home/user/softwaredir/bamse
+#Run the launching script
+python ${bamsedir}/bamse.py -f inputdata.txt -d /workdir/ -x /db/taxonomy.db -t 40
+```
+
+If working in Computerome2, insert that code in a shell file, and submit a job using qsub.
+
+bamsejob.sh
+```shell
+python ${bamsedir}/bamse.py -f inputdata.txt -d /workdir/ -x /db/taxonomy.db -t 40
+```
+
+Submit the job
+```shell
+workdir=/home/user/projectdir/
+bamsedir=/home/user/softwaredir/bamse
+qsub -V -A ku-cbd -W group_list=ku-cbd -v "workdir=${workdir},bamsedir=${bamsedir}"  -d `pwd` -e ${workdir}/BAMSE.err -o ${workdir}/BAMSE.out -l nodes=1:ppn=40,mem=180gb,walltime=1:00:00:00 -N BAMSE ${workdir}/bamsejob.sh
 ```
