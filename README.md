@@ -1,2 +1,2 @@
-# bamse
-Bacterial amplicon sequencing processing pipeline
+# BAMSE
+### **B**cterial **AM**plicon **Se**quencing processing pipeline
