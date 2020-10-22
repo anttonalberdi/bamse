@@ -6,7 +6,7 @@
 ### Installation
 
 ```
-git clone -b nurher --single-branch https://github.com/anttonalberdi/bamse.git
+git clone https://github.com/anttonalberdi/bamse.git
 ```
 
 ### Running
