@@ -30,7 +30,7 @@ else:
 
 if read2.endswith('.gz'):
     copy2Cmd = 'gunzip -c '+read2+' > '+path+'/'+name+'_2.fastq'
-    subprocess.check_call(copy1Cmd, shell=True)
+    subprocess.check_call(copy2Cmd, shell=True)
 else:
     copy2Cmd = 'cp '+read2+' '+path+'/'+name+'_2.fastq'
     subprocess.check_call(copy2Cmd, shell=True)
