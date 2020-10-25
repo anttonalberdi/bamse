@@ -16,8 +16,8 @@ option_list = list(
  make_option("--truncLen", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character")
 );
 
-opt_parser = OptionParser(option_list = option_list);
-opt = parse_args(opt_parser);
+opt_parser = OptionParser(option_list = option_list)
+opt = parse_args(opt_parser)
 
 i1<-opt$i1
 i2<-opt$i2
@@ -34,4 +34,4 @@ o1
 o1
 
 library(dada2)
-filterAndTrim(i1, i2, o1, o2, maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, truncLen=c(100,100), compress=TRUE, multithread=TRUE)
+filterAndTrim(fwd=i1, filt=i2, rev=o1, filt.rev=o2, maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, truncLen=c(100,100), compress=TRUE, multithread=TRUE)
