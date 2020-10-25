@@ -95,35 +95,35 @@ def read_input(path,in_f):
     # Read input data file
     inputfile = open(in_f, "r")
 
-        ## Read input data row by row
-        for line in lines:
-            ### Skip empty lines
-            if line in ['\n', '\r\n']:
-                ### Skip line if starts with # (comment line)
-                if not (line.startswith('#')):
+    ## Read input data row by row
+    for line in lines:
+        ### Skip empty lines
+        if line in ['\n', '\r\n']:
+            ### Skip line if starts with # (comment line)
+            if not (line.startswith('#')):
 
-                    #Define variables
-                    linelist = line.split(',') # Create a list of each line
-                    name=linelist[0]
-                    sample=linelist[1]
-                    run=linelist[2]
-                    in_for=linelist[3]
-                    in_rev=linelist[4]
+                #Define variables
+                linelist = line.split(',') # Create a list of each line
+                name=linelist[0]
+                sample=linelist[1]
+                run=linelist[2]
+                in_for=linelist[3]
+                in_rev=linelist[4]
 
-                    # Transfer, rename and decompress data
-                    if in_for.endswith('.gz'):
-                        copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/'+name+'_1.fastq'
-                        subprocess.check_call(copy1Cmd, shell=True)
-                    else:
-                        copy1Cmd = 'cp '+in_for+' '+path+'/'+name+'_1.fastq'
-                        subprocess.check_call(copy1Cmd, shell=True)
+                # Transfer, rename and decompress data
+                if in_for.endswith('.gz'):
+                    copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/'+name+'_1.fastq'
+                    subprocess.check_call(copy1Cmd, shell=True)
+                else:
+                    copy1Cmd = 'cp '+in_for+' '+path+'/'+name+'_1.fastq'
+                    subprocess.check_call(copy1Cmd, shell=True)
 
-                    if in_rev.endswith('.gz'):
-                        copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/'+name+'_2.fastq'
-                        subprocess.check_call(copy2Cmd, shell=True)
-                    else:
-                        copy2Cmd = 'cp '+in_rev+' '+path+'/'+name+'_2.fastq'
-                        subprocess.check_call(copy2Cmd, shell=True)
+                if in_rev.endswith('.gz'):
+                    copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/'+name+'_2.fastq'
+                    subprocess.check_call(copy2Cmd, shell=True)
+                else:
+                    copy2Cmd = 'cp '+in_rev+' '+path+'/'+name+'_2.fastq'
+                    subprocess.check_call(copy2Cmd, shell=True)
 
 read_input(in_f, path)
 
