@@ -98,8 +98,9 @@ def read_input(path,in_f):
 
     ## Read input data row by row
     for line in inputfile:
+        print(line)
         ### Skip empty lines
-        if line in ['\n', '\r\n']:
+        if not line in ['\n', '\r\n']:
             ### Skip line if starts with # (comment line)
             if not (line.startswith('#')):
 
