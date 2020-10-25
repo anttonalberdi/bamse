@@ -11,7 +11,7 @@ def prepare_dir_trimming(path):
     if not os.path.exists(in_dir):
         os.makedirs(in_dir)
 
-prepare_dir_trimming(path)
+prepare_dir_trimming(expand("{path}", path=config['path']))
 
 rule transfer:
     input:
@@ -41,7 +41,7 @@ def prepare_dir_filtering(path):
     if not os.path.exists(in_dir):
         os.makedirs(in_dir)
 
-prepare_dir_filtering(path)
+prepare_dir_filtering(expand("{path}", path=config['path']))
 
 rule transfer:
     input:
