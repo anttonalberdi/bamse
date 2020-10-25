@@ -142,8 +142,8 @@ def read_input(path,in_f):
             out = [out_for,out_rev]
             outlist.append(out)
 
-    #Transform output file list into comma-separated string
-    outstr = ",".join(outlist)
+    #Transform output file list into space-separated string
+    outstr = " ".join(outlist)
 
     #Remove comma in the end of each row of the input file to return to initial condition
     commaCmd = 'sed -i "$!s/,$//" '+in_f+''

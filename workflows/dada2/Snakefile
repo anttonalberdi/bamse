@@ -1,3 +1,10 @@
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
 
 ##
 # Primer trimming
@@ -16,7 +23,7 @@ rule transfer:
         primer2=expand("{primer2}", primer2=config['primer2'])
     shell:
         """
-        mkdir {projectpath}/1-Trimmed
+        mkdir {wildcards.projectpath}/1-Trimmed
         python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
         """
 
@@ -40,6 +47,6 @@ rule filter:
 
     shell:
         """
-        mkdir {projectpath}/2-Filtered
+        mkdir {wildcards.projectpath}/2-Filtered
         module load tools gcc R/3.4.0 && export i1={input.read1} && i2={input.read2} && export o1={output.read1} && export o2={output.read2} && export q={params.truncq} && export l={params.truncl} && export n={params.maxn} && export e={params.maxee} && Rscript --vanilla -f {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R
         """
