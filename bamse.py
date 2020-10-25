@@ -124,7 +124,7 @@ def read_input(path,in_f):
                     copy2Cmd = 'cp '+in_rev+' '+path+'/'+name+'_2.fastq'
                     subprocess.check_call(copy2Cmd, shell=True)
 
-read_input(in_f, path)
+read_input(path,in_f)
 
 ######################
 # Run dada2 workflow #
