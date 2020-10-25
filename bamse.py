@@ -112,7 +112,7 @@ def read_input(path,in_f):
                 print(in_rev)
 
                 # Transfer, rename and decompress data
-                if os.path.isfile(in_for):
+                if pathlib.Path(in_for).exists():
                     if in_for.endswith('.gz'):
                         copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
                         subprocess.check_call(copy1Cmd, shell=True)
