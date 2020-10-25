@@ -113,20 +113,20 @@ def read_input(path,in_f):
             if os.path.isfile(in_for):
                 if in_for.endswith('.gz'):
                     gunzip1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.check_call(gunzip1Cmd, shell=True)
+                    subprocess.run(gunzip1Cmd, shell=True)
                 else:
                     copy1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.check_call(copy1Cmd, shell=True)
+                    subprocess.run(copy1Cmd, shell=True)
             else:
                 print('The file ' + in_for + 'does not exist.')
 
             if os.path.isfile(in_rev):
                 if in_rev.endswith('.gz'):
                     gunzip2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.check_call(gunzip2Cmd, shell=True)
+                    subprocess.run(gunzip2Cmd, shell=True)
                 else:
                     copy2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.check_call(copy2Cmd, shell=True)
+                    subprocess.run(copy2Cmd, shell=True)
             else:
                 print('The file ' + in_rev + 'does not exist.')
 
