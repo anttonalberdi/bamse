@@ -4,6 +4,8 @@ import os
 import sys
 import ruamel.yaml
 
+#python bamse/bamse.py -f bamse/workflows/inputfile.txt -d /home/projects/ku-cbd/people/antalb/bamse/ -x sdf -t 1
+
 ####################
 # Argument parsing #
 ####################
@@ -92,13 +94,6 @@ prepare_dir(path)
 def read_input(path,in_f):
     # Read input data file
     inputfile = open(in_f, "r")
-
-        ## Read all lines
-        all_lines = inputfile.readlines() # Read input.txt lines
-
-        ## Remove empty lines
-        all_lines = map(lambda s: s.strip(), all_lines)
-        lines = list(filter(None, list(all_lines)))
 
         ## Read input data row by row
         for line in lines:
