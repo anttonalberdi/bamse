@@ -48,5 +48,5 @@ rule filter:
     shell:
         """
         mkdir {wildcards.projectpath}/2-Filtered
-        module load tools gcc R/3.4.0 && export i1={input.read1} && i2={input.read2} && export o1={output.read1} && export o2={output.read2} && export q={params.truncq} && export l={params.truncl} && export n={params.maxn} && export e={params.maxee} && Rscript --vanilla -f {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R
+        module load tools gcc R/3.4.0 && export i1={input.read1} && i2={input.read2} && export o1={output.read1} && export o2={output.read2} && export q={params.truncQ} && export l={params.truncLen} && export n={params.maxN} && export e={params.maxEE} && Rscript --vanilla -f {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R
         """
