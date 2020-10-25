@@ -23,15 +23,15 @@ name=args.name
 
 #Transfer files
 if path1.endswith('.gz'):
-    copy1Cmd = 'gunzip -c '+read1+' > '+path+'/'+name+'_1.fastq''
+    copy1Cmd = 'gunzip -c '+read1+' > '+path+'/'+name+'_1.fastq'
     subprocess.check_call(copy1Cmd, shell=True)
     else:
-        copy1Cmd = 'cp '+read1+' '+path+'/'+name+'_1.fastq''
+        copy1Cmd = 'cp '+read1+' '+path+'/'+name+'_1.fastq'
         subprocess.check_call(copy1Cmd, shell=True)
 
 if path2.endswith('.gz'):
-    copy2Cmd = 'gunzip -c '+read2+' > '+path+'/'+name+'_2.fastq''
+    copy2Cmd = 'gunzip -c '+read2+' > '+path+'/'+name+'_2.fastq'
     subprocess.check_call(copy1Cmd, shell=True)
     else:
-        copy2Cmd = 'cp '+read2+' '+path+'/'+name+'_2.fastq''
+        copy2Cmd = 'cp '+read2+' '+path+'/'+name+'_2.fastq'
         subprocess.check_call(copy2Cmd, shell=True)
