@@ -4,7 +4,7 @@
 
 
 ### Installation
-BAMSE does not require an installation, as it can be directly ran from the repository cloned from github.
+BAMSE does not require an installation, as it can be directly run from the repository cloned from github. For doing so, follow these steps:
 
 1- Go to the directory you want to "install"
 
@@ -15,11 +15,11 @@ cd /home/user/softwaredir
 2- Clone the github repository. In Computerome2, load the git module before downloading the repositoru
 
 ```shell
-modue load git/2.4.4
+module load git/2.4.4
 git clone https://github.com/anttonalberdi/bamse.git
 ```
 
-3- Remember the bamse path for using it in the future. In this example:
+3- Remember the BAMSE path for using it in the future. In this example:
 ```shell
 /home/user/softwaredir/bamse
 ```
