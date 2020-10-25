@@ -167,6 +167,12 @@ subprocess.Popen(commaCmd, shell=True).wait()
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 
+#################
+# Begin workflows
+#################
+
+print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
+
 ##############################
 # Run preprocessing workflow #
 ##############################
@@ -192,4 +198,3 @@ path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 # Run snakemake
 prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config_dada2+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
-print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
