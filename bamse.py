@@ -89,6 +89,11 @@ prepare_dir(path)
 print(path)
 
 def read_input(path,in_f):
+
+#Add comma in the end of each row
+commaCmd = 'sed "$!s/$/,/" '+in_f+''
+subprocess.Popen(commaCmd, shell=True).wait()
+
     # Read input data file
     inputfile = open(in_f, "r")
 
@@ -99,7 +104,6 @@ def read_input(path,in_f):
         if not (line.startswith('#')):
 
             #Define variables
-            line=line+','
             linelist = line.split(',') # Create a list of each line
             name=linelist[0]
             sample=linelist[1]
@@ -114,7 +118,7 @@ def read_input(path,in_f):
             if os.path.isfile(in_for):
                 if in_for.endswith('.gz'):
                     read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
-                    #ubprocess.Popen(read1Cmd, shell=True).wait()
+                    subprocess.Popen(read1Cmd, shell=True).wait()
                 else:
                     read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
                     subprocess.Popen(read1Cmd, shell=True).wait()
