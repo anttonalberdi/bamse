@@ -11,6 +11,7 @@ library(dada2)
 option_list = list(
  make_option(c("-d", "--directory"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-o", "--overlap"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
+ make_option(c("-a", "--asvfile"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-c", "--count"),type = "character",default = NULL, help = "Input directory",metavar = "character")
 );
 
@@ -18,14 +19,15 @@ opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 dir<-opt$directory
 overlap <- opt$overlap
+asvfile <- opt$asvfile
 countfile <- opt$count
 
 #####
 # List files
 #####
 
-filtFs <- list.files(path = dir, pattern = "_1.fastq")
-filtRs <- list.files(path = dir, pattern = "_2.fastq")
+filtFs <- list.files(path = dir, pattern = "_1.fastq", full.names=TRUE)
+filtRs <- list.files(path = dir, pattern = "_2.fastq", full.names=TRUE)
 
 #####
 # Dereplicate
@@ -62,8 +64,20 @@ seqtab <- makeSequenceTable(merged_amplicons)
 asv_tab <- t(removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE))
 
 #####
-# Output count table
+# Output ASV fasta
 #####
 
-row.names(asv_tab) <- sub(">", "", asv_headers)
+asv_seqs <- rownames(asv_tab)
+asv_headers <- vector(dim(asv_tab)[1], mode="character")
+for (i in 1:dim(asv_tab)[1]) {
+    asv_headers[i] <- paste(">ASV", i, sep="_")
+    }
+asv_fasta <- c(rbind(asv_headers, asv_seqs))
+write(asv_fasta, asvfile)
+
+#####
+# Output count table
+#####
+colnames(asv_tab) <- sub("_1.fastq", "", colnames(asv_tab))
+rownames(asv_tab) <- sub(">", "", asv_headers)
 write.table(asv_tab, countfile, sep=",", quote=F, col.names=NA)

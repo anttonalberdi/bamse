@@ -159,7 +159,7 @@ def run_dada2_wf(in_f, path, config, cores):
     """Run snakemake on shell"""
 
     # Define output names
-    out_files = path+'/ASV_counts.txt'
+    out_files = path+'/ASV_counts.txt '+path+'/ASVs.fasta'
     curr_dir = os.path.dirname(sys.argv[0])
     bamsepath = os.path.abspath(curr_dir)
     path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
