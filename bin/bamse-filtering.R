@@ -5,10 +5,10 @@ i1<-snakemake@input[["i1"]]
 i2<-snakemake@input[["i2"]]
 o1<-snakemake@input[["o1"]]
 o2<-snakemake@input[["o2"]]
-maxN<-Sys.getenv("maxN")[5]
-maxEE<-Sys.getenv("maxEE")[6]
-truncQ<-Sys.getenv("truncQ")[7]
-truncLen<-Sys.getenv("truncLen")[8]
+maxN<-snakemake@params[["maxN"]]
+maxEE<-snakemake@params[["maxEE"]]
+truncQ<-snakemake@params[["truncQ"]]
+truncLen<-snakemake@params[["truncLen"]]
 
 print(i1)
 print(i2)
