@@ -3,6 +3,7 @@ import subprocess
 import os
 import sys
 import ruamel.yaml
+import pathlib
 
 #python bamse/bamse.py -f bamse/workflows/inputfile.txt -d /home/projects/ku-cbd/people/antalb/bamse2/ -x sdf -t 1
 
@@ -104,24 +105,13 @@ def read_input(path,in_f):
                 name=linelist[0]
                 sample=linelist[1]
                 run=linelist[2]
-                in_for=linelist[3]
-                in_rev=linelist[4]
+                in_for=pathlib.Path(linelist[3])
+                in_rev=pathlib.Path(linelist[4])
                 print(name)
                 print(in_for)
                 print(in_rev)
 
                 # Transfer, rename and decompress data
-
-                if os.path.isfile(in_rev):
-                    if in_rev.endswith('.gz'):
-                        copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
-                        subprocess.check_call(copy2Cmd, shell=True)
-                    else:
-                        copy2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
-                        subprocess.check_call(copy2Cmd, shell=True)
-                else:
-                    print('The file ' + in_rev + 'does not exist.')
-                    
                 if os.path.isfile(in_for):
                     if in_for.endswith('.gz'):
                         copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
@@ -132,6 +122,15 @@ def read_input(path,in_f):
                 else:
                     print('The file ' + in_for + 'does not exist.')
 
+                if in_rev.exists():
+                    if in_rev.endswith('.gz'):
+                        copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
+                        subprocess.check_call(copy2Cmd, shell=True)
+                    else:
+                        copy2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
+                        subprocess.check_call(copy2Cmd, shell=True)
+                else:
+                    print('The file ' + in_rev + 'does not exist.')
 
 read_input(path,in_f)
 
