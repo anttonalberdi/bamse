@@ -169,7 +169,7 @@ def run_dada2_wf(in_f, path, config, cores):
     path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 
     # Run snakemake
-    prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+outstr+' --configfile '+config+' --cores '+cores+''
+    prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config+' --cores '+cores+''
     subprocess.check_call(prep_snk_Cmd, shell=True)
     print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
 
