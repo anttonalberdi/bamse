@@ -21,8 +21,8 @@ opt = parse_args(opt_parser);
 
 i1<-opt$i1
 i2<-opt$i2
-o1<-opt$01
-o2<-opt$02
+o1<-opt$o1
+o2<-opt$o2
 maxN<-opt$maxN
 maxEE<-opt$maxEE
 truncQ<-opt$truncQ
