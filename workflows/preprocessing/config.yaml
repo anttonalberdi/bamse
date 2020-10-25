@@ -1,0 +1,28 @@
+##
+# General
+##
+
+bamsepath:
+  /home/projects/ku-cbd/people/antalb/bamse
+path:
+  /home/projects/ku-cbd/people/antalb/bamse2
+
+##
+# Primer trimming
+##
+primer1:
+  CTANGGGNNGCANCAG
+primer2:
+  GACTACNNGGGTATCTAAT
+
+##
+# Read filtering and trimming
+##
+maxN:
+  0
+maxEE:
+  2,2
+truncQ:
+  2
+truncLen:
+  250,250

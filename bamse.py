@@ -14,7 +14,8 @@ parser.add_argument('-f', help="input.txt file", dest="input", required=True)
 parser.add_argument('-d', help="temp files directory path", dest="workdir", required=True)
 parser.add_argument('-x', help="taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="threads", dest="threads", required=True)
-parser.add_argument('-c', help="config file", dest="config_file", required=False)
+parser.add_argument('-c', help="config file", dest="config_preprocessing", required=False)
+parser.add_argument('-r', help="config file", dest="config_dada2", required=False)
 parser.add_argument('-p', help="comma separated primer sequences", dest="prim", required=False)
 parser.add_argument('-l', help="pipeline log file", dest="log", required=False)
 args = parser.parse_args()
@@ -33,11 +34,16 @@ curr_dir = os.path.abspath(file)
 if not os.path.exists(path):
     os.makedirs(path)
 
-# Define config file
-if not (args.config_file):
-    config = os.path.join(os.path.abspath(curr_dir),"workflows/dada2/config.yaml")
+# Define config files
+if not (args.config_preprocessing):
+    config_preprocessing = os.path.join(os.path.abspath(curr_dir),"workflows/preprocessing/config.yaml")
 else:
-    config=args.config_file
+    config_preprocessing=args.config_preprocessing
+
+if not (args.config_dada2):
+    config_dada2 = os.path.join(os.path.abspath(curr_dir),"workflows/dada2/config.yaml")
+else:
+    config_dada2=args.config_dada2
 
 # Define log file
 if not (args.log):
@@ -150,20 +156,31 @@ def read_input(path,in_f):
             out = [out_for,out_rev]
             outlist.append(out)
 
-    #Transform output file list into space-separated string (only for development)
-    #outstr = " ".join(outlist)
+
 
     #Remove comma in the end of each row of the input file to return to initial condition
     commaCmd = 'sed -i "$!s/,$//" '+in_f+''
     subprocess.Popen(commaCmd, shell=True).wait()
 
 read_input(path,in_f)
+curr_dir = os.path.dirname(sys.argv[0])
+bamsepath = os.path.abspath(curr_dir)
+
+##############################
+# Run preprocessing workflow #
+##############################
+
+path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
+#Transform output file list into space-separated string (only for development)
+outstr = " ".join(outlist)
+
+# Run snakemake
+prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+outstr+' --configfile '+config_preprocessing+' --cores '+cores+''
+subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ######################
 # Run dada2 workflow #
 ######################
-
-"""Run snakemake on shell"""
 
 # Define output names
 out_files = path+'/ASV_counts.txt '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
@@ -172,6 +189,6 @@ bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 
 # Run snakemake
-prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config+' --cores '+cores+''
-subprocess.check_call(prep_snk_Cmd, shell=True)
+prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config_dada2+' --cores '+cores+''
+subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
