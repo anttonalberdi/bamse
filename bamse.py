@@ -108,7 +108,10 @@ def read_input(path,in_f):
                 run=linelist[2]
                 in_for=linelist[3]
                 in_rev=linelist[4]
-
+                print(name)
+                print(in_for)
+                print(in_rev)
+                
                 # Transfer, rename and decompress data
                 if in_for.endswith('.gz'):
                     copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/'+name+'_1.fastq'
