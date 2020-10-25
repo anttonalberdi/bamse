@@ -1,2 +1,2 @@
 #DATAUNIT,SAMPLE,RUN,F_READ,R_READ
-Datafile1,Sample1,Run1,/home/location/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.1.fq.gz,Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.2.fq.gz
+Datafile1,Sample1,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.1.fq.gz,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.2.fq.gz
