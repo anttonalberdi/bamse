@@ -6,10 +6,10 @@
 library(optparse)
 
 option_list = list(
- make_option("-i1",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
- make_option("-i2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
- make_option("-o1",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
- make_option("-o2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
+ make_option("--i1",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
+ make_option("--i2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
+ make_option("--o1",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
+ make_option("--o2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
  make_option("--maxN",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
  make_option("--maxEE", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
  make_option("--truncQ",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
