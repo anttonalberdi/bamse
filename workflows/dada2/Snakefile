@@ -25,7 +25,7 @@ rule transfer:
 # Read filtering and trimming
 ##
 
-rule transfer:
+rule filter:
     input:
       read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
       read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
