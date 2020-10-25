@@ -83,10 +83,10 @@ dir2 = os.path.join(path,"2-Filtered")
 ## If input directory does not exist, make it
 if not os.path.exists(dir0):
     os.makedirs(dir0)
-if not os.path.exists(dir1):
-    os.makedirs(dir1)
-if not os.path.exists(dir2):
-    os.makedirs(dir2)
+#if not os.path.exists(dir1):
+#    os.makedirs(dir1)
+#if not os.path.exists(dir2):
+#    os.makedirs(dir2)
 
 #################
 # Transfer data #
