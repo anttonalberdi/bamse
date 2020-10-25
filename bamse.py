@@ -88,7 +88,6 @@ if not os.path.exists(dir1):
 if not os.path.exists(dir2):
     os.makedirs(dir2)
 
-
 #################
 # Transfer data #
 #################
