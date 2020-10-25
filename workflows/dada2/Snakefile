@@ -3,16 +3,6 @@
 # Primer trimming
 ##
 
-def prepare_dir_trimming(path):
-    # Set input directory
-    in_dir = os.path.join(path,"1-Trimmed")
-
-    ## If input directory does not exist, make it
-    if not os.path.exists(in_dir):
-        os.makedirs(in_dir)
-
-prepare_dir_trimming(expand("{path}", path=config['path']))
-
 rule transfer:
     input:
         read1="{projectpath}/0-Data/{sample}_1.fastq",
@@ -22,26 +12,18 @@ rule transfer:
         read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
     params:
+        path=expand("{path}", path=config['path']),
         primer1=expand("{primer1}", primer1=config['primer1']),
         primer2=expand("{primer2}", primer2=config['primer2'])
     shell:
         """
+        mkdir {params.path}/1-Trimmed
         python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
         """
 
 ##
 # Read filtering and trimming
 ##
-
-def prepare_dir_filtering(path):
-    # Set input directory
-    in_dir = os.path.join(path,"2-Filtered")
-
-    ## If input directory does not exist, make it
-    if not os.path.exists(in_dir):
-        os.makedirs(in_dir)
-
-prepare_dir_filtering(expand("{path}", path=config['path']))
 
 rule transfer:
     input:
@@ -59,5 +41,6 @@ rule transfer:
 
     shell:
         """
+        mkdir {params.path}/2-Filtered
         module load tools gcc R/3.4.0 && export i1={input.read1} && i2={input.read2} && export o1={output.read1} && export o2={output.read2} && export q={params.truncq} && export l={params.truncl} && export n={params.maxn} && export e={params.maxee} && Rscript --vanilla -f {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R
         """
