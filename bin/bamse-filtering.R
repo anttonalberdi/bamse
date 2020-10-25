@@ -29,4 +29,4 @@ truncQ<-opt$truncQ
 truncLen<-opt$truncLen
 
 library(dada2)
-filterAndTrim(fwd=i1, filt=o1, rev=i2, filt.rev=o2, maxN=0, maxEE=c(3,3), truncQ=2, rm.phix=TRUE, truncLen=c(250,250), compress=FALSE, multithread=TRUE)
+filterAndTrim(fwd=i1, filt=o1, rev=i2, filt.rev=o2, maxN=0, maxEE=Inf, truncQ=2, rm.phix=TRUE, truncLen=0, compress=FALSE, multithread=TRUE)
