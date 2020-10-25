@@ -10,17 +10,21 @@ library(dada2)
 
 option_list = list(
  make_option(c("-d", "--directory"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
+ make_option(c("-t", "--taxonomy"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-o", "--overlap"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-a", "--asvfile"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
- make_option(c("-c", "--count"),type = "character",default = NULL, help = "Input directory",metavar = "character")
+ make_option(c("-c", "--count"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
+ make_option(c("-x", "--taxa"),type = "character",default = NULL, help = "Input directory",metavar = "character")
 );
 
 opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 dir<-opt$directory
 overlap <- opt$overlap
+taxonomy <- opt$taxonomy
 asvfile <- opt$asvfile
 countfile <- opt$count
+taxafile <- opt$taxa
 
 #####
 # List files
@@ -61,7 +65,8 @@ seqtab <- makeSequenceTable(merged_amplicons)
 # Chimera filtering
 #####
 
-asv_tab <- t(removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE))
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+asv_tab <- t(seqtab.nochim)
 
 #####
 # Output ASV fasta
@@ -78,6 +83,15 @@ write(asv_fasta, asvfile)
 #####
 # Output count table
 #####
+
 colnames(asv_tab) <- sub("_1.fastq", "", colnames(asv_tab))
 rownames(asv_tab) <- sub(">", "", asv_headers)
 write.table(asv_tab, countfile, sep=",", quote=F, col.names=NA)
+
+#####
+# Assign taxonomy
+#####
+
+taxa <- assignTaxonomy(seqtab.nochim, taxonomy, tryRC=T, multithread=TRUE)
+row.names(taxa) <- sub(">", "", asv_headers)
+write.table(taxa, taxafile, sep=",", quote=F, col.names=NA)

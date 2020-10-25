@@ -57,13 +57,15 @@ rule filter:
 rule dada2:
     input:
         dir="{projectpath}/2-Filtered"
-    threads: 1
+    threads: 40
     output:
         asvs="{projectpath}/ASVs.fasta",
         counts="{projectpath}/ASV_counts.txt"
+        taxa="{projectpath}/ASV_taxa.txt"
     params:
         overlap=expand("{overlap}", overlap=config['overlap'])
+        taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy'])
     shell:
         """
-        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -o {params.overlap} -a {output.asvs} -c {output.counts}
+        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -o {params.overlap} -t {params.taxonomy} -a {output.asvs} -c {output.counts}
         """
