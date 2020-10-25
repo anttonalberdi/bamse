@@ -109,69 +109,61 @@ if not os.path.exists(dir0):
 # Transfer data #
 #################
 
-print(path)
 
-def read_input(path,in_f):
+#Add comma in the end of each row of the input file to avoid downstream issues
+commaCmd = 'sed -i "$!s/$/,/" '+in_f+''
+subprocess.Popen(commaCmd, shell=True).wait()
 
-    #Add comma in the end of each row of the input file to avoid downstream issues
-    commaCmd = 'sed -i "$!s/$/,/" '+in_f+''
-    subprocess.Popen(commaCmd, shell=True).wait()
+# Read input data file
+inputfile = open(in_f, "r")
 
-    # Read input data file
-    inputfile = open(in_f, "r")
+#Declare empty output file list
+outlist = []
 
-    #Declare empty output file list
-    outlist = []
+## Read input data row by row
+for line in inputfile:
+    ### Skip line if starts with # (comment line)
+    if not (line.startswith('#')):
 
-    ## Read input data row by row
-    for line in inputfile:
-        print(line)
-        ### Skip line if starts with # (comment line)
-        if not (line.startswith('#')):
+        #Define variables
+        linelist = line.split(',') # Create a list of each line
+        name=linelist[0]
+        sample=linelist[1]
+        run=linelist[2]
+        in_for=linelist[3]
+        in_rev=linelist[4]
 
-            #Define variables
-            linelist = line.split(',') # Create a list of each line
-            name=linelist[0]
-            sample=linelist[1]
-            run=linelist[2]
-            in_for=linelist[3]
-            in_rev=linelist[4]
-            print(name)
-            print(in_for)
-            print(in_rev)
-
-            # Transfer, rename and decompress data
-            if os.path.isfile(in_for):
-                if in_for.endswith('.gz'):
-                    read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.Popen(read1Cmd, shell=True).wait()
-                else:
-                    read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.Popen(read1Cmd, shell=True).wait()
+        # Transfer, rename and decompress data
+        if os.path.isfile(in_for):
+            if in_for.endswith('.gz'):
+                read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
+                subprocess.Popen(read1Cmd, shell=True).wait()
             else:
-                print('The file ' + in_for + 'does not exist.')
+                read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
+                subprocess.Popen(read1Cmd, shell=True).wait()
+        else:
+            print('The file ' + in_for + 'does not exist.')
 
-            if os.path.isfile(in_rev):
-                if in_for.endswith('.gz'):
-                    read2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.Popen(read2Cmd, shell=True).wait()
-                else:
-                    read2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.Popen(read2Cmd, shell=True).wait()
+        if os.path.isfile(in_rev):
+            if in_for.endswith('.gz'):
+                read2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
+                subprocess.Popen(read2Cmd, shell=True).wait()
             else:
-                print('The file ' + in_rev + 'does not exist.')
+                read2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
+                subprocess.Popen(read2Cmd, shell=True).wait()
+        else:
+            print('The file ' + in_rev + 'does not exist.')
 
-            #Create list of output files (only for development)
-            out_for = path+'/2-Filtered/'+name+'_1.fastq'
-            out_rev = path+'/2-Filtered/'+name+'_2.fastq'
-            out = [out_for,out_rev]
-            outlist.append(out)
+        #Create list of output files (only for development)
+        out_for = path+'/2-Filtered/'+name+'_1.fastq'
+        out_rev = path+'/2-Filtered/'+name+'_2.fastq'
+        out = [out_for,out_rev]
+        outlist.append(out)
 
-    #Remove comma in the end of each row of the input file to return to initial condition
-    commaCmd = 'sed -i "$!s/,$//" '+in_f+''
-    subprocess.Popen(commaCmd, shell=True).wait()
+#Remove comma in the end of each row of the input file to return to initial condition
+commaCmd = 'sed -i "$!s/,$//" '+in_f+''
+subprocess.Popen(commaCmd, shell=True).wait()
 
-read_input(path,in_f)
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 
