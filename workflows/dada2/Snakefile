@@ -48,5 +48,6 @@ rule filter:
 
     shell:
         """
+        mkdir -p {wildcards.projectpath}/2-Filtered
         module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --truncQ {params.truncQ} --truncLen {params.truncLen} --maxN {params.maxN} --maxEE {params.maxEE}
         """
