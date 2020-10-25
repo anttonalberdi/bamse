@@ -28,7 +28,7 @@ git clone https://github.com/anttonalberdi/bamse.git
 
 ```shell
 cd /home/user/softwaredir
-rm -r bamse
+rm -rf bamse
 modue load git/2.4.4
 git clone https://github.com/anttonalberdi/bamse.git
 ```
