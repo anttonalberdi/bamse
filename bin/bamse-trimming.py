@@ -52,5 +52,5 @@ if mode == 'ligation':
     subprocess.Popen(trim_ligation5, shell=True).wait()
 
 else:
-    trim_PCR = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.15 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+' -p '+output2+''
+    trim_PCR = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.15 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+' -p '+output2+' '+input1+' '+input2+''
     subprocess.check_call(trim_PCR, shell=True)
