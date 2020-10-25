@@ -11,8 +11,8 @@ import ruamel.yaml
 ####################
 
 parser = argparse.ArgumentParser(description='Runs bamse-dada2 pipeline.')
-parser.add_argument('-f', help="input.txt file", dest="input_txt", required=True)
-parser.add_argument('-d', help="temp files directory path", dest="work_dir", required=True)
+parser.add_argument('-f', help="input.txt file", dest="input", required=True)
+parser.add_argument('-d', help="temp files directory path", dest="workdir", required=True)
 parser.add_argument('-x', help="taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="threads", dest="threads", required=True)
 parser.add_argument('-c', help="config file", dest="config_file", required=False)
@@ -21,9 +21,8 @@ parser.add_argument('-l', help="pipeline log file", dest="log", required=False)
 args = parser.parse_args()
 
 # Translate arguments
-in_f=args.input_txt
-path=args.work_dir
-ref=args.ref
+in_f=args.input
+path=args.workdir
 cores=args.threads
 tax=args.tax
 
