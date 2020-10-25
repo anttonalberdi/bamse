@@ -162,7 +162,7 @@ read_input(path,in_f)
 """Run snakemake on shell"""
 
 # Define output names
-out_files = path+'/ASV_counts.txt '+path+'/ASVs.fasta'+path+'/ASV_taxa.fasta'
+out_files = path+'/ASV_counts.txt '+path+'/ASVs.fasta '+path+'/ASV_taxa.fasta'
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
