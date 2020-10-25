@@ -63,7 +63,7 @@ rule dada2:
         counts="{projectpath}/ASV_counts.txt",
         taxa="{projectpath}/ASV_taxa.txt"
     params:
-        overlap=expand("{overlap}", overlap=config['overlap'])
+        overlap=expand("{overlap}", overlap=config['overlap']),
         taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy'])
     shell:
         """
