@@ -75,11 +75,6 @@ def prepare_dir(path):
     # Set input directory
     in_dir = os.path.join(path,"0-Data")
 
-    ## If input directory exists remove, remake it
-    if os.path.exists(in_dir):
-        rmdirCmd='cd '+in_dir+'/.. && rm -rf '+in_dir+' && mkdir '+in_dir+''
-        subprocess.check_call(rmdirCmd,shell=True)
-
     ## If input directory does not exist, make it
     if not os.path.exists(in_dir):
         os.makedirs(in_dir)
@@ -116,15 +111,6 @@ def read_input(path,in_f):
                 print(in_rev)
 
                 # Transfer, rename and decompress data
-                if os.path.isfile(in_for):
-                    if in_for.endswith('.gz'):
-                        copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
-                        subprocess.check_call(copy1Cmd, shell=True)
-                    else:
-                        copy1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
-                        subprocess.check_call(copy1Cmd, shell=True)
-                else:
-                    print('The file ' + in_for + 'does not exist.')
 
                 if os.path.isfile(in_rev):
                     if in_rev.endswith('.gz'):
@@ -135,6 +121,17 @@ def read_input(path,in_f):
                         subprocess.check_call(copy2Cmd, shell=True)
                 else:
                     print('The file ' + in_rev + 'does not exist.')
+                    
+                if os.path.isfile(in_for):
+                    if in_for.endswith('.gz'):
+                        copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
+                        subprocess.check_call(copy1Cmd, shell=True)
+                    else:
+                        copy1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
+                        subprocess.check_call(copy1Cmd, shell=True)
+                else:
+                    print('The file ' + in_for + 'does not exist.')
+
 
 read_input(path,in_f)
 
