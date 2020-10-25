@@ -67,7 +67,7 @@ with open(str(config), 'r') as config_file:
 with open(str(config), 'w') as config_file:
     data['bamsepath'] = str(curr_dir)
     data['logpath'] = str(log)
-    data['taxonomydb'] = str(tax)
+    data['taxonomy'] = str(tax)
     dump = yaml.dump(data, config_file)
 
 #############################
