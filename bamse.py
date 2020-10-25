@@ -123,7 +123,7 @@ def read_input(path,in_f):
                     else:
                         copy1Cmd = 'cp '+in_for+' '+path+'/'+name+'_1.fastq'
                         subprocess.check_call(copy1Cmd, shell=True)
-                else
+                else:
                     print('The file' + in_for + 'does not exist.')
 
                 if os.path.isfile(in_rev):
@@ -133,7 +133,7 @@ def read_input(path,in_f):
                     else:
                         copy2Cmd = 'cp '+in_rev+' '+path+'/'+name+'_2.fastq'
                         subprocess.check_call(copy2Cmd, shell=True)
-                else
+                else:
                     print('The file' + in_rev + 'does not exist.')
 
 read_input(path,in_f)
