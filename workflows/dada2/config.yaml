@@ -26,3 +26,10 @@ truncQ:
   2
 truncLen:
   250,250
+
+##
+# Error learning and dada2
+##
+
+overlap:
+  0

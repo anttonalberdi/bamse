@@ -44,9 +44,25 @@ rule filter:
         maxEE=expand("{maxEE}", maxEE=config['maxEE']),
         truncQ=expand("{truncQ}", truncQ=config['truncQ']),
         truncLen=expand("{truncLen}", truncLen=config['truncLen'])
-
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
         module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --truncQ {params.truncQ} --truncLen {params.truncLen} --maxN {params.maxN} --maxEE {params.maxEE}
+        """
+
+##
+# Error learning and dada2
+##
+
+rule dada2:
+    input:
+        dir="{projectpath}/2-Filtered"
+    threads: 1
+    output:
+        counts="{projectpath}/ASV_counts.txt"
+    params:
+        overlap=expand("{overlap}", overlap=config['overlap'])
+    shell:
+        """
+        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -o {params.overlap} -c {output.counts}
         """
