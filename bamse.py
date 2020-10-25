@@ -65,12 +65,23 @@ prim_r = primsplit[1]
 #Append current directory to .yaml config for standalone calling
 yaml = ruamel.yaml.YAML()
 yaml.explicit_start = True
-with open(str(config), 'r') as config_file:
+with open(str(config_preprocessing), 'r') as config_file:
     data = yaml.load(config_file)
     if data == None:
         data = {}
 
-with open(str(config), 'w') as config_file:
+with open(str(config_preprocessing), 'w') as config_file:
+    data['bamsepath'] = str(curr_dir)
+    data['logpath'] = str(log)
+    data['taxonomy'] = str(tax)
+    dump = yaml.dump(data, config_file)
+
+with open(str(config_dada2), 'r') as config_file:
+    data = yaml.load(config_file)
+    if data == None:
+        data = {}
+
+with open(str(config_dada2), 'w') as config_file:
     data['bamsepath'] = str(curr_dir)
     data['logpath'] = str(log)
     data['taxonomy'] = str(tax)
@@ -155,8 +166,6 @@ def read_input(path,in_f):
             out_rev = path+'/2-Filtered/'+name+'_2.fastq'
             out = [out_for,out_rev]
             outlist.append(out)
-
-
 
     #Remove comma in the end of each row of the input file to return to initial condition
     commaCmd = 'sed -i "$!s/,$//" '+in_f+''
