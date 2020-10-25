@@ -91,7 +91,7 @@ print(path)
 def read_input(path,in_f):
 
     #Add comma in the end of each row
-    commaCmd = 'sed "$!s/$/,/" '+in_f+''
+    commaCmd = 'sed -i "$!s/$/,/" '+in_f+''
     subprocess.Popen(commaCmd, shell=True).wait()
 
     # Read input data file
