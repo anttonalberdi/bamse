@@ -34,4 +34,4 @@ o1
 o1
 
 library(dada2)
-filterAndTrim(fwd=i1, filt=i2, rev=o1, filt.rev=o2, maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, truncLen=c(100,100), compress=TRUE, multithread=TRUE)
+filterAndTrim(fwd=i1, filt=o1, rev=f2, filt.rev=o2, maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, truncLen=c(100,100), compress=TRUE, multithread=TRUE)
