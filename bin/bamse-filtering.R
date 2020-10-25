@@ -28,10 +28,5 @@ maxEE<-opt$maxEE
 truncQ<-opt$truncQ
 truncLen<-opt$truncLen
 
-i1
-i2
-o1
-o1
-
 library(dada2)
-filterAndTrim(fwd=i1, filt=o1, rev=i2, filt.rev=o2, maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, truncLen=c(100,100), compress=TRUE, multithread=TRUE)
+filterAndTrim(fwd=i1, filt=o1, rev=i2, filt.rev=o2, maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, truncLen=c(100,100), compress=FALSE, multithread=TRUE)
