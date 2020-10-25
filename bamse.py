@@ -105,8 +105,8 @@ def read_input(path,in_f):
                 name=linelist[0]
                 sample=linelist[1]
                 run=linelist[2]
-                in_for=pathlib.Path(linelist[3])
-                in_rev=pathlib.Path(linelist[4])
+                in_for=linelist[3]
+                in_rev=linelist[4]
                 print(name)
                 print(in_for)
                 print(in_rev)
@@ -122,7 +122,7 @@ def read_input(path,in_f):
                 else:
                     print('The file ' + in_for + 'does not exist.')
 
-                if in_rev.exists():
+                if pathlib.Path(in_rev).exists():
                     if in_rev.endswith('.gz'):
                         copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
                         subprocess.check_call(copy2Cmd, shell=True)
