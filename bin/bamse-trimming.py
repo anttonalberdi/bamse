@@ -27,9 +27,9 @@ primer2=args.primer2
 mode = 'ligation'
 
 if mode == 'ligation':
-    trim_ligation1 = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.3 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+'_a -p '+output2+'_a '+input1+' '+input2+''
+    trim_ligation1 = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.5 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+'_a -p '+output2+'_a '+input1+' '+input2+''
     subprocess.Popen(trim_ligation1, shell=True).wait()
-    trim_ligation2 = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.3 -g ^'+primer2+' -G ^'+primer1+' --discard-untrimmed -o '+output1+'_b -p '+output2+'_b '+input1+' '+input2+''
+    trim_ligation2 = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.5 -g ^'+primer2+' -G ^'+primer1+' --discard-untrimmed -o '+output1+'_b -p '+output2+'_b '+input1+' '+input2+''
     subprocess.Popen(trim_ligation2, shell=True).wait()
     trim_ligation3 = 'cat '+output1+'_a '+output2+'_b > '+output1+''
     subprocess.Popen(trim_ligation3, shell=True).wait()
@@ -39,5 +39,5 @@ if mode == 'ligation':
     subprocess.Popen(trim_ligation5, shell=True).wait()
 
 else:
-    trim_PCR = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.2 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+' -p '+output2+' '+input1+' '+input2+''
+    trim_PCR = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.5 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+' -p '+output2+' '+input1+' '+input2+''
     subprocess.check_call(trim_PCR, shell=True)
