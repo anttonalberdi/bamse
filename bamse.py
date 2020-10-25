@@ -145,4 +145,4 @@ def run_dada2(in_f, path, config, cores):
     subprocess.check_call(prep_snk_Cmd, shell=True)
     print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
 
-run_dada2(in_f, path, config, cores)
+#run_dada2(in_f, path, config, cores)
