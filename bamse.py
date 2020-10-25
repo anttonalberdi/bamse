@@ -5,8 +5,6 @@ import sys
 import ruamel.yaml
 import pathlib
 
-#python bamse/bamse.py -f bamse/workflows/inputfile.txt -d /home/projects/ku-cbd/people/antalb/bamse2/ -x sdf -t 1
-
 ####################
 # Argument parsing #
 ####################

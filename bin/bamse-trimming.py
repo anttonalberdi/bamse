@@ -48,9 +48,9 @@ if mode == 'ligation':
     subprocess.Popen(trim_ligation3, shell=True).wait()
     trim_ligation4 = 'cat '+output2+'_a '+output1+'_b > '+output2+''
     subprocess.Popen(trim_ligation4, shell=True).wait()
+    trim_ligation5 = 'rm '+output1+'_a '+output1+'_b '+output2+'_a '+output2+'_b'
+    subprocess.Popen(trim_ligation5, shell=True).wait()
 
 else:
-    trim_PCR = '''
-        cutadapt -e 0.15 -g ^CTANGGGNNGCANCAG -G ^GACTACNNGGGTATCTAAT --discard-untrimmed -o ${basename}_trimmed_1.fq -p ${basename}_trimmed_2.fq ${lines}_1.fq ${lines}_2.fq >> ../02_Trimming/cutadapt_primer_trimming_stats.txt 2>&1
-    '''
+    trim_PCR = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.15 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+' -p '+output2+''
     subprocess.check_call(trim_PCR, shell=True)
