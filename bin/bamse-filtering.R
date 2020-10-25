@@ -1,10 +1,10 @@
 #2020/10/25 - BAMSE 1.0
 
-workdir<-Sys.getenv("WORKDIR")[1]
-i1<-Sys.getenv("i1")[3]
-i2<-Sys.getenv("i2")[4]
-o1<-Sys.getenv("o1")[3]
-o2<-Sys.getenv("o2")[4]
+
+i1<-snakemake@input[["i1"]]
+i2<-snakemake@input[["i2"]]
+o1<-snakemake@input[["o1"]]
+o2<-snakemake@input[["o2"]]
 maxN<-Sys.getenv("maxN")[5]
 maxEE<-Sys.getenv("maxEE")[6]
 truncQ<-Sys.getenv("truncQ")[7]
