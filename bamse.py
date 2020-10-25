@@ -136,14 +136,14 @@ def read_input(path,in_f):
             else:
                 print('The file ' + in_rev + 'does not exist.')
 
-            #Create list of output files
+            #Create list of output files (only for development)
             out_for = path+'/2-Filtered/'+name+'_1.fastq'
             out_rev = path+'/2-Filtered/'+name+'_2.fastq'
             out = [out_for,out_rev]
             outlist.append(out)
 
-    #Transform output file list into space-separated string
-    outstr = " ".join(outlist)
+    #Transform output file list into space-separated string (only for development)
+    #outstr = " ".join(outlist)
 
     #Remove comma in the end of each row of the input file to return to initial condition
     commaCmd = 'sed -i "$!s/,$//" '+in_f+''
@@ -159,7 +159,7 @@ def run_dada2_wf(in_f, path, config, cores):
     """Run snakemake on shell"""
 
     # Define output names
-    out_files = in_out_dada2(path,in_f)
+    out_files = path+'/ASV_counts.txt'
     curr_dir = os.path.dirname(sys.argv[0])
     bamsepath = os.path.abspath(curr_dir)
     path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')

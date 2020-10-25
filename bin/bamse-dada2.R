@@ -9,16 +9,16 @@ library(dada2)
 
 
 option_list = list(
- make_option("-d",type = "character",default = NULL,help = "Input directory",metavar = "character"),
- make_option("-o",type = "character",default = NULL,help = "Input directory",metavar = "character"),
- make_option("-c",type = "character",default = NULL,help = "Input directory",metavar = "character")
+ make_option(c("-d", "--directory"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
+ make_option(c("-o", "--overlap"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
+ make_option(c("-c", "--count"),type = "character",default = NULL, help = "Input directory",metavar = "character")
 );
 
 opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
-dir<-opt$d
-overlap <- opt$o
-countfile <- opt$c
+dir<-opt$directory
+overlap <- opt$overlap
+countfile <- opt$count
 
 #####
 # List files
