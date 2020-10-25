@@ -29,6 +29,10 @@ tax=args.tax
 file = os.path.dirname(sys.argv[0])
 curr_dir = os.path.abspath(file)
 
+# Create workign directory if does not exist
+if not os.path.exists(path):
+    os.makedirs(path)
+
 # Define config file
 if not (args.config_file):
     config = os.path.join(os.path.abspath(curr_dir),"workflows/dada2/config.yaml")
