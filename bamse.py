@@ -157,8 +157,8 @@ for line in inputfile:
         #Create list of output files (only for development)
         out_for = path+'/2-Filtered/'+name+'_1.fastq'
         out_rev = path+'/2-Filtered/'+name+'_2.fastq'
-        out = [out_for,out_rev]
-        outlist.append(out)
+        outlist.append(out_for)
+        outlist.append(out_rev)
 
 #Remove comma in the end of each row of the input file to return to initial condition
 commaCmd = 'sed -i "$!s/,$//" '+in_f+''
