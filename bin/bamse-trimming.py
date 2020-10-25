@@ -21,19 +21,6 @@ primer1=args.primer1
 primer2=args.primer2
 
 #####
-# Check library mode
-#####
-
-checklibmode = '''
-echo "a"
-echo "b"
-echo "c"
-echo "d"
-'''
-
-#subprocess.check_call(checklibmode, shell=True)
-
-#####
 # Trim primers
 #####
 

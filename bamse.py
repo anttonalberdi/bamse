@@ -53,18 +53,18 @@ prim_f = primsplit[0]
 prim_r = primsplit[1]
 
 #Append current directory to .yaml config for standalone calling
-#yaml = ruamel.yaml.YAML()
-#yaml.explicit_start = True
-#with open(str(config), 'r') as config_file:
-#    data = yaml.load(config_file)
-#    if data == None:
-#        data = {}
+yaml = ruamel.yaml.YAML()
+yaml.explicit_start = True
+with open(str(config), 'r') as config_file:
+    data = yaml.load(config_file)
+    if data == None:
+        data = {}
 
-#with open(str(config), 'w') as config_file:
-#    data['bamsepath'] = str(curr_dir)
-#    data['logpath'] = str(log)
-#    data['taxonomydb'] = str(tax)
-#    dump = yaml.dump(data, config_file)
+with open(str(config), 'w') as config_file:
+    data['bamsepath'] = str(curr_dir)
+    data['logpath'] = str(log)
+    data['taxonomydb'] = str(tax)
+    dump = yaml.dump(data, config_file)
 
 #############################
 # Prepare working directory #
@@ -95,6 +95,9 @@ def read_input(path,in_f):
     # Read input data file
     inputfile = open(in_f, "r")
 
+    #Declare empty output file list
+    outlist = []
+
     ## Read input data row by row
     for line in inputfile:
         print(line)
@@ -123,8 +126,6 @@ def read_input(path,in_f):
             else:
                 print('The file ' + in_for + 'does not exist.')
 
-            #the reverse is not working for an unknown reason
-
             if os.path.isfile(in_rev):
                 if in_for.endswith('.gz'):
                     read2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
@@ -134,6 +135,15 @@ def read_input(path,in_f):
                     subprocess.Popen(read2Cmd, shell=True).wait()
             else:
                 print('The file ' + in_rev + 'does not exist.')
+
+            #Create list of output files
+            out_for = path+'/2-Filtered/'+name+'_1.fastq'
+            out_rev = path+'/2-Filtered/'+name+'_2.fastq'
+            out = [out_for,out_rev]
+            outlist.append(out)
+
+    #Transform output file list into comma-separated string
+    outstr = ",".join(outlist)
 
     #Remove comma in the end of each row of the input file to return to initial condition
     commaCmd = 'sed -i "$!s/,$//" '+in_f+''
@@ -145,18 +155,18 @@ read_input(path,in_f)
 # Run dada2 workflow #
 ######################
 
-def run_dada2(in_f, path, config, cores):
+def run_dada2_wf(in_f, path, config, cores):
     """Run snakemake on shell"""
 
     # Define output names
     out_files = in_out_dada2(path,in_f)
     curr_dir = os.path.dirname(sys.argv[0])
     bamsepath = os.path.abspath(curr_dir)
-    path_snkf = os.path.join(holopath,'workflows/dada2/Snakefile')
+    path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 
     # Run snakemake
-    prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config+' --cores '+cores+''
+    prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+outstr+' --configfile '+config+' --cores '+cores+''
     subprocess.check_call(prep_snk_Cmd, shell=True)
     print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
 
-#run_dada2(in_f, path, config, cores)
+run_dada2_wf(in_f, path, config, cores)

@@ -20,11 +20,44 @@ rule transfer:
     threads: 1
     output:
         read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
-        read2="{projectpath}/1-Trimmed/{sample}_2.fastq",
+        read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
     params:
         primer1=expand("{primer1}", primer1=config['primer1']),
-        primer2=expand("{primer2}", primer2=config['primer2']),
+        primer2=expand("{primer2}", primer2=config['primer2'])
     shell:
         """
         python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
+        """
+
+##
+# Read filtering and trimming
+##
+
+def prepare_dir_filtering(path):
+    # Set input directory
+    in_dir = os.path.join(path,"2-Filtered")
+
+    ## If input directory does not exist, make it
+    if not os.path.exists(in_dir):
+        os.makedirs(in_dir)
+
+prepare_dir_filtering(path)
+
+rule transfer:
+    input:
+      read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
+      read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
+    threads: 1
+    output:
+        read1="{projectpath}/2-Filtered/{sample}_1.fastq",
+        read2="{projectpath}/2-Filtered/{sample}_2.fastq"
+    params:
+        maxN=expand("{maxN}", maxN=config['maxN']),
+        maxEE=expand("{maxEE}", maxEE=config['maxEE']),
+        truncQ=expand("{truncQ}", truncQ=config['truncQ']),
+        truncLen=expand("{truncLen}", truncLen=config['truncLen'])
+
+    shell:
+        """
+        module load tools gcc R/3.4.0 && export i1={input.read1} && i2={input.read2} && export o1={output.read1} && export o2={output.read2} && export q={params.truncq} && export l={params.truncl} && export n={params.maxn} && export e={params.maxee} && Rscript --vanilla -f {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R
         """
