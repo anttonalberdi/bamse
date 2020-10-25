@@ -39,7 +39,7 @@ rule filter:
     output:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",
         read2="{projectpath}/2-Filtered/{sample}_2.fastq",
-        directory("{projectpath}/2-Filtered/")
+        dir="{projectpath}/2-Filtered/"
     params:
         maxN=expand("{maxN}", maxN=config['maxN']),
         maxEE=expand("{maxEE}", maxEE=config['maxEE']),
