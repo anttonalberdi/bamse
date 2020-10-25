@@ -59,7 +59,7 @@ rule dada2:
         dir="{projectpath}/2-Filtered"
     threads: 1
     output:
-        asvs="{projectpath}/ASVs.fasta"
+        asvs="{projectpath}/ASVs.fasta",
         counts="{projectpath}/ASV_counts.txt"
     params:
         overlap=expand("{overlap}", overlap=config['overlap'])
