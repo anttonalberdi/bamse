@@ -53,30 +53,26 @@ prim_f = primsplit[0]
 prim_r = primsplit[1]
 
 #Append current directory to .yaml config for standalone calling
-yaml = ruamel.yaml.YAML()
-yaml.explicit_start = True
-with open(str(config), 'r') as config_file:
-    data = yaml.load(config_file)
-    if data == None:
-        data = {}
+#yaml = ruamel.yaml.YAML()
+#yaml.explicit_start = True
+#with open(str(config), 'r') as config_file:
+#    data = yaml.load(config_file)
+#    if data == None:
+#        data = {}
 
-with open(str(config), 'w') as config_file:
-    data['bamsepath'] = str(curr_dir)
-    data['logpath'] = str(log)
-    data['taxonomydb'] = str(tax)
-    dump = yaml.dump(data, config_file)
+#with open(str(config), 'w') as config_file:
+#    data['bamsepath'] = str(curr_dir)
+#    data['logpath'] = str(log)
+#    data['taxonomydb'] = str(tax)
+#    dump = yaml.dump(data, config_file)
 
 #############################
-# Input datafile processing #
+# Prepare working directory #
 #############################
 
-def in_out_dada2(path,in_f):
-    """Generate output names files from input.txt. Rename and move
-    input files where snakemake expects to find them if necessary."""
-
-
+def prepare_dir(path):
     # Set input directory
-    in_dir = os.path.join(path,"0-InputData")
+    in_dir = os.path.join(path,"0-Data")
 
     ## If input directory exists remove, remake it
     if os.path.exists(in_dir):
@@ -87,15 +83,18 @@ def in_out_dada2(path,in_f):
     if not os.path.exists(in_dir):
         os.makedirs(in_dir)
 
+prepare_dir(path)
+
+#################
+# Transfer data #
+#################
+
+def read_input(path,in_f):
     # Read input data file
-    with open(in_f,'r') as in_file:
-        ## Generate desired output file names from input.txt
-        read = 0
-        output_files=''
-        final_temp_dir="9-Results"
+    inputfile = open(in_f, "r")
 
         ## Read all lines
-        all_lines = in_file.readlines() # Read input.txt lines
+        all_lines = inputfile.readlines() # Read input.txt lines
 
         ## Remove empty lines
         all_lines = map(lambda s: s.strip(), all_lines)
@@ -103,22 +102,35 @@ def in_out_dada2(path,in_f):
 
         ## Read input data row by row
         for line in lines:
+            ### Skip empty lines
+            if line in ['\n', '\r\n']:
+                ### Skip line if starts with # (comment line)
+                if not (line.startswith('#')):
 
-            ### Skip line if starts with # (comment line)
-            if not (line.startswith('#')):
-                linelist = line.split(',') # Create a list of each line
-                unit=linelist[0]
-                sample=linelist[1]
-                run=linelist[2]
-                in_for=linelist[3]
-                in_rev=linelist[4]
-                out_for=(path+"/"+unit+"_1.fastq ")
-                out_rev=(path+"/"+unit+"_2.fastq ")
-                out_both=(out_for,out_rev)
-                output_files+=out_both
+                    #Define variables
+                    linelist = line.split(',') # Create a list of each line
+                    name=linelist[0]
+                    sample=linelist[1]
+                    run=linelist[2]
+                    in_for=linelist[3]
+                    in_rev=linelist[4]
 
-        return output_files
+                    # Transfer, rename and decompress data
+                    if in_for.endswith('.gz'):
+                        copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/'+name+'_1.fastq'
+                        subprocess.check_call(copy1Cmd, shell=True)
+                    else:
+                        copy1Cmd = 'cp '+in_for+' '+path+'/'+name+'_1.fastq'
+                        subprocess.check_call(copy1Cmd, shell=True)
 
+                    if in_rev.endswith('.gz'):
+                        copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/'+name+'_2.fastq'
+                        subprocess.check_call(copy2Cmd, shell=True)
+                    else:
+                        copy2Cmd = 'cp '+in_rev+' '+path+'/'+name+'_2.fastq'
+                        subprocess.check_call(copy2Cmd, shell=True)
+
+read_input(in_f, path)
 
 ######################
 # Run dada2 workflow #

@@ -34,6 +34,3 @@ if read2.endswith('.gz'):
 else:
     copy2Cmd = 'cp '+read2+' '+path+'/'+name+'_2.fastq'
     subprocess.check_call(copy2Cmd, shell=True)
-
-
-#python bamse/bin/bamse-transfer.py -1 Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.1.fq.gz -2 Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.2.fq.gz -d bamse -n test
