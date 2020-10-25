@@ -95,7 +95,7 @@ def read_input(path,in_f):
     inputfile = open(in_f, "r")
 
     ## Read input data row by row
-    for line in lines:
+    for line in inputfile:
         ### Skip empty lines
         if line in ['\n', '\r\n']:
             ### Skip line if starts with # (comment line)
