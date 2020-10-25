@@ -159,18 +159,15 @@ read_input(path,in_f)
 # Run dada2 workflow #
 ######################
 
-def run_dada2_wf(in_f, path, config, cores):
-    """Run snakemake on shell"""
+"""Run snakemake on shell"""
 
-    # Define output names
-    out_files = path+'/ASV_counts.txt '+path+'/ASVs.fasta'
-    curr_dir = os.path.dirname(sys.argv[0])
-    bamsepath = os.path.abspath(curr_dir)
-    path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
+# Define output names
+out_files = path+'/ASV_counts.txt '+path+'/ASVs.fasta'+path+'/ASV_taxa.fasta'
+curr_dir = os.path.dirname(sys.argv[0])
+bamsepath = os.path.abspath(curr_dir)
+path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 
-    # Run snakemake
-    prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config+' --cores '+cores+''
-    subprocess.check_call(prep_snk_Cmd, shell=True)
-    print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
-
-run_dada2_wf(in_f, path, config, cores)
+# Run snakemake
+prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config+' --cores '+cores+''
+subprocess.check_call(prep_snk_Cmd, shell=True)
+print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
