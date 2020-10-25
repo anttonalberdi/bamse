@@ -118,23 +118,23 @@ def read_input(path,in_f):
                 # Transfer, rename and decompress data
                 if os.path.isfile(in_for):
                     if in_for.endswith('.gz'):
-                        copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/'+name+'_1.fastq'
+                        copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
                         subprocess.check_call(copy1Cmd, shell=True)
                     else:
-                        copy1Cmd = 'cp '+in_for+' '+path+'/'+name+'_1.fastq'
+                        copy1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
                         subprocess.check_call(copy1Cmd, shell=True)
                 else:
-                    print('The file' + in_for + 'does not exist.')
+                    print('The file ' + in_for + 'does not exist.')
 
                 if os.path.isfile(in_rev):
                     if in_rev.endswith('.gz'):
-                        copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/'+name+'_2.fastq'
+                        copy2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
                         subprocess.check_call(copy2Cmd, shell=True)
                     else:
-                        copy2Cmd = 'cp '+in_rev+' '+path+'/'+name+'_2.fastq'
+                        copy2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
                         subprocess.check_call(copy2Cmd, shell=True)
                 else:
-                    print('The file' + in_rev + 'does not exist.')
+                    print('The file ' + in_rev + 'does not exist.')
 
 read_input(path,in_f)
 
