@@ -105,26 +105,22 @@ def read_input(path,in_f):
             run=linelist[2]
             in_for=linelist[3]
             in_rev=linelist[4]
+            print(name)
+            print(in_for)
+            print(in_rev)
 
-            # Transfer, rename and decompress data
-            if os.path.isfile(in_for):
+
+            #the reverse is not working for an unknown reason
+
+            if os.path.isfile(in_rev):
                 if in_for.endswith('.gz'):
-                    read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.check_call(read1Cmd, shell=True)
-                else:
-                    read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.check_call(read1Cmd, shell=True)
-
-                if in_rev.endswith('.gz'):
                     read2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.check_call(read2Cmd, shell=True)
+                    subprocess.Popen(read2Cmd, shell=True).wait()
                 else:
                     read2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.check_call(read2Cmd, shell=True)
+                    subprocess.Popen(read2Cmd, shell=True).wait()
             else:
-                print('The file ' + in_for + 'does not exist.')
-
-
+                print('The file ' + in_rev + 'does not exist.')
 
 
 read_input(path,in_f)
