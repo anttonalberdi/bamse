@@ -90,7 +90,7 @@ print(path)
 
 def read_input(path,in_f):
 
-    #Add comma in the end of each row
+    #Add comma in the end of each row of the input file to avoid downstream issues
     commaCmd = 'sed -i "$!s/$/,/" '+in_f+''
     subprocess.Popen(commaCmd, shell=True).wait()
 
@@ -137,6 +137,9 @@ def read_input(path,in_f):
             else:
                 print('The file ' + in_rev + 'does not exist.')
 
+    #Remove comma in the end of each row of the input file to return to initial condition
+    commaCmd = 'sed -i "$!s/,$//" '+in_f+''
+    subprocess.Popen(commaCmd, shell=True).wait()
 
 read_input(path,in_f)
 
