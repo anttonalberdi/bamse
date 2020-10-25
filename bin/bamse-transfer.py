@@ -15,7 +15,6 @@ parser.add_argument('-d', help="destination path", dest="path", required=True)
 parser.add_argument('-n', help="destination name", dest="name", required=True)
 args = parser.parse_args()
 
-input_file=args.input
 read1=args.read1
 read2=args.read2
 path=args.path
@@ -35,3 +34,6 @@ if path2.endswith('.gz'):
 else:
     copy2Cmd = 'cp '+read2+' '+path+'/'+name+'_2.fastq'
     subprocess.check_call(copy2Cmd, shell=True)
+
+
+#python bamse/bin/bamse-transfer.py -1 Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.1.fq.gz -2 Israel_bat_microbiome/1-QualityFiltered_DADA2/GM10.B02.2.fq.gz -d bamse -n test
