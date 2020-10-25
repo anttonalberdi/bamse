@@ -4,7 +4,7 @@ import os
 import sys
 import ruamel.yaml
 
-#python bamse/bamse.py -f bamse/workflows/inputfile.txt -d /home/projects/ku-cbd/people/antalb/bamse/ -x sdf -t 1
+#python bamse/bamse.py -f bamse/workflows/inputfile.txt -d /home/projects/ku-cbd/people/antalb/bamse2/ -x sdf -t 1
 
 ####################
 # Argument parsing #
@@ -90,6 +90,8 @@ prepare_dir(path)
 # Transfer data #
 #################
 
+print(path)
+
 def read_input(path,in_f):
     # Read input data file
     inputfile = open(in_f, "r")
@@ -111,7 +113,7 @@ def read_input(path,in_f):
                 print(name)
                 print(in_for)
                 print(in_rev)
-                
+
                 # Transfer, rename and decompress data
                 if in_for.endswith('.gz'):
                     copy1Cmd = 'gunzip -c '+in_for+' > '+path+'/'+name+'_1.fastq'
