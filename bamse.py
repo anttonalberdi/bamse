@@ -71,18 +71,23 @@ with open(str(config), 'w') as config_file:
     dump = yaml.dump(data, config_file)
 
 #############################
-# Prepare working directory #
+# Prepare working directories #
 #############################
 
-def prepare_dir(path):
-    # Set input directory
-    in_dir = os.path.join(path,"0-Data")
 
-    ## If input directory does not exist, make it
-    if not os.path.exists(in_dir):
-        os.makedirs(in_dir)
+# Set input directory
+dir0 = os.path.join(path,"0-Data")
+dir1 = os.path.join(path,"1-Trimmed")
+dir2 = os.path.join(path,"2-Filtered")
 
-prepare_dir(path)
+## If input directory does not exist, make it
+if not os.path.exists(dir0):
+    os.makedirs(dir0)
+if not os.path.exists(dir1):
+    os.makedirs(dir1)
+if not os.path.exists(dir2):
+    os.makedirs(dir2)
+
 
 #################
 # Transfer data #
