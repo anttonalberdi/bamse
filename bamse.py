@@ -99,6 +99,7 @@ def read_input(path,in_f):
         if not (line.startswith('#')):
 
             #Define variables
+            line=line+','
             linelist = line.split(',') # Create a list of each line
             name=linelist[0]
             sample=linelist[1]
@@ -109,6 +110,16 @@ def read_input(path,in_f):
             print(in_for)
             print(in_rev)
 
+            # Transfer, rename and decompress data
+            if os.path.isfile(in_for):
+                if in_for.endswith('.gz'):
+                    read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
+                    #ubprocess.Popen(read1Cmd, shell=True).wait()
+                else:
+                    read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
+                    subprocess.Popen(read1Cmd, shell=True).wait()
+            else:
+                print('The file ' + in_for + 'does not exist.')
 
             #the reverse is not working for an unknown reason
 
