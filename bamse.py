@@ -36,12 +36,12 @@ if not os.path.exists(path):
 
 # Define config files
 if not (args.config_preprocessing):
-    config_preprocessing = os.path.join(os.path.abspath(curr_dir),"workflows/preprocessing/config.yaml")
+    config_preprocessing = os.path.join(os.path.abspath(curr_dir),"workflows/configs/preprocessing.yaml")
 else:
     config_preprocessing=args.config_preprocessing
 
 if not (args.config_dada2):
-    config_dada2 = os.path.join(os.path.abspath(curr_dir),"workflows/dada2/config.yaml")
+    config_dada2 = os.path.join(os.path.abspath(curr_dir),"workflows/configs/dada2.yaml")
 else:
     config_dada2=args.config_dada2
 
@@ -62,7 +62,7 @@ primsplit = prim.split(",")
 prim_f = primsplit[0]
 prim_r = primsplit[1]
 
-#Append current directory to .yaml config for standalone calling
+#Append current directory to config file preprocessing.yaml
 yaml = ruamel.yaml.YAML()
 yaml.explicit_start = True
 with open(str(config_preprocessing), 'r') as config_file:
@@ -76,6 +76,7 @@ with open(str(config_preprocessing), 'w') as config_file:
     data['taxonomy'] = str(tax)
     dump = yaml.dump(data, config_file)
 
+#Append current directory to config file dada2.yaml
 with open(str(config_dada2), 'r') as config_file:
     data = yaml.load(config_file)
     if data == None:
@@ -153,6 +154,9 @@ for line in inputfile:
                 subprocess.Popen(read2Cmd, shell=True).wait()
         else:
             print('The file ' + in_rev + 'does not exist.')
+
+        #Calculate read length and add to config file
+        #[TO BE DONE!]
 
         #Create list of output files (only for development)
         out_for = path+'/2-Filtered/'+name+'_1.fastq'
