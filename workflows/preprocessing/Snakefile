@@ -61,8 +61,8 @@ rule filter:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",
         read2="{projectpath}/2-Filtered/{sample}_2.fastq"
     params:
-        truncF=expand("{truncF}", truncF=config['{sample}_truncF']),
-        truncR=expand("{truncR}", truncR=config['{sample}_truncR'])
+        truncF=expand("{truncF}", truncF=config['{wildcards.sample}_truncF']),
+        truncR=expand("{truncR}", truncR=config['{wildcards.sample}_truncR'])
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
