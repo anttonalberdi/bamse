@@ -37,7 +37,7 @@ rule quality:
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
     threads: 1
     output:
-        sampleparam="{projectpath}/1-Trimmed/{sample}.yaml"
+        sampleparam="{projectpath}/1-Trimmed/{sample}.param"
     params:
         parampath=expand("{parampath}", parampath=config['parampath']),
         ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
@@ -55,16 +55,12 @@ rule filter:
     input:
         read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq",
-        sampleparam="{projectpath}/1-Trimmed/{sample}.yaml"
+        sampleparam="{projectpath}/1-Trimmed/{sample}.param"
     threads: 1
     output:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",
         read2="{projectpath}/2-Filtered/{sample}_2.fastq"
-    params:
-        truncF=expand("{truncF}", truncF=config['{wildcards.sample}_truncF']),
-        truncR=expand("{truncR}", truncR=config['{wildcards.sample}_truncR'])
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
-        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --truncF {params.truncF} --truncR {params.truncR}
-        """
+        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --params {input.sampleparam}

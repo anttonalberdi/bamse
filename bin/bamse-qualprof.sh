@@ -129,7 +129,5 @@ done
 # Print to sample-specific params file
 #####
 
-echo -e "\n#Sample-specific parameters" >> ${sampleparam}
-echo -e "truncF_$sample:\n $trimm1" >> ${sampleparam}
-echo -e "truncR_$sample:\n $trimm2" >> ${sampleparam}
-cat ${sampleparam} >> $param
+echo -e "truncF\t$trimm1" > ${sampleparam}
+echo -e "truncR\t$trimm2" >> ${sampleparam}
