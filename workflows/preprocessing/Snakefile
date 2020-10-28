@@ -39,10 +39,10 @@ rule filter:
     params:
         parampath=expand("{parampath}", parampath=config['parampath']),
         ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
-        desiredminQ=expand("{minQ}", minQ=config['minQ'])
+        minq=expand("{minq}", minq=config['minq'])
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-filtering.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.desiredminQ} -c {params.parampath}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-filtering.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.minq} -c {params.parampath}
         """
 
 ##
