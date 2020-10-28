@@ -5,7 +5,7 @@
 rule get_paths:
     input:
         bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
-
+        parampath=expand("{parampath}", parampath=config['parampath'])
 ##
 # Primer trimming
 ##
@@ -44,7 +44,7 @@ rule quality:
         minq=expand("{minq}", minq=config['minq'])
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
         """
 
 ##

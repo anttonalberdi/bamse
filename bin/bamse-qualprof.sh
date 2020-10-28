@@ -1,10 +1,16 @@
 #2020/10/25 - BAMSE 1.0
 #Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
-usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-c sampleparam.yaml]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-s <samplename>] [-w <workdir>] [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-c sample.yaml] [-p bamse.yaml]" 1>&2; exit 1; }
 
-while getopts ":f:r:l:q:c:" o; do
+while getopts ":s:w:f:r:l:q:c:p:" o; do
     case "${o}" in
+        s)
+            s=${OPTARG}
+            ;;
+        w)
+            w=${OPTARG}
+            ;;
         f)
             f=${OPTARG}
             ;;
@@ -20,6 +26,9 @@ while getopts ":f:r:l:q:c:" o; do
 				c)
 						c=${OPTARG}
 						;;
+        p)
+            p=${OPTARG}
+            ;;
         *)
             usage
             ;;
@@ -28,15 +37,18 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${l}" ] || [ -z "${q}" ] || [ -z "${c}" ]; then
+if [ -z "${s}" ] || [ -z "${w}" ] || [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${l}" ] || [ -z "${q}" ] || [ -z "${c}" || [ -z "${p}" ]; then
     usage
 fi
 
+sample=$s
+workdir=$w
 read1=$f
 read2=$r
 ampliconlength=$l
 minQ=$q
-paramfile=$c
+sampleparam=$c
+param=$p
 
 #####
 # Obtain amplicon lengths and overlaps
@@ -118,9 +130,10 @@ while [[ "$qualoverlap" -le 5 ]];do
 done
 
 #####
-# Print to params file
+# Print to sample-specific params file
 #####
 
-echo -e "#Sample-specific parameters\n" > $paramfile
-echo -e "truncF:\n $trimm1\n" > $paramfile
-echo -e "truncF:\n $trimm2\n" > $paramfile
+echo -e "#Sample-specific parameters\n" >> ${sampleparam}
+echo -e "truncF_$sample:\n $trimm1\n" >> ${sampleparam}
+echo -e "truncR_$sample:\n $trimm2\n" >> ${sampleparam}
+cat ${sampleparam} >> $param
