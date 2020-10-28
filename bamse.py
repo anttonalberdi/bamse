@@ -4,6 +4,7 @@ import os
 import sys
 import ruamel.yaml
 import pathlib
+import re
 
 ####################
 # Argument parsing #
