@@ -14,9 +14,11 @@ parser.add_argument('-i', help="Data information file", dest="input", required=T
 parser.add_argument('-d', help="Working directory of the project", dest="workdir", required=True)
 parser.add_argument('-f', help="Forward primer sequence", dest="primF", required=True)
 parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required=True)
+parser.add_argument('-a', help="Amplicon length", dest="ampliconlength", required=True)
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
 parser.add_argument('-q', help="Desired minimum quality (phred) score", dest="minq", required=False)
+parser.add_argument('-o', help="Desired minimum read overlap", dest="overlap", required=False)
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
 parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
 args = parser.parse_args()
@@ -26,6 +28,7 @@ in_f=args.input
 path=args.workdir
 primF=args.primF
 primR=args.primR
+ampliconlength=args.ampliconlength
 tax=args.tax
 cores=args.threads
 
@@ -42,6 +45,12 @@ if not (args.minq):
     minq = 30
 else:
     minq=args.minq
+
+# Define minQ value
+if not (args.overlap):
+    overlap = 5
+else:
+    overlap=args.overlap
 
 # Define param file
 if not (args.param):
@@ -62,8 +71,17 @@ os.remove(str(param))
 f = open(str(param), "a")
 f.write("#BAMSE core paths\n")
 f.write("bamsepath:\n "+str(curr_dir)+"\n")
+f.write("workdir:\n "+str(workdir)+"\n")
+f.write("parampath:\n "+str(param)+"\n")
 f.write("logpath:\n "+str(log)+"\n")
 f.write("taxonomy:\n "+str(tax)+"\n")
+f.write("\n#Primers\n")
+f.write("primer1:\n "+str(primF)+"\n")
+f.write("primer2:\n "+str(primR)+"\n")
+f.write("\n#Trimming and filtering\n")
+f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
+f.write("overlap:\n "+str(overlap)+"\n")
+f.write("minq:\n "+str(minq)+"\n")
 f.close()
 
 ###############################

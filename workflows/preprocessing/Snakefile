@@ -37,12 +37,12 @@ rule filter:
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
     threads: 1
     params:
-        config=expand("{config}", config=config['config']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
         ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
         desiredminQ=expand("{minQ}", minQ=config['minQ'])
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-filtering.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.desiredminQ} -c {params.config}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-filtering.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.desiredminQ} -c {params.parampath}
         """
 
 ##
