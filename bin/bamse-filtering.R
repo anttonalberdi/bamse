@@ -10,10 +10,9 @@ option_list = list(
  make_option("--i2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
  make_option("--o1",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
  make_option("--o2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
- make_option("--maxN",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
- make_option("--maxEE", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
- make_option("--truncQ",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
- make_option("--truncLen", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character")
+ make_option("--truncF", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
+ make_option("--truncR", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character")
+
 );
 
 opt_parser = OptionParser(option_list = option_list)
@@ -23,10 +22,9 @@ i1<-opt$i1
 i2<-opt$i2
 o1<-opt$o1
 o2<-opt$o2
-maxN<-opt$maxN
-maxEE<-opt$maxEE
-truncQ<-opt$truncQ
-truncLen<-opt$truncLen
+truncF<-opt$truncF
+truncR<-opt$truncR
+truncLen=c(truncF,truncR)
 
 library(dada2)
-filterAndTrim(fwd=i1, filt=o1, rev=i2, filt.rev=o2, maxN=0, maxEE=Inf, truncQ=2, rm.phix=TRUE, truncLen=0, compress=FALSE, multithread=TRUE)
+filterAndTrim(fwd=i1, filt=o1, rev=i2, filt.rev=o2, maxN=0, maxEE=Inf, truncQ=0, rm.phix=TRUE, truncLen=truncLen, compress=FALSE, multithread=TRUE)

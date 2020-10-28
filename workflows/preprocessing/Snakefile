@@ -28,6 +28,24 @@ rule trim:
         """
 
 ##
+# Quality profiling
+##
+
+rule filter:
+    input:
+        read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
+        read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
+    threads: 1
+    params:
+        config=expand("{config}", config=config['config']),
+        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
+        desiredminQ=expand("{minQ}", minQ=config['minQ'])
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-filtering.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.desiredminQ} -c {params.config}
+        """
+
+##
 # Read filtering and trimming
 ##
 
@@ -38,14 +56,12 @@ rule filter:
     threads: 1
     output:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",
-        read2="{projectpath}/2-Filtered/{sample}_2.fastq",
+        read2="{projectpath}/2-Filtered/{sample}_2.fastq"
     params:
-        maxN=expand("{maxN}", maxN=config['maxN']),
-        maxEE=expand("{maxEE}", maxEE=config['maxEE']),
-        truncQ=expand("{truncQ}", truncQ=config['truncQ']),
-        truncLen=expand("{truncLen}", truncLen=config['truncLen'])
+        truncF=expand("{truncF}", maxN=config['truncF']),
+        truncR=expand("{truncR}", truncR=config['truncR'])
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
-        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --truncQ {params.truncQ} --truncLen {params.truncLen} --maxN {params.maxN} --maxEE {params.maxEE}
+        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --truncF {params.truncF} --truncF {params.truncR}
         """

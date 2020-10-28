@@ -10,21 +10,24 @@ import pathlib
 ####################
 
 parser = argparse.ArgumentParser(description='Runs bamse-dada2 pipeline.')
-parser.add_argument('-f', help="input.txt file", dest="input", required=True)
-parser.add_argument('-d', help="temp files directory path", dest="workdir", required=True)
-parser.add_argument('-x', help="taxonomy database", dest="tax", required=True)
-parser.add_argument('-t', help="threads", dest="threads", required=True)
-parser.add_argument('-c', help="config file", dest="config_preprocessing", required=False)
-parser.add_argument('-r', help="config file", dest="config_dada2", required=False)
-parser.add_argument('-p', help="comma separated primer sequences", dest="prim", required=False)
-parser.add_argument('-l', help="pipeline log file", dest="log", required=False)
+parser.add_argument('-i', help="Data information file", dest="input", required=True)
+parser.add_argument('-d', help="Working directory of the project", dest="workdir", required=True)
+parser.add_argument('-f', help="Forward primer sequence", dest="primF", required=True)
+parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required=True)
+parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
+parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
+parser.add_argument('-q', help="Desired minimum quality (phred) score", dest="minq", required=False)
+parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
+parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
 args = parser.parse_args()
 
 # Translate arguments
 in_f=args.input
 path=args.workdir
-cores=args.threads
+primF=args.primF
+primR=args.primR
 tax=args.tax
+cores=args.threads
 
 # Retrieve current directory
 file = os.path.dirname(sys.argv[0])
@@ -34,69 +37,40 @@ curr_dir = os.path.abspath(file)
 if not os.path.exists(path):
     os.makedirs(path)
 
-# Define config files
-if not (args.config_preprocessing):
-    config_preprocessing = os.path.join(os.path.abspath(curr_dir),"workflows/configs/preprocessing.yaml")
+# Define minQ value
+if not (args.minq):
+    minq = 30
 else:
-    config_preprocessing=args.config_preprocessing
+    param=args.minq
 
-if not (args.config_dada2):
-    config_dada2 = os.path.join(os.path.abspath(curr_dir),"workflows/configs/dada2.yaml")
+# Define param file
+if not (args.param):
+    param = os.path.join(os.path.abspath(curr_dir),"bamse.yaml")
 else:
-    config_dada2=args.config_dada2
+    param=args.param
 
 # Define log file
 if not (args.log):
-    log = os.path.join(path,"bamse-dada2.log")
+    log = os.path.join(path,"bamse.log")
 else:
     log=args.log
 
-# Define primers
-if not (args.prim):
-    prim = "CTANGGGNNGCANCAG,GACTACNNGGGTATCTAAT"
-else:
-    prim=args.prim
+#Append information to the parameters file
+f = open(str(param), "a")
+f.write("BAMSE core paths\n")
+f.write("bamsepath="+str(curr_dir)+"\n")
+f.write("logpath="+str(log)+"\n")
+f.write("taxonomy="+str(tax)+"\n")
+f.close()
 
-# Split primers
-primsplit = prim.split(",")
-prim_f = primsplit[0]
-prim_r = primsplit[1]
-
-#Append current directory to config file preprocessing.yaml
-yaml = ruamel.yaml.YAML()
-yaml.explicit_start = True
-with open(str(config_preprocessing), 'r') as config_file:
-    data = yaml.load(config_file)
-    if data == None:
-        data = {}
-
-with open(str(config_preprocessing), 'w') as config_file:
-    data['bamsepath'] = str(curr_dir)
-    data['logpath'] = str(log)
-    data['taxonomy'] = str(tax)
-    dump = yaml.dump(data, config_file)
-
-#Append current directory to config file dada2.yaml
-with open(str(config_dada2), 'r') as config_file:
-    data = yaml.load(config_file)
-    if data == None:
-        data = {}
-
-with open(str(config_dada2), 'w') as config_file:
-    data['bamsepath'] = str(curr_dir)
-    data['logpath'] = str(log)
-    data['taxonomy'] = str(tax)
-    dump = yaml.dump(data, config_file)
-
-#############################
+###############################
 # Prepare working directories #
-#############################
-
+###############################
 
 # Set input directory
 dir0 = os.path.join(path,"0-Data")
-dir1 = os.path.join(path,"1-Trimmed")
-dir2 = os.path.join(path,"2-Filtered")
+#dir1 = os.path.join(path,"1-Trimmed")
+#dir2 = os.path.join(path,"2-Filtered")
 
 ## If input directory does not exist, make it
 if not os.path.exists(dir0):
@@ -183,10 +157,10 @@ print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
 
 path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
 #Transform output file list into space-separated string (only for development)
-outstr = " ".join(outlist)
+out_preprocessing = " ".join(outlist)
 
 # Run snakemake
-prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+outstr+' --configfile '+config_preprocessing+' --cores '+cores+''
+prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ######################
@@ -194,11 +168,11 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 ######################
 
 # Define output names
-out_files = path+'/ASV_counts.txt '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
+out_dada2 = path+'/ASV_counts.txt '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 
 # Run snakemake
-prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_files+' --configfile '+config_dada2+' --cores '+cores+''
+prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_dada2+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
