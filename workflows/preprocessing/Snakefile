@@ -20,30 +20,17 @@ rule trim:
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
     params:
         primer1=expand("{primer1}", primer1=config['primer1']),
-        primer2=expand("{primer2}", primer2=config['primer2'])
-    shell:
-        """
-        mkdir -p {wildcards.projectpath}/1-Trimmed
-        module load anaconda3/4.4.0 && python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
-        """
-
-##
-# Quality profiling
-##
-
-rule quality:
-    input:
-        read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
-        read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
-    threads: 1
-    params:
+        primer2=expand("{primer2}", primer2=config['primer2']),
         parampath=expand("{parampath}", parampath=config['parampath']),
         ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
         minq=expand("{minq}", minq=config['minq'])
     shell:
         """
+        mkdir -p {wildcards.projectpath}/1-Trimmed
+        module load anaconda3/4.4.0 && python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
         sh {rules.get_paths.input.bamsepath}/bin/bamse-filtering.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.minq} -c {params.parampath}
         """
+
 
 ##
 # Read filtering and trimming
@@ -63,5 +50,5 @@ rule filter:
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
-        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --truncF {params.truncF} --truncF {params.truncR}
+        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --truncF {params.truncF} --truncR {params.truncR}
         """

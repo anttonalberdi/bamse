@@ -4,7 +4,6 @@ rm -rf bamse
 git clone https://anttonalberdi:Ss7679Bd@github.com/anttonalberdi/bamse.git
 
 
-
 #Transfer
 
 python bamse/bamse.py -i bamse/inputfile.txt -d /home/projects/ku-cbd/people/antalb/bamse3/ -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x sdf -t 1

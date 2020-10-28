@@ -40,6 +40,9 @@ curr_dir = os.path.abspath(file)
 if not os.path.exists(path):
     os.makedirs(path)
 
+#Remove last / to the working directory (if necessary)
+path = re.sub('/$','',path)
+
 # Define minQ value
 if not (args.minq):
     minq = 30
