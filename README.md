@@ -12,7 +12,7 @@ BAMSE does not require an installation, as it can be directly run from the repos
 cd /home/user/softwaredir
 ```
 
-2- Clone the github repository. In Computerome2, load the git module before downloading the repositoru
+2- Clone the github repository. In Computerome2, load the git module before downloading the repository.
 
 ```shell
 module load git/2.4.4
@@ -39,8 +39,9 @@ For running the core workflow of bamse, use the following code:
 ```shell
 #Declare the bamse directory
 bamsedir=/home/user/softwaredir/bamse
+projectdir=/home/user/softwaredir/test
 #Run the launching script
-python ${bamsedir}/bamse.py -i inputdata.txt -d /home/workdir/ -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x /db/taxonomy.db -t 40 [-minq] 30 [-q] /home/workdir/param.yaml [-l] /home/workdir/bamse.log
+python ${bamsedir}/bamse.py -i ${projectdir}/inputdata.txt -d ${projectdir} -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 40
 ```
 #### Parameters
 
@@ -68,7 +69,7 @@ Optional:
 If working in Computerome2, insert that code in a shell file, and submit a job using qsub.
 
 ```shell
-echo "python ${bamsedir}/bamse.py -f inputdata.txt -d /workdir/ -x /db/taxonomy.db -t 40" > bamsejob.sh
+echo "python ${bamsedir}/bamse.py -i ${projectdir}/inputdata.txt -d ${projectdir} -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 40" > bamsejob.sh
 
 workdir=/home/user/projectdir/
 bamsedir=/home/user/softwaredir/bamse
