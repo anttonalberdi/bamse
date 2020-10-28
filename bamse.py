@@ -82,6 +82,8 @@ f.write("\n#Trimming and filtering\n")
 f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
 f.write("overlap:\n "+str(overlap)+"\n")
 f.write("minq:\n "+str(minq)+"\n")
+f.write("truncF:\n 0\n")
+f.write("truncR:\n 0\n")
 f.close()
 
 ###############################
