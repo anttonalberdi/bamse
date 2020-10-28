@@ -24,7 +24,7 @@ rule trim:
     shell:
         """
         mkdir -p {wildcards.projectpath}/1-Trimmed
-        module load anaconda3/4.4.0 && python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
+        module load tools anaconda3/4.4.0 && python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
         """
 
 ##
@@ -44,7 +44,7 @@ rule quality:
         minq=expand("{minq}", minq=config['minq'])
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
+        module load tools perl/5.30.2 && sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
         """
 
 ##

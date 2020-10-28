@@ -131,4 +131,4 @@ done
 
 echo -e "truncF\t$trimm1" > ${sampleparam}
 echo -e "truncR\t$trimm2" >> ${sampleparam}
-echo -e "truncR\t$minQ" >> ${sampleparam}
+echo -e "minQ\t$minQ" >> ${sampleparam}
