@@ -26,12 +26,6 @@ primer2=args.primer2
 
 mode = 'ligation'
 
-cutadapt --pair-adapters -e 0.2 -g ^CTANGGGNNGCANCAG -G ^GACTACNNGGGTATCTAAT --discard-untrimmed -o output1.fastq -p output2.fastq bamse3/0-Data/Datafile2_1.fastq bamse3/0-Data/Datafile2_2.fastq
-
-
-cutadapt --pair-adapters -e 0.2 -g ^GACTACNNGGGTATCTAAT -G ^CTANGGGNNGCANCAG --discard-untrimmed -o output1.fastq -p output2.fastq bamse3/0-Data/Datafile2_1.fastq bamse3/0-Data/Datafile2_2.fastq
-
-
 if mode == 'ligation':
     trim_ligation1 = 'module load tools anaconda3/4.4.0 && cutadapt --pair-adapters -e 0.2 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+'_a -p '+output2+'_a '+input1+' '+input2+''
     subprocess.Popen(trim_ligation1, shell=True).wait()
