@@ -121,5 +121,6 @@ done
 # Print to params file
 #####
 
-cat $paramfile | tr '\n' '*' | sed "s/truncF:\* 0/truncF:\* $trimm1/g"  | tr '*' '\n' > $paramfile
-cat $paramfile | tr '\n' '*' | sed "s/truncR:\* 0/truncR:\* $trimm2/g"  | tr '*' '\n' > $paramfile
+echo -e "#Sample-specific parameters\n" > $paramfile
+echo -e "truncF:\n $trimm1\n" > $paramfile
+echo -e "truncF:\n $trimm2\n" > $paramfile
