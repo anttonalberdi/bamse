@@ -37,14 +37,14 @@ rule quality:
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
     threads: 1
     output:
-        param="{projectpath}/bamse.yaml"
+        sampleparam="{projectpath}/1-Trimmed/{sample}.yaml"
     params:
         parampath=expand("{parampath}", parampath=config['parampath']),
         ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
         minq=expand("{minq}", minq=config['minq'])
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.minq} -c {params.parampath}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam}
         """
 
 ##
@@ -55,7 +55,7 @@ rule filter:
     input:
         read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq",
-        param="{projectpath}/bamse.yaml"
+        sampleparam="{projectpath}/1-Trimmed/{sample}.yaml"
     threads: 1
     output:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",

@@ -1,7 +1,7 @@
 #2020/10/25 - BAMSE 1.0
 #Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
-usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-c params.yaml]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-c sampleparam.yaml]" 1>&2; exit 1; }
 
 while getopts ":f:r:l:q:c:" o; do
     case "${o}" in
