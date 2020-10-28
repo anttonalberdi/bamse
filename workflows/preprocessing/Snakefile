@@ -44,7 +44,7 @@ rule quality:
         minq=expand("{minq}", minq=config['minq'])
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1}  -r {input.read2}  -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
         """
 
 ##
@@ -61,8 +61,8 @@ rule filter:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",
         read2="{projectpath}/2-Filtered/{sample}_2.fastq"
     params:
-        truncF=expand("{truncF}", truncF=config['truncF']),
-        truncR=expand("{truncR}", truncR=config['truncR'])
+        truncF=expand("{truncF}", truncF=config['{sample}_truncF']),
+        truncR=expand("{truncR}", truncR=config['{sample}_truncR'])
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
