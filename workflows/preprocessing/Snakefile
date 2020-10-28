@@ -58,7 +58,7 @@ rule filter:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",
         read2="{projectpath}/2-Filtered/{sample}_2.fastq"
     params:
-        truncF=expand("{truncF}", maxN=config['truncF']),
+        truncF=expand("{truncF}", truncF=config['truncF']),
         truncR=expand("{truncR}", truncR=config['truncR'])
     shell:
         """
