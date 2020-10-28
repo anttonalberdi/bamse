@@ -14,7 +14,7 @@ parser.add_argument('-p2', help="Reverse primer sequence", dest="primer2", requi
 args = parser.parse_args()
 
 input1=args.input1
-input2=args.input1
+input2=args.input2
 output1=args.output1
 output2=args.output2
 primer1=args.primer1
