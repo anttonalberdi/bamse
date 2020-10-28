@@ -36,7 +36,7 @@ read1=$f
 read2=$r
 ampliconlength=$l
 minQ=$q
-configfile=$c
+paramfile=$c
 
 #####
 # Obtain amplicon lengths and overlaps
@@ -121,4 +121,4 @@ done
 # Print to config file
 #####
 
-echo -e "\n#Learned from bamse-qualprof.sh\n\npossibleMinQ: $minQ\ntruncF: $trimm1\ntruncR: $trimm2" >> $configfile
+echo -e "defminq:\n $minQ\ntruncF:\n $trimm1\ntruncR:\n $trimm2" >> $paramfile
