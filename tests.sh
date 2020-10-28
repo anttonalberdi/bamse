@@ -8,12 +8,13 @@ git clone https://anttonalberdi:Ss7679Bd@github.com/anttonalberdi/bamse.git
 
 python bamse/bamse.py -i bamse/inputfile.txt -d /home/projects/ku-cbd/people/antalb/bamse3/ -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x /home/projects/ku-cbd/people/antalb/databases/silva_nr_v132_train_set.fa.gz -t 1
 
-
-#Trimming
-
-python bamse/bin/bamse-trimming.py -i1 /home/projects/ku-cbd/people/antalb/bamse2/0-Data/Datafile1_1.fastq -i2 /home/projects/ku-cbd/people/antalb/bamse2/0-Data/Datafile1_2.fastq -o1 /home/projects/ku-cbd/people/antalb/bamse2/1-Trimmed/Datafile1_1.fastq -o2 /home/projects/ku-cbd/people/antalb/bamse2/1-Trimmed/Datafile1_2.fastq -p1 CTANGGGNNGCANCAG -p2 GACTACNNGGGTATCTAAT
-
-python bamse/bin/bamse-trimming.py -i1 /home/projects/ku-cbd/people/antalb/bamse2/0-Data/Datafile2_1.fastq -i2 /home/projects/ku-cbd/people/antalb/bamse2/0-Data/Datafile2_2.fastq -o1 /home/projects/ku-cbd/people/antalb/bamse2/1-Trimmed/Datafile2_1.fastq -o2 /home/projects/ku-cbd/people/antalb/bamse2/1-Trimmed/Datafile2_2.fastq -p1 CTANGGGNNGCANCAG -p2 GACTACNNGGGTATCTAAT
+#Computerome Job
 
 
--e 0.15 -g ^GACTACNNGGGTATCTAAT -G ^CTANGGGNNGCANCAG --trimmed-only -o /home/projects/ku-cbd/people/antalb/bamse2/1-Trimmed/Datafile2_1.fastq_b -p /home/projects/ku-cbd/people/antalb/bamse2/1-Trimmed/Datafile2_2.fastq_b /home/projects/ku-cbd/people/antalb/bamse2/0-Data/Datafile2_1.fastq /home/projects/ku-cbd/people/antalb/bamse2/0-Data/Datafile2_1.fastq
+# PREPARE reference genome
+workdir=/home/projects/ku-cbd/people/antalb/bamse3
+bamsedir=/home/projects/ku-cbd/people/antalb/bamse
+qsub -V -A ku-cbd -W group_list=ku-cbd -v "workdir=${workdir},bamsedir=${bamsedir}"  -d `pwd` -e ${workdir}/BAMSE.err -o ${workdir}/BAMSE.out -l nodes=1:ppn=40,mem=180gb,walltime=0:06:00:00 -N BAMSE ${workdir}/bamse.sh
+
+#bamse.sh
+python bamse/bamse.py -i ${workdir}/inputfile.txt -d ${workdir} -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x /home/projects/ku-cbd/people/antalb/databases/silva_nr_v132_train_set.fa.gz -t 1
