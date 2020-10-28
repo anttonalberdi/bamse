@@ -47,17 +47,6 @@ sampleparam=$c
 param=$p
 
 #####
-# Obtain amplicon lengths and overlaps
-#####
-
-#Get average lengths of reads
-readlength1=$(cat $read1 | awk '{if(NR%4==2) {count++; bases += length} } END{print int(bases/count)}')
-readlength2=$(cat $read2 | awk '{if(NR%4==2) {count++; bases += length} } END{print int(bases/count)}')
-
-#Get average overlap
-overlap=$(($readlength1 + $readlength2 - $ampliconlength))
-
-#####
 # Obtain quality profiles
 #####
 
@@ -111,15 +100,16 @@ qualoverlap=0
 while [[ "$qualoverlap" -le 5 ]];do
 
 	minQ=$((minQ - 1))
+  echo $minQ
 
 	trimm1=$(cat ${sampleparam}.qual1 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
 	if [ -z "$trimm1" ];then
-	 trimm1=$readlength1
+	 trimm1=$(cat ${sampleparam}.qual1 | wc -l)
 	fi
 
 	trimm2=$(cat ${sampleparam}.qual2 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
 	if [ -z "$trimm2" ];then
-	 trimm2=$readlength2
+	 trimm2=$(cat ${sampleparam}.qual2 | wc -l)
 	fi
 
 	qualoverlap=$(($trimm1 + $trimm2 - $ampliconlength))
