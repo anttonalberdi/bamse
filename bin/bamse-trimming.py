@@ -41,3 +41,5 @@ if mode == 'ligation':
 else:
     trim_PCR = 'module load tools anaconda3/4.4.0 && cutadapt -e 0.5 -g ^'+primer1+' -G ^'+primer2+' --discard-untrimmed -o '+output1+' -p '+output2+' '+input1+' '+input2+''
     subprocess.check_call(trim_PCR, shell=True)
+
+trim_PCR = 'sh {rules.get_paths.input.bamsepath}/bin/bamse-filtering.sh -f '+input1+'  -r '+input2+' -l 440 -q 30 -c /home/projects/ku-cbd/people/antalb/bamse3/bamse.yaml'
