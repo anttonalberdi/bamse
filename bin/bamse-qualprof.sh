@@ -61,7 +61,7 @@ overlap=$(($readlength1 + $readlength2 - $ampliconlength))
 # Obtain quality profiles
 #####
 
-cat $read1 | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
+cat $read1 | seqtk sample - 1000 | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
 		chomp($a[3]);
 		$max_j=0;
 		$j=0;
@@ -80,9 +80,9 @@ cat $read1 | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a
 		print($jj."\t".$s->mean()."\t".$s->standard_deviation())}' | \
 		# Apply sliding window to soften quality values
 		awk -v OFS="\t" 'BEGIN{window=5;slide=1} {mod=NR%window; if(NR<=window){count++}else{sum-=array[mod];sum2-=array2[mod]}sum+=$2;sum2+=$3;array[mod]=$2;array2[mod]=$3;} (NR%slide)==0{print NR,sum/count,sum2/count}' \
-		> test1.txt
+		> ${sampleparam}.qual1
 
-cat $read2 | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
+cat $read2 | seqtk sample - 1000 | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
 		chomp($a[3]);
 		$max_j=0;
 		$j=0;
@@ -101,7 +101,7 @@ cat $read2 | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a
 		print($jj."\t".$s->mean()."\t".$s->standard_deviation())}' | \
 		# Apply sliding window to soften quality values
 		awk -v OFS="\t" 'BEGIN{window=5;slide=1} {mod=NR%window; if(NR<=window){count++}else{sum-=array[mod];sum2-=array2[mod]}sum+=$2;sum2+=$3;array[mod]=$2;array2[mod]=$3;} (NR%slide)==0{print NR,sum/count,sum2/count}' \
-		> test2.txt
+		> ${sampleparam}.qual2
 
 		#####
 		# Identify trimming length and min phred score
@@ -112,12 +112,12 @@ while [[ "$qualoverlap" -le 5 ]];do
 
 	minQ=$((minQ - 1))
 
-	trimm1=$(cat test1.txt | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
+	trimm1=$(cat ${sampleparam}.qual1 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
 	if [ -z "$trimm1" ];then
 	 trimm1=$readlength1
 	fi
 
-	trimm2=$(cat test2.txt | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
+	trimm2=$(cat ${sampleparam}.qual2 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
 	if [ -z "$trimm2" ];then
 	 trimm2=$readlength2
 	fi
