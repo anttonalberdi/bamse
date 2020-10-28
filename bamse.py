@@ -69,7 +69,8 @@ else:
     log=args.log
 
 #Remove param file if exists
-os.remove(str(param))
+if param.exists():
+    os.remove(str(param))
 
 #Append information to the parameters file
 f = open(str(param), "a")
