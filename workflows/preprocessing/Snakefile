@@ -44,7 +44,7 @@ rule quality:
         minq=expand("{minq}", minq=config['minq'])
     shell:
         """
-        module load tools perl/5.30.2 && sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
+        module unload perl && module load tools perl/5.30.2 && sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
         """
 
 ##
