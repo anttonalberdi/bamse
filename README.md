@@ -37,8 +37,9 @@ git clone https://github.com/anttonalberdi/bamse.git
 For running the core workflow of bamse, use the following code:
 
 ```shell
-#Declare the bamse directory
+#Directory in which BAMSE script are stored
 bamsedir=/home/user/softwaredir/bamse
+#Directory in which you want to store the project files
 projectdir=/home/user/softwaredir/test
 #Run the launching script
 python ${bamsedir}/bamse.py -i ${projectdir}/inputdata.txt -d ${projectdir} -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 40
