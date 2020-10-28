@@ -45,7 +45,7 @@ else:
 
 # Define param file
 if not (args.param):
-    param = os.path.join(os.path.abspath(curr_dir),"bamse.yaml")
+    param = os.path.join(os.path.abspath(path),"bamse.yaml")
 else:
     param=args.param
 
@@ -149,7 +149,7 @@ bamsepath = os.path.abspath(curr_dir)
 # Begin workflows
 #################
 
-print("BAMSE dada2 is starting\n\t\tMay the force be with you.")
+print("BAMSE is starting\n\tMay the force be with you!")
 
 ##############################
 # Run preprocessing workflow #
