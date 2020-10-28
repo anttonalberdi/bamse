@@ -55,12 +55,15 @@ if not (args.log):
 else:
     log=args.log
 
+#Remove param file if exists
+os.remove(str(param))
+
 #Append information to the parameters file
 f = open(str(param), "a")
 f.write("#BAMSE core paths\n")
-f.write("bamsepath="+str(curr_dir)+"\n")
-f.write("logpath="+str(log)+"\n")
-f.write("taxonomy="+str(tax)+"\n")
+f.write("bamsepath:\n\t"+str(curr_dir)+"\n")
+f.write("logpath:\n\t"+str(log)+"\n")
+f.write("taxonomy:\n\t"+str(tax)+"\n")
 f.close()
 
 ###############################
