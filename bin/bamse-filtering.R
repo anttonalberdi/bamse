@@ -10,7 +10,7 @@ option_list = list(
  make_option("--i2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
  make_option("--o1",type = "character",default = NULL,help = "stata dataset file name",metavar = "character"),
  make_option("--o2", type = "character", default = "NULL", help = "output file name [default = %default]", metavar = "character"),
- make_option("--params", type = "character", default = "NULL", help = "Sample parameters", metavar = "character"),
+ make_option("--params", type = "character", default = "NULL", help = "Sample parameters", metavar = "character")
 
 );
 
@@ -22,7 +22,6 @@ i2<-opt$i2
 o1<-opt$o1
 o2<-opt$o2
 params<-opt$params
-
 
 params <- read.table(params,header=FALSE,sep="\t")
 truncLen <- c(params[1,2],params[2,2])
