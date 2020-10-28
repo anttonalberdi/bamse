@@ -118,7 +118,8 @@ while [[ "$qualoverlap" -le 5 ]];do
 done
 
 #####
-# Print to config file
+# Print to params file
 #####
 
-echo -e "defminq:\n $minQ\ntruncF:\n $trimm1\ntruncR:\n $trimm2" >> $paramfile
+cat $paramfile | tr '\n' '*' | sed "s/truncF:\* 0/truncF:\* $trimm1/g"  | tr '*' '\n' > $paramfile
+cat $paramfile | tr '\n' '*' | sed "s/truncR:\* 0/truncR:\* $trimm2/g"  | tr '*' '\n' > $paramfile
