@@ -41,7 +41,7 @@ if not os.path.exists(path):
 if not (args.minq):
     minq = 30
 else:
-    param=args.minq
+    minq=args.minq
 
 # Define param file
 if not (args.param):
