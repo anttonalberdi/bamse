@@ -58,7 +58,7 @@ dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 # Merge amplicons
 #####
 
-merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=overlap, maxMismatch=int(overlap/3),verbose=TRUE)
+merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=overlap, maxMismatch=round(overlap/3,0),verbose=TRUE)
 seqtab <- makeSequenceTable(merged_amplicons)
 
 #####
