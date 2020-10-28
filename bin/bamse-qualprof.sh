@@ -1,15 +1,12 @@
 #2020/10/25 - BAMSE 1.0
 #Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
-usage() { echo "Usage: $0 [-s <samplename>] [-w <workdir>] [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-c sample.yaml] [-p bamse.yaml]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-s <samplename>] [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-c sample.yaml] [-p bamse.yaml]" 1>&2; exit 1; }
 
-while getopts ":s:w:f:r:l:q:c:p:" o; do
+while getopts ":s:f:r:l:q:c:p:" o; do
     case "${o}" in
         s)
             s=${OPTARG}
-            ;;
-        w)
-            w=${OPTARG}
             ;;
         f)
             f=${OPTARG}
@@ -37,12 +34,11 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "${s}" ] || [ -z "${w}" ] || [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${l}" ] || [ -z "${q}" ] || [ -z "${c}" || [ -z "${p}" ]; then
+if [ -z "${s}" ] || [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${l}" ] || [ -z "${q}" ] || [ -z "${c}" || [ -z "${p}" ]; then
     usage
 fi
 
 sample=$s
-workdir=$w
 read1=$f
 read2=$r
 ampliconlength=$l
