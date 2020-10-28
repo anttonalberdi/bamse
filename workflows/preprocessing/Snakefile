@@ -31,7 +31,7 @@ rule trim:
 # Quality profiling
 ##
 
-rule filter:
+rule quality:
     input:
         read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
         read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
