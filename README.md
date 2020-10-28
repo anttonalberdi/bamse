@@ -40,21 +40,30 @@ For running the core workflow of bamse, use the following code:
 #Declare the bamse directory
 bamsedir=/home/user/softwaredir/bamse
 #Run the launching script
-python ${bamsedir}/bamse.py -i inputdata.txt -d /home/workdir/ -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -x /db/taxonomy.db -t 40 [-minq] 30 [-q] /home/workdir/param.yaml [-l] /home/workdir/bamse.log
+python ${bamsedir}/bamse.py -i inputdata.txt -d /home/workdir/ -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x /db/taxonomy.db -t 40 [-minq] 30 [-q] /home/workdir/param.yaml [-l] /home/workdir/bamse.log
 ```
 #### Parameters
 
--i: Data information file
--d: Working directory of the project
--f: Forward primer sequence
--r: Reverse primer sequence
--x: Absolute path to the taxonomy database
--t: Number of threads
+**-i:** Data information file
+
+**-d:** Working directory of the project
+
+**-f:** Forward primer sequence (e.g. CTANGGGNNGCANCAG)
+
+**-r:** Reverse primer sequence (e.g. GACTACNNGGGTATCTAAT)
+
+**-a:** Expected sequence length without primers (e.g. 440)
+
+**-x:** Absolute path to the taxonomy database
+
+**-t:** Number of threads (e.g. 40)
 
 Optional:
--q: Desired minimum quality (phred) score
--p: Absolute path to the parameters file that BAMSE will create
--l: Absolute path to the log file that BAMSE will create
+**-q:** Desired minimum quality (phred) score
+
+**-p:** Absolute path to the parameters file that BAMSE will create
+
+**-l:** Absolute path to the log file that BAMSE will create
 
 If working in Computerome2, insert that code in a shell file, and submit a job using qsub.
 

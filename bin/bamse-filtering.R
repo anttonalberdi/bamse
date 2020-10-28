@@ -26,5 +26,11 @@ params<-opt$params
 params <- read.table(params,header=FALSE,sep="\t")
 truncLen <- c(params[1,2],params[2,2])
 
+#Not using it for now
+minq <- params[3,2]
+ee1 <- 10^(minq/-10)*truncLen[1]
+ee2 <- 10^(minq/-10)*truncLen[2]
+maxee <- c(ee1,ee2)
+
 library(dada2)
 filterAndTrim(fwd=i1, filt=o1, rev=i2, filt.rev=o2, maxN=0, maxEE=Inf, truncQ=0, rm.phix=TRUE, truncLen=truncLen, compress=FALSE, multithread=TRUE)
