@@ -1,9 +1,9 @@
 #2020/10/25 - BAMSE 1.0
 #Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
-usage() { echo "Usage: $0 [-s <samplename>] [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-c sample.yaml] [-p bamse.yaml]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-s <samplename>] [-f read1.fq] [-r read2.fq] [-l <int>] [-q <int>] [-n <int>] [-c sample.yaml] [-p bamse.yaml]" 1>&2; exit 1; }
 
-while getopts ":s:f:r:l:q:c:p:" o; do
+while getopts ":s:f:r:l:q:n:c:p:" o; do
     case "${o}" in
         s)
             s=${OPTARG}
@@ -20,6 +20,9 @@ while getopts ":s:f:r:l:q:c:p:" o; do
 		    q)
 		        q=${OPTARG}
 		        ;;
+        n)
+    		    n=${OPTARG}
+    		    ;;
 				c)
 						c=${OPTARG}
 						;;
@@ -34,7 +37,7 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "${s}" ] || [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${l}" ] || [ -z "${q}" ] || [ -z "${c}" ] || [ -z "${p}" ]; then
+if [ -z "${s}" ] || [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${l}" ] || [ -z "${q}" ] || [ -z "${n}" ] || [ -z "${c}" ] || [ -z "${p}" ]; then
     usage
 fi
 
@@ -43,6 +46,7 @@ read1=$f
 read2=$r
 ampliconlength=$l
 minQ=$q
+readnumber=$n
 sampleparam=$c
 param=$p
 
@@ -52,7 +56,11 @@ param=$p
 
 
 
-cat $read1 | awk '{ printf("%s",$0); n++; if(n%4==0) {printf("\n");} else { printf("\t");} }' | awk -v k=1000 'BEGIN{srand(systime() + PROCINFO["pid"]);}{s=x++<k?x1:int(rand()*x);if(s<k)R[s]=$0}END{for(i in R)print R[i]}' | awk -F"\t" '{print $1"\n"$2"\n"$3"\n"$4}' | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
+cat $read1 | \
+# Randomly sample 1000 reads
+awk '{ printf("%s",$0); n++; if(n%4==0) {printf("\n");} else { printf("\t");} }' | awk -v k=${readnumber} 'BEGIN{srand(systime() + PROCINFO["pid"]);}{s=x++<k?x1:int(rand()*x);if(s<k)R[s]=$0}END{for(i in R)print R[i]}' | awk -F"\t" '{print $1"\n"$2"\n"$3"\n"$4}' | \
+# Capture quality scores
+perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
 		chomp($a[3]);
 		$max_j=0;
 		$j=0;
@@ -73,7 +81,11 @@ cat $read1 | awk '{ printf("%s",$0); n++; if(n%4==0) {printf("\n");} else { prin
 		awk -v OFS="\t" 'BEGIN{window=5;slide=1} {mod=NR%window; if(NR<=window){count++}else{sum-=array[mod];sum2-=array2[mod]}sum+=$2;sum2+=$3;array[mod]=$2;array2[mod]=$3;} (NR%slide)==0{print NR,sum/count,sum2/count}' \
 		> ${sampleparam}.qual1
 
-cat $read2 | awk '{ printf("%s",$0); n++; if(n%4==0) {printf("\n");} else { printf("\t");} }' | awk -v k=1000 'BEGIN{srand(systime() + PROCINFO["pid"]);}{s=x++<k?x1:int(rand()*x);if(s<k)R[s]=$0}END{for(i in R)print R[i]}' | awk -F"\t" '{print $1"\n"$2"\n"$3"\n"$4}' | perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
+cat $read2 | \
+# Randomly sample 1000 reads
+awk '{ printf("%s",$0); n++; if(n%4==0) {printf("\n");} else { printf("\t");} }' | awk -v k=${readnumber} 'BEGIN{srand(systime() + PROCINFO["pid"]);}{s=x++<k?x1:int(rand()*x);if(s<k)R[s]=$0}END{for(i in R)print R[i]}' | awk -F"\t" '{print $1"\n"$2"\n"$3"\n"$4}' | \
+# Capture quality scores
+perl -MStatistics::Descriptive -lne 'push @a, $_; @a = @a[@a-4..$#a]; if ($. % 4 == 0){
 		chomp($a[3]);
 		$max_j=0;
 		$j=0;

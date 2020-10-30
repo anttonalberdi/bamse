@@ -34,3 +34,6 @@ GM5.P60,GM5.P60,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1
 GM7.P73,GM7.P73,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM7.P73.1.fq.gz,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM7.P73.2.fq.gz
 GM8.H10,GM8.H10,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM8.H10.1.fq.gz,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM8.H10.2.fq.gz
 GM9.H39_r3,GM9.H39_r3,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM9.H39_r3.1.fq.gz,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM9.H39_r3.2.fq.gz
+
+
+python ../bamse/bin/bamse-subsample.py -f 2-Filtered/GM11.E44_1.fastq -s 5
