@@ -97,21 +97,21 @@ cat $read2 | seqtk sample - 1000 | perl -MStatistics::Descriptive -lne 'push @a,
 		#####
 
 qualoverlap=0
-while [[ "$qualoverlap" -le 5 ]];do
+while [[ "$qualoverlap" -le 5 ]] && [[ "$minQ" -ge 10 ]];do
+    echo "$minQ"
 
-	trimm1=$(cat ${sampleparam}.qual1 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
-	if [ -z "$trimm1" ];then
-	 trimm1=$(cat ${sampleparam}.qual1 | wc -l)
-	fi
+  	trimm1=$(cat ${sampleparam}.qual1 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
+  	if [ -z "$trimm1" ];then
+  	 trimm1=$(cat ${sampleparam}.qual1 | wc -l)
+  	fi
 
-	trimm2=$(cat ${sampleparam}.qual2 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
-	if [ -z "$trimm2" ];then
-	 trimm2=$(cat ${sampleparam}.qual2 | wc -l)
-	fi
+  	trimm2=$(cat ${sampleparam}.qual2 | awk -F"\t" -v q=$minQ '$2<=q' | cut -f1 | sort | head -n1)
+  	if [ -z "$trimm2" ];then
+  	 trimm2=$(cat ${sampleparam}.qual2 | wc -l)
+  	fi
 
-	qualoverlap=$(($trimm1 + $trimm2 - $ampliconlength))
-  minQ=$((minQ - 1))
-  
+  	qualoverlap=$(($trimm1 + $trimm2 - $ampliconlength))
+    minQ=$((minQ - 1))
 done
 
 #####
