@@ -126,7 +126,7 @@ for line in inputfile:
     ### Skip line if starts with # (comment line)
     if not (line.startswith('#')):
         ###Skip line if it's empty
-        if len(line.strip()) == 0 :
+        if not len(line.strip()) == 0 :
 
             #Define variables
             linelist = line.split(',') # Create a list of each line
@@ -135,7 +135,6 @@ for line in inputfile:
             run=linelist[2]
             in_for=linelist[3]
             in_rev=linelist[4]
-
 
             # Transfer, rename and decompress data
             out1=path+'/0-Data/'+name+'_1.fastq'
@@ -166,7 +165,7 @@ for line in inputfile:
                 else:
                     print('The file ' + in_rev + 'does not exist.')
 
-            #Create list of output files (only for development)
+            #Create list of output files for preprocessing workflow
             out_for = path+'/2-Filtered/'+name+'_1.fastq'
             out_rev = path+'/2-Filtered/'+name+'_2.fastq'
             outlist.append(out_for)
