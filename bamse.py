@@ -137,10 +137,13 @@ for line in inputfile:
             in_rev=linelist[4]
 
             # Transfer, rename and decompress data
+
+            #Check if the file is already in the working directory
             out1=path+'/0-Data/'+name+'_1.fastq'
             if os.path.isfile(out1):
                 print('The file ' + out1 + ' is already in the working directory.')
             else:
+                #If the file is not in the working directory, transfer it
                 if os.path.isfile(in_for):
                     if in_for.endswith('.gz'):
                         read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
@@ -151,10 +154,12 @@ for line in inputfile:
                 else:
                     print('The file ' + in_for + 'does not exist.')
 
+            #Check if the file is already in the working directory
             out2=path+'/0-Data/'+name+'_2.fastq'
             if os.path.isfile(out1):
                 print('The file ' + out2 + ' is already in the working directory.')
             else:
+                #If the file is not in the working directory, transfer it
                 if os.path.isfile(in_rev):
                     if in_for.endswith('.gz'):
                         read2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
