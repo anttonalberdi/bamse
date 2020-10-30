@@ -140,7 +140,7 @@ for line in inputfile:
             # Transfer, rename and decompress data
             out1=path+'/0-Data/'+name+'_1.fastq'
             if os.path.isfile(out1):
-                print('The file ' + out1 + 'is already in the working directory.')
+                print('The file ' + out1 + ' is already in the working directory.')
             else:
                 if os.path.isfile(in_for):
                     if in_for.endswith('.gz'):
@@ -154,7 +154,7 @@ for line in inputfile:
 
             out2=path+'/0-Data/'+name+'_2.fastq'
             if os.path.isfile(out1):
-                print('The file ' + out2 + 'is already in the working directory.')
+                print('The file ' + out2 + ' is already in the working directory.')
             else:
                 if os.path.isfile(in_rev):
                     if in_for.endswith('.gz'):
@@ -189,6 +189,7 @@ print("BAMSE is starting\n\tMay the force be with you!")
 # Run preprocessing workflow #
 ##############################
 
+print("\tRunning preprocessing workflow")
 path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
 #Transform output file list into space-separated string (only for development)
 out_preprocessing = " ".join(outlist)
@@ -200,6 +201,8 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 ######################
 # Run dada2 workflow #
 ######################
+
+print("\tRunning dada2 workflow")
 
 # Define output names
 out_dada2 = path+'/ASV_counts.txt '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
