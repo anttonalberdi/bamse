@@ -136,29 +136,35 @@ for line in inputfile:
             in_for=linelist[3]
             in_rev=linelist[4]
 
+
             # Transfer, rename and decompress data
-            if os.path.isfile(in_for):
-                if in_for.endswith('.gz'):
-                    read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.Popen(read1Cmd, shell=True).wait()
-                else:
-                    read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
-                    subprocess.Popen(read1Cmd, shell=True).wait()
+            out1=path+'/0-Data/'+name+'_1.fastq'
+            if os.path.isfile(out1):
+                print('The file ' + out1 + 'is already in the working directory.')
             else:
-                print('The file ' + in_for + 'does not exist.')
-
-            if os.path.isfile(in_rev):
-                if in_for.endswith('.gz'):
-                    read2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.Popen(read2Cmd, shell=True).wait()
+                if os.path.isfile(in_for):
+                    if in_for.endswith('.gz'):
+                        read1Cmd = 'gunzip -c '+in_for+' > '+path+'/0-Data/'+name+'_1.fastq'
+                        subprocess.Popen(read1Cmd, shell=True).wait()
+                    else:
+                        read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
+                        subprocess.Popen(read1Cmd, shell=True).wait()
                 else:
-                    read2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
-                    subprocess.Popen(read2Cmd, shell=True).wait()
-            else:
-                print('The file ' + in_rev + 'does not exist.')
+                    print('The file ' + in_for + 'does not exist.')
 
-            #Calculate read length and add to config file
-            #[TO BE DONE!]
+            out2=path+'/0-Data/'+name+'_2.fastq'
+            if os.path.isfile(out1):
+                print('The file ' + out2 + 'is already in the working directory.')
+            else:
+                if os.path.isfile(in_rev):
+                    if in_for.endswith('.gz'):
+                        read2Cmd = 'gunzip -c '+in_rev+' > '+path+'/0-Data/'+name+'_2.fastq'
+                        subprocess.Popen(read2Cmd, shell=True).wait()
+                    else:
+                        read2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
+                        subprocess.Popen(read2Cmd, shell=True).wait()
+                else:
+                    print('The file ' + in_rev + 'does not exist.')
 
             #Create list of output files (only for development)
             out_for = path+'/2-Filtered/'+name+'_1.fastq'
