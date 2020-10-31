@@ -32,6 +32,11 @@ rm -rf bamse
 module load git/2.4.4
 git clone https://github.com/anttonalberdi/bamse.git
 ```
+### Dependencies
+BAMSE has a few dependencies:
+#### ANACONDA/MINICONDA (python)
+#### SNAKEMAKE (python)
+#### DADA2 (R)
 
 ### Running
 For running the core workflow of bamse, use the following code:
