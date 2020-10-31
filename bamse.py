@@ -192,7 +192,7 @@ logfile.write("\n{0} | Transferring data to the working directory \r\n".format(c
 logfile.close()
 
 #Add comma in the end of each row of the input file to avoid downstream issues
-commaCmd = 'sed -i "$!s/$/,/" '+in_f+''
+commaCmd = 'sed -i "" "s/$/,/" '+in_f+''
 subprocess.Popen(commaCmd, shell=True).wait()
 
 # Read input data file
@@ -265,7 +265,7 @@ for line in inputfile:
             outlist.append(out_rev)
 
 #Remove comma in the end of each row of the input file to return to initial condition
-commaCmd = 'sed -i "$!s/,$//" '+in_f+''
+commaCmd = 'sed -i "" "s/,$//" '+in_f+''
 subprocess.Popen(commaCmd, shell=True).wait()
 
 #####################################################
