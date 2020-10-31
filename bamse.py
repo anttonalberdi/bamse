@@ -5,6 +5,8 @@ import sys
 import ruamel.yaml
 import pathlib
 import re
+import time
+
 
 ####################
 # Argument parsing #

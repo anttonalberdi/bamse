@@ -13,6 +13,7 @@ python bamse/bamse.py -i bamse3/inputfile.txt -d /home/projects/ku-cbd/people/an
 # PREPARE reference genome
 workdir=/home/projects/ku-cbd/people/antalb/bamse3
 bamsedir=/home/projects/ku-cbd/people/antalb/bamse
+cd $workdir
 qsub -V -A ku-cbd -W group_list=ku-cbd -v "workdir=${workdir},bamsedir=${bamsedir}"  -d `pwd` -e ${workdir}/BAMSE.err -o ${workdir}/BAMSE.out -l nodes=1:ppn=40,mem=180gb,walltime=0:06:00:00 -N BAMSE ${workdir}/bamse.sh
 
 #bamse.sh
@@ -36,4 +37,5 @@ GM8.H10,GM8.H10,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1
 GM9.H39_r3,GM9.H39_r3,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM9.H39_r3.1.fq.gz,/home/projects/ku-cbd/people/antalb/Israel_bat_microbiome/1-QualityFiltered_DADA2/GM9.H39_r3.2.fq.gz
 
 
-python ../bamse/bin/bamse-subsample.py -f 2-Filtered/GM11.E44_1.fastq -s 5
+
+${bamsedir}/bin/bamse-qualprof.sh -s GM4.E27 -f GM4.E27_1.fastq -r GM4.E27_2.fastq -l 440 -q 30 -c sample.yaml -p bamse.yaml
