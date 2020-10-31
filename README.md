@@ -81,6 +81,17 @@ Optional:
 
 #### Data information file
 The data input file must be a simple text file with the information corresponding to each dataset specified in a different row and **separated by commas**. The minimum information required is:
+
+**Data unit:** Name of the minimum data unit. If no replicates (either biological or technical) have been used data unit and sample should be identical. If replicates have been used, data units with identical sample names will be merged by BAMSE.
+
+**Sample:** String that specifies the sample name. This is the name that the ASV tables will get.
+
+**Run:** String specifying the sequencing run. If all samples were sequences in the same flowcell or lane, use the same string for all samples.
+
+**Forward read:** Absolute path to the forward read. Both compressed (e.g. fq.gz, fastq.gz) and uncompressed (e.g. fq, fastq) files are accepted.
+
+**Reverse read:** Absolute path to the reverse read. Both compressed (e.g. fq.gz, fastq.gz) and uncompressed (e.g. fq, fastq) files are accepted.
+
 | Data unit (replicate) | Sample | Run | Forward read | Reverse read |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
 | Sample1_Rep1 | Sample1 | Run1 | Sample1_Rep1_1.fq.gz | Sample1_Rep1_2.fq.gz |
@@ -89,6 +100,8 @@ The data input file must be a simple text file with the information correspondin
 | Sample2_Rep2 | Sample2 | Run1 | Sample2_Rep2_1.fq.gz | Sample2_Rep2_2.fq.gz |
 | Sample3_Rep1 | Sample3 | Run2 | Sample3_Rep1_1.fq.gz | Sample3_Rep1_2.fq.gz |
 | Sample3_Rep2 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
+
+An example data input file can be found in inputfile.txt
 
 If working in Computerome2, insert that code in a shell file, and submit a job using qsub.
 
