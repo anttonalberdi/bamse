@@ -72,6 +72,24 @@ else:
 if os.path.exists(param):
     os.remove(param)
 
+
+##################
+# Create log file #
+##################
+
+logfile=open(logfilepath,"a+")
+logfile.write("#####################")
+logfile.write("#### BAMSE v1.0 #####")
+logfile.write("#####################")
+logfile.write("BAMSE is starting at:\n")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("\t{0}\n".format(current_time))
+logfile.close()
+
+#############################################
+# Append information to the parameters file #
+#############################################
+
 #Append information to the parameters file
 f = open(str(param), "a")
 f.write("#BAMSE core paths\n")
@@ -88,6 +106,25 @@ f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
 f.write("overlap:\n "+str(overlap)+"\n")
 f.write("minq:\n "+str(minq)+"\n")
 f.close()
+
+#Append information to the log file
+logfile=open(logfilepath,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("\nBAMSE will run with the following parameters:\n")
+logfile.write("\t#Paths\n")
+logfile.write("\tbamsepath:\n "+str(curr_dir)+"\n")
+logfile.write("\tprojectpath:\n "+str(path)+"\n")
+logfile.write("\tparampath:\n "+str(param)+"\n")
+logfile.write("\tlogpath:\n "+str(log)+"\n")
+logfile.write("\ttaxonomy:\n "+str(tax)+"\n")
+logfile.write("#Primers\n")
+logfile.write("\tprimer1:\n "+str(primF)+"\n")
+logfile.write("\tprimer2:\n "+str(primR)+"\n")
+logfile.write("#Trimming and filtering\n")
+logfile.write("\tampliconlength:\n "+str(ampliconlength)+"\n")
+logfile.write("\toverlap:\n "+str(overlap)+"\n")
+logfile.write("\tminq:\n "+str(minq)+"\n")
+logfile.close()
 
 ###############################
 # Prepare working directories #
@@ -110,6 +147,11 @@ if not os.path.exists(dir0):
 # Transfer data #
 #################
 
+#Generate depth file
+logfile=open(logfilepath,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("{0} | Transferring data to the working directory \r\n".format(current_time))
+logfile.close()
 
 #Add comma in the end of each row of the input file to avoid downstream issues
 commaCmd = 'sed -i "$!s/$/,/" '+in_f+''
@@ -141,7 +183,9 @@ for line in inputfile:
             #Check if the file is already in the working directory
             out1=path+'/0-Data/'+name+'_1.fastq'
             if os.path.isfile(out1):
-                print('The file ' + out1 + ' is already in the working directory.')
+                logfile=open(logfilepath,"a+")
+                logfile.write("\tThe file " + out1 + " is already in the working directory.\n")
+                logfile.close()
             else:
                 #If the file is not in the working directory, transfer it
                 if os.path.isfile(in_for):
@@ -152,12 +196,16 @@ for line in inputfile:
                         read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
                         subprocess.Popen(read1Cmd, shell=True).wait()
                 else:
-                    print('The file ' + in_for + 'does not exist.')
+                    logfile=open(logfilepath,"a+")
+                    logfile.write("\tThe file " + in_for + " does not exist.\n")
+                    logfile.close()
 
             #Check if the file is already in the working directory
             out2=path+'/0-Data/'+name+'_2.fastq'
             if os.path.isfile(out1):
-                print('The file ' + out2 + ' is already in the working directory.')
+                logfile=open(logfilepath,"a+")
+                logfile.write("\tThe file " + out2 + " is already in the working directory.\n")
+                logfile.close()
             else:
                 #If the file is not in the working directory, transfer it
                 if os.path.isfile(in_rev):
@@ -168,7 +216,9 @@ for line in inputfile:
                         read2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
                         subprocess.Popen(read2Cmd, shell=True).wait()
                 else:
-                    print('The file ' + in_rev + 'does not exist.')
+                    logfile=open(logfilepath,"a+")
+                    logfile.write("\tThe file " + in_rev + " does not exist.\n")
+                    logfile.close()
 
             #Create list of output files for preprocessing workflow
             out_for = path+'/2-Filtered/'+name+'_1.fastq'
@@ -187,13 +237,15 @@ bamsepath = os.path.abspath(curr_dir)
 # Begin workflows
 #################
 
-print("BAMSE is starting\n\tMay the force be with you!")
-
 ##############################
 # Run preprocessing workflow #
 ##############################
 
-print("\tRunning preprocessing workflow")
+logfile=open(logfilepath,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("{0} | Starting preprocessing workflow \r\n".format(current_time))
+logfile.close()
+
 path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
 #Transform output file list into space-separated string (only for development)
 out_preprocessing = " ".join(outlist)
@@ -206,7 +258,10 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run dada2 workflow #
 ######################
 
-print("\tRunning dada2 workflow")
+logfile=open(logfilepath,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("{0} | Starting dada2 workflow \r\n".format(current_time))
+logfile.close()
 
 # Define output names
 out_dada2 = path+'/ASV_counts.txt '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
@@ -217,3 +272,8 @@ path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 # Run snakemake
 prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_dada2+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+
+logfile=open(logfilepath,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("{0} | BAMSE has completed succesfully \r\n".format(current_time))
+logfile.close()
