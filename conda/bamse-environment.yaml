@@ -7,6 +7,7 @@ dependencies:
   - snakemake-minimal >=5.24.1
   - ruamel.yaml
   - cutadapt =2.10
+  - libcurl =7.71.1
   - R =4.0.0
   - r-devtools
   - devtools:
