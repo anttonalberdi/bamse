@@ -10,3 +10,4 @@ dependencies:
   - R =4.0.0
   - bioconductor-dada2
   - perl-statistics-descriptive
+  - r-optparse
