@@ -8,5 +8,5 @@ dependencies:
   - ruamel.yaml
   - cutadapt =2.10
   - R =4.0.0
-   - devtools:
-     - git+https://github.com/benjjneb/dada2
+  - devtools:
+    - git+https://github.com/benjjneb/dada2
