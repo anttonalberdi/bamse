@@ -3,47 +3,35 @@
 **B**acterial **AM**plicon **Se**quencing data processing pipeline
 
 
-### Installation
-BAMSE does not require an installation, as it can be directly run from the repository cloned from github. For doing so, follow these steps:
-
-1- Go to the directory you want to "install"
+### Installation (local computer)
+BAMSE does not require an installation, as it can be directly run from the repository cloned from github. The best way to ensure BAMSE will run smoothly is to create a conda environment that contains all the dependencies BAMSE requires.
 
 ```shell
+#Go to the directory where you want to install BAMSE
 cd /home/user/softwaredir
+#Clone the BAMSE repository
+git clone https://github.com/anttonalberdi/bamse.git
+#Create conda environment
+conda env create --file bamse/conda/bamse-environment.yaml
+#Activae conda environment
+conda activate bamse-env
+#Test if BAMSE is working
+python bamse/bamse.py -h
 ```
 
+### Installation (Computerome2)
 2- Clone the github repository. In Computerome2, load the git module before downloading the repository.
 
 ```shell
-module load git/2.4.4
-git clone https://github.com/anttonalberdi/bamse.git
-```
-
-3- Remember the BAMSE path for using it in the future. In this example:
-```shell
-/home/user/softwaredir/bamse
-```
-
-4- To download the latest version, remove the old directory and download it again.
-
-```shell
+#Go to the directory where you want to install BAMSE
 cd /home/user/softwaredir
-rm -rf bamse
-module load git/2.4.4
+#Clone the BAMSE repository
+module load tools git/2.4.4
 git clone https://github.com/anttonalberdi/bamse.git
-```
-### Dependencies
-BAMSE has a few dependencies:
-#### ANACONDA/MINICONDA (Python 3)
-https://conda.io/en/latest/miniconda.html
-#### SNAKEMAKE (Python 3)
-https://snakemake.readthedocs.io/en/stable/getting_started/installation.html
-#### PERL
-#### DADA2 (R)
-
-For loading these dependencies at Computerome2 use the following script before launching BAMSE.
-```shell
+#Load dependencies
 module load tools anaconda3/4.4.0 perl/5.30.2 intel/perflibs gcc/9.3.0 R/4.0.0
+#Test if BAMSE is working
+python bamse/bamse.py -h
 ```
 
 ### Running
