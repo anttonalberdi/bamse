@@ -254,7 +254,7 @@ path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
 out_preprocessing = " ".join(outlist)
 
 # Run snakemake
-prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+''
+prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ######################
@@ -274,7 +274,7 @@ bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 
 # Run snakemake
-prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_dada2+' --configfile '+param+' --cores '+cores+''
+prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 # Output log to logfile

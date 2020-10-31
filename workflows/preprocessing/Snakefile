@@ -34,7 +34,7 @@ rule trim:
     shell:
         """
         mkdir -p {wildcards.projectpath}/1-Trimmed
-        module load tools anaconda3/4.4.0 && python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
+        python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
         """
 
 ##
@@ -54,7 +54,7 @@ rule quality:
         minq=expand("{minq}", minq=config['minq'])
     shell:
         """
-        module unload perl && module load tools perl/5.30.2 seqtk/1.3 && sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -n 1000 -c {output.sampleparam} -p {rules.get_paths.input.parampath}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -n 1000 -c {output.sampleparam} -p {rules.get_paths.input.parampath}
         """
 
 ##
@@ -73,5 +73,5 @@ rule filter:
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
-        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --params {input.sampleparam}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --params {input.sampleparam}
         """
