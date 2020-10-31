@@ -14,8 +14,8 @@ python bamse/bamse.py -i bamse3/inputfile.txt -d /home/projects/ku-cbd/people/an
 workdir=/home/projects/ku-cbd/people/antalb/bamse3
 bamsedir=/home/projects/ku-cbd/people/antalb/bamse
 cd $workdir
-module load tools anaconda3/4.4.0 perl/5.30.2 intel/perflibs gcc/9.3.0 R/4.0.0
 
+module load tools anaconda3/4.4.0 perl/5.30.2 intel/perflibs gcc/9.3.0 R/4.0.0
 qsub -V -A ku-cbd -W group_list=ku-cbd -v "workdir=${workdir},bamsedir=${bamsedir}"  -d `pwd` -e ${workdir}/BAMSE.err -o ${workdir}/BAMSE.out -l nodes=1:ppn=40,mem=180gb,walltime=0:06:00:00 -N BAMSE ${workdir}/bamse.sh
 
 #bamse.sh

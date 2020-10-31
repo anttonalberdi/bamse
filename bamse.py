@@ -149,9 +149,11 @@ if not is_tool('perl'):
 if not is_tool('snakemake'):
     logfile.write("\Snakemake is not installed or loaded. \n")
     sys.exit(0)
+
 if not is_tool('R'):
     logfile.write("\tR is not installed or loaded. \n")
     sys.exit(0)
+    
 else:
     dadacheck='Rscript '+bamsepath+'bin/dadacheck.R'
     dadacheckresult=subprocess.Popen(dadacheck, shell=True).wait()
@@ -313,3 +315,13 @@ logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("{0} | BAMSE has completed succesfully \r\n".format(current_time))
 logfile.close()
+
+################################
+# Run decontamination workflow #
+################################
+
+
+
+###################################
+# Run diversity analysis workflow #
+###################################
