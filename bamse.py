@@ -79,7 +79,7 @@ if os.path.exists(param):
 # Create log file #
 ###################
 
-logfile=open(log,"a+")
+logfile=open(log,"w+")
 logfile.write("#####################\n")
 logfile.write("#### BAMSE v1.0 #####\n")
 logfile.write("#####################\n")
