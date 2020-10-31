@@ -240,7 +240,7 @@ for line in inputfile:
 
             #Check if the file is already in the working directory
             out2=path+'/0-Data/'+name+'_2.fastq'
-            if os.path.isfile(out1):
+            if os.path.isfile(out2):
                 logfile=open(log,"a+")
                 logfile.write("\tThe file " + out2 + " is already in the working directory.\n")
                 logfile.close()
