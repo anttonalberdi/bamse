@@ -9,6 +9,4 @@ dependencies:
   - libcurl =7.71.1
   - java-jdk =8.0.112
   - R =4.0.0
-  - r-devtools
-  - devtools:
-    - git+https://github.com/benjjneb/dada2
+  - bioconductor-dada2
