@@ -73,11 +73,11 @@ if os.path.exists(param):
     os.remove(param)
 
 
-##################
+###################
 # Create log file #
-##################
+###################
 
-logfile=open(logfilepath,"a+")
+logfile=open(log,"a+")
 logfile.write("#####################")
 logfile.write("#### BAMSE v1.0 #####")
 logfile.write("#####################")
@@ -108,7 +108,7 @@ f.write("minq:\n "+str(minq)+"\n")
 f.close()
 
 #Append information to the log file
-logfile=open(logfilepath,"a+")
+logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("\nBAMSE will run with the following parameters:\n")
 logfile.write("\t#Paths\n")
@@ -147,8 +147,8 @@ if not os.path.exists(dir0):
 # Transfer data #
 #################
 
-#Generate depth file
-logfile=open(logfilepath,"a+")
+# Output log to logfile
+logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("{0} | Transferring data to the working directory \r\n".format(current_time))
 logfile.close()
@@ -183,7 +183,7 @@ for line in inputfile:
             #Check if the file is already in the working directory
             out1=path+'/0-Data/'+name+'_1.fastq'
             if os.path.isfile(out1):
-                logfile=open(logfilepath,"a+")
+                logfile=open(log,"a+")
                 logfile.write("\tThe file " + out1 + " is already in the working directory.\n")
                 logfile.close()
             else:
@@ -196,14 +196,14 @@ for line in inputfile:
                         read1Cmd = 'cp '+in_for+' '+path+'/0-Data/'+name+'_1.fastq'
                         subprocess.Popen(read1Cmd, shell=True).wait()
                 else:
-                    logfile=open(logfilepath,"a+")
+                    logfile=open(log,"a+")
                     logfile.write("\tThe file " + in_for + " does not exist.\n")
                     logfile.close()
 
             #Check if the file is already in the working directory
             out2=path+'/0-Data/'+name+'_2.fastq'
             if os.path.isfile(out1):
-                logfile=open(logfilepath,"a+")
+                logfile=open(log,"a+")
                 logfile.write("\tThe file " + out2 + " is already in the working directory.\n")
                 logfile.close()
             else:
@@ -216,7 +216,7 @@ for line in inputfile:
                         read2Cmd = 'cp '+in_rev+' '+path+'/0-Data/'+name+'_2.fastq'
                         subprocess.Popen(read2Cmd, shell=True).wait()
                 else:
-                    logfile=open(logfilepath,"a+")
+                    logfile=open(log,"a+")
                     logfile.write("\tThe file " + in_rev + " does not exist.\n")
                     logfile.close()
 
@@ -233,15 +233,16 @@ subprocess.Popen(commaCmd, shell=True).wait()
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 
-#################
-# Begin workflows
-#################
+#####################################################
+################## Begin workflows ##################
+#####################################################
 
 ##############################
 # Run preprocessing workflow #
 ##############################
 
-logfile=open(logfilepath,"a+")
+# Output log to logfile
+logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("{0} | Starting preprocessing workflow \r\n".format(current_time))
 logfile.close()
@@ -258,7 +259,8 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run dada2 workflow #
 ######################
 
-logfile=open(logfilepath,"a+")
+# Output log to logfile
+logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("{0} | Starting dada2 workflow \r\n".format(current_time))
 logfile.close()
@@ -273,7 +275,8 @@ path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 prep_snk_Cmd = 'module load tools anaconda3/4.4.0 && snakemake -s '+path_snkf+' -k '+out_dada2+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
-logfile=open(logfilepath,"a+")
+# Output log to logfile
+logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("{0} | BAMSE has completed succesfully \r\n".format(current_time))
 logfile.close()
