@@ -34,8 +34,10 @@ git clone https://github.com/anttonalberdi/bamse.git
 ```
 ### Dependencies
 BAMSE has a few dependencies:
-#### ANACONDA/MINICONDA (python)
-#### SNAKEMAKE (python)
+#### ANACONDA/MINICONDA (Python 3)
+https://conda.io/en/latest/miniconda.html
+#### SNAKEMAKE (Python 3)
+https://snakemake.readthedocs.io/en/stable/getting_started/installation.html
 #### PERL
 #### DADA2 (R)
 
