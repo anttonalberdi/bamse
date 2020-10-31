@@ -6,7 +6,7 @@ import ruamel.yaml
 import pathlib
 import re
 import time
-
+from shutil import which
 
 ####################
 # Argument parsing #
@@ -74,6 +74,8 @@ else:
 if os.path.exists(param):
     os.remove(param)
 
+curr_dir = os.path.dirname(sys.argv[0])
+bamsepath = os.path.abspath(curr_dir)
 
 ###################
 # Create log file #
@@ -136,6 +138,28 @@ logfile.close()
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("\n{0} | Checking dependencies \r\n".format(current_time))
+
+def is_tool(name):
+    return which(name) is not None
+
+if not is_tool('perl'):
+    logfile.write("\tPerl is not installed or loaded. \n")
+    sys.exit(0)
+
+if not is_tool('snakemake'):
+    logfile.write("\Snakemake is not installed or loaded. \n")
+    sys.exit(0)
+if not is_tool('R'):
+    logfile.write("\tR is not installed or loaded. \n")
+    sys.exit(0)
+else:
+    dadacheck='Rscript '+bamsepath+'bin/dadacheck.R'
+    dadacheckresult=subprocess.Popen(dadacheck, shell=True).wait()
+    if dadacheckresult == 'FALSE':
+        logfile.write("\tDada2 is not installed in R. \n")
+        sys.exit(0)
+
+logfile.write("\tAll dependencies are properly installed. \n")
 logfile.close()
 
 ###############################
@@ -241,9 +265,6 @@ for line in inputfile:
 #Remove comma in the end of each row of the input file to return to initial condition
 commaCmd = 'sed -i "$!s/,$//" '+in_f+''
 subprocess.Popen(commaCmd, shell=True).wait()
-
-curr_dir = os.path.dirname(sys.argv[0])
-bamsepath = os.path.abspath(curr_dir)
 
 #####################################################
 ################## Begin workflows ##################
