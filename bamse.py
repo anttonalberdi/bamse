@@ -128,6 +128,16 @@ logfile.write("\toverlap: "+str(overlap)+"\n")
 logfile.write("\tminq: "+str(minq)+"\n")
 logfile.close()
 
+######################
+# Check dependencies #
+######################
+
+# Output log to logfile
+logfile=open(log,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("\n{0} | Checking dependencies \r\n".format(current_time))
+logfile.close()
+
 ###############################
 # Prepare working directories #
 ###############################

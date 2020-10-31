@@ -21,6 +21,7 @@ output2=args.output2
 primer1=args.primer1
 primer2=args.primer2
 
+
 #####
 # Trim primers
 #####

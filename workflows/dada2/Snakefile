@@ -23,5 +23,5 @@ rule dada2:
         taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy'])
     shell:
         """
-        module load tools gcc intel/perflibs R/4.0.0 && Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -o {params.overlap} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -o {params.overlap} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa}
         """
