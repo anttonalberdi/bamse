@@ -153,9 +153,9 @@ if not is_tool('snakemake'):
 if not is_tool('R'):
     logfile.write("\tR is not installed or loaded. \n")
     sys.exit(0)
-    
+
 else:
-    dadacheck='Rscript '+bamsepath+'bin/dadacheck.R'
+    dadacheck='Rscript '+bamsepath+'/bin/dadacheck.R'
     dadacheckresult=subprocess.Popen(dadacheck, shell=True).wait()
     if dadacheckresult == 'FALSE':
         logfile.write("\tDada2 is not installed in R. \n")
