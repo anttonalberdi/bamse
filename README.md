@@ -36,7 +36,13 @@ git clone https://github.com/anttonalberdi/bamse.git
 BAMSE has a few dependencies:
 #### ANACONDA/MINICONDA (python)
 #### SNAKEMAKE (python)
+#### PERL
 #### DADA2 (R)
+
+For loading these dependencies at Computerome2 use the following script before launching BAMSE.
+```shell
+module load tools anaconda3/4.4.0 perl/5.30.2 intel/perflibs gcc/9.3.0 R/4.0.0
+```
 
 ### Running
 For running the core workflow of bamse, use the following code:
