@@ -80,7 +80,7 @@ Optional:
 **-l:** Absolute path to the log file that BAMSE will create. By default, this will be stored in the working directory.
 
 #### Data information file
-The data input file must be a simple text file with the information corresponding to each dataset specified in a different row separated with commas. The minimum information required is:
+The data input file must be a simple text file with the information corresponding to each dataset specified in a different row and **separated by commas**. The minimum information required is:
 | Data unit (replicate) | Sample | Run | Forward read | Reverse read |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
 | Sample1_Rep1 | Sample1 | Run1 | Sample1_Rep1_1.fq.gz | Sample1_Rep1_2.fq.gz |
