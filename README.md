@@ -57,26 +57,38 @@ python ${bamsedir}/bamse.py -i ${projectdir}/inputdata.txt -d ${projectdir} -f C
 ```
 #### Parameters
 
-**-i:** Data information file
+**-i:** Data information file.
 
-**-d:** Working directory of the project
+**-d:** Working directory of the project.
 
-**-f:** Forward primer sequence (e.g. CTANGGGNNGCANCAG)
+**-f:** Forward primer sequence (e.g. CTANGGGNNGCANCAG).
 
-**-r:** Reverse primer sequence (e.g. GACTACNNGGGTATCTAAT)
+**-r:** Reverse primer sequence (e.g. GACTACNNGGGTATCTAAT).
 
-**-a:** Expected sequence length without primers (e.g. 440)
+**-a:** Expected sequence length without primers (e.g. 440).
 
-**-x:** Absolute path to the taxonomy database
+**-x:** Absolute path to the taxonomy database,
 
-**-t:** Number of threads (e.g. 40)
+**-t:** Number of threads (e.g. 40).
 
 Optional:
-**-q:** Desired minimum quality (phred) score
 
-**-p:** Absolute path to the parameters file that BAMSE will create
+**-q:** Desired minimum quality (phred) score. Note that BAMSE might need to change this, if the read-overlap is not long enough.
 
-**-l:** Absolute path to the log file that BAMSE will create
+**-p:** Absolute path to the parameters file that BAMSE will create. By default, this will be stored in the working directory.
+
+**-l:** Absolute path to the log file that BAMSE will create. By default, this will be stored in the working directory.
+
+#### Data information file
+The data input file must be a simple text file with the information corresponding to each dataset specified in a different row separated with commas. The minimum information required is:
+| Data unit (replicate) | Sample | Run | Forward read | Reverse read |
+| ----------- | ----------- | ----------- | ----------- | ----------- |
+| Sample1_Rep1 | Sample1 | Run1 | Sample1_Rep1_1.fq.gz | Sample1_Rep1_2.fq.gz |
+| Sample1_Rep2 | Sample1 | Run1 | Sample1_Rep2_1.fq.gz | Sample1_Rep2_2.fq.gz |
+| Sample2_Rep1 | Sample2 | Run1 | Sample2_Rep1_1.fq.gz | Sample2_Rep1_2.fq.gz |
+| Sample2_Rep2 | Sample2 | Run1 | Sample2_Rep2_1.fq.gz | Sample2_Rep2_2.fq.gz |
+| Sample3_Rep1 | Sample3 | Run2 | Sample3_Rep1_1.fq.gz | Sample3_Rep1_2.fq.gz |
+| Sample3_Rep2 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
 
 If working in Computerome2, insert that code in a shell file, and submit a job using qsub.
 
