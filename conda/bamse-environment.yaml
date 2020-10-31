@@ -2,7 +2,6 @@ name: bamse-env
 channels:
   - bioconda
   - conda-forge
-  - r
 dependencies:
   - snakemake-minimal >=5.24.1
   - ruamel.yaml
