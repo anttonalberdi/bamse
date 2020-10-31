@@ -59,7 +59,7 @@ python ${bamsedir}/bamse.py -i ${projectdir}/inputdata.txt -d ${projectdir} -f C
 
 **-a:** Expected sequence length without primers (e.g. 440).
 
-**-x:** Absolute path to the taxonomy database,
+**-x:** Absolute path to the taxonomy database, which can be downloaded here: https://zenodo.org/record/1172783/files/silva_nr_v132_train_set.fa.gz
 
 **-t:** Number of threads (e.g. 40).
 
