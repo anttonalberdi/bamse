@@ -5,10 +5,18 @@
 rule get_paths:
     input:
         bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
-        parampath=expand("{parampath}", parampath=config['parampath'])
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
 ##
 # Primer trimming
 ##
+
+rule trim_log:
+    run:
+        logfile=open(logpath,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("{0} |    Trimming primers \r\n".format(current_time))
+        logfile.close()
 
 rule trim:
     input:

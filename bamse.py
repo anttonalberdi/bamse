@@ -112,7 +112,7 @@ f.close()
 #Append information to the log file
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("\nBAMSE will run with the following parameters:\n")
+logfile.write("\nBAMSE is running with the following parameters:\n")
 logfile.write("#Paths\n")
 logfile.write("\tbamsepath: "+str(curr_dir)+"\n")
 logfile.write("\tprojectpath: "+str(path)+"\n")
@@ -152,7 +152,7 @@ if not os.path.exists(dir0):
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("{0} | Transferring data to the working directory \r\n".format(current_time))
+logfile.write("\n{0} | Transferring data to the working directory \r\n".format(current_time))
 logfile.close()
 
 #Add comma in the end of each row of the input file to avoid downstream issues
@@ -246,7 +246,7 @@ bamsepath = os.path.abspath(curr_dir)
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("{0} | Starting preprocessing workflow \r\n".format(current_time))
+logfile.write("\n{0} | Starting preprocessing workflow \r\n".format(current_time))
 logfile.close()
 
 path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
@@ -264,7 +264,7 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("{0} | Starting dada2 workflow \r\n".format(current_time))
+logfile.write("\n{0} | Starting dada2 workflow \r\n".format(current_time))
 logfile.close()
 
 # Define output names
