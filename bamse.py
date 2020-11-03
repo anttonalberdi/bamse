@@ -164,6 +164,18 @@ else:
 logfile.write("\tAll dependencies are properly installed. \n")
 logfile.close()
 
+#########################################
+# Check if input information is correct #
+#########################################
+
+if not os.path.isfile(in_f):
+    logfile.write("\tThe input data file does not exist. \n")
+    sys.exit(0)
+
+if not os.path.isfile(tax):
+    logfile.write("\tThe taxonomy database path is incorrect. \n")
+    sys.exit(0)
+
 ###############################
 # Prepare working directories #
 ###############################
@@ -315,6 +327,12 @@ logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("{0} | BAMSE has completed succesfully \r\n".format(current_time))
 logfile.close()
+
+#####################
+# Run lulu workflow #
+#####################
+
+
 
 ################################
 # Run decontamination workflow #
