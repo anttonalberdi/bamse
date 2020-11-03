@@ -14,6 +14,7 @@ match <- opt$m
 output <- opt$o
 
 
+library(dplyr)
 library(lulu)
 
 curated_result <- lulu(table, match)
