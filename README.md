@@ -6,7 +6,9 @@
 ### Installation (local computer)
 BAMSE does not require an installation, as it can be directly run from the repository cloned from github. The best way to ensure BAMSE will run smoothly is to create a conda environment that contains all the dependencies BAMSE requires.
 
-In order to create the BAMSE conda environment, it is necessary to install miniconda: https://docs.conda.io/en/latest/miniconda.html
+In order to create the BAMSE conda environment, it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
+
+Note that BAMSE works only with Python 3.
 
 ```shell
 #Go to the directory where you want to install BAMSE
