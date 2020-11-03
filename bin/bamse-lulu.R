@@ -13,5 +13,8 @@ table <- opt$i
 match <- opt$m
 output <- opt$o
 
+
+library(lulu)
+
 curated_result <- lulu(table, match)
 write.table(curated_result$curated_table,output)
