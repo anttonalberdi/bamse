@@ -15,7 +15,7 @@ Note that BAMSE works only with Python 3.
 cd /home/user/softwaredir
 #Clone the BAMSE repository
 git clone https://github.com/anttonalberdi/bamse.git
-#Create conda environment
+#Create conda environment (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
 conda env create --file bamse/conda/bamse-environment.yaml python=3.7.4
 #Activae conda environment
 conda activate bamse-env
