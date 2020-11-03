@@ -13,3 +13,4 @@ dependencies:
   - perl-statistics-descriptive
   - r-optparse
   - gawk =5.1.0
+  - vsearch

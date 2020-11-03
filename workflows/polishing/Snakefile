@@ -1,0 +1,40 @@
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+
+##
+# ASV match table generation
+##
+
+rule matching:
+    input:
+        fasta="{projectpath}/ASVs.fasta"
+    threads: 40
+    output:
+        match="{projectpath}/ASVs.match"
+    params:
+    shell:
+        """
+        python {rules.get_paths.input.bamsepath}/bin/bamse-asmatch.py -i {input.fasta} -o {output.match}
+        """
+
+##
+# LULU algorithm
+##
+
+rule lulu:
+    input:
+        table="{projectpath}/ASV_count.txt"
+        match="{projectpath}/ASVs.match"
+    threads: 40
+    output:
+        table2="{projectpath}/ASV_count_lulu.txt"
+    params:
+    shell:
+        """
+        Rscipt {rules.get_paths.input.bamsepath}/bin/bamse-lulu.R --i {input.table} --m {input.match} --o {output.table2}
+        """
