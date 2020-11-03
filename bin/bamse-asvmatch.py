@@ -11,7 +11,7 @@ parser.add_argument('-i', help="ASV fasta file", dest="input", required=True)
 parser.add_argument('-o', help="Output match list", dest="match", required=True)
 args = parser.parse_args()
 
-input=args.i
+input=args.input
 output=args.match
 
 matching = 'vsearch --usearch_global '+input+' --db '+input+' --self --id .84 --iddef 1 --userout '+output+' -userfields query+target+id --maxaccepts 0 --query_cov .9 --maxhits 10'
