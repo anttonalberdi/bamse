@@ -14,7 +14,7 @@ cd /home/user/softwaredir
 #Clone the BAMSE repository
 git clone https://github.com/anttonalberdi/bamse.git
 #Create conda environment
-conda env create --file bamse/conda/bamse-environment.yaml
+conda env create --file bamse/conda/bamse-environment.yaml python=3.7.4
 #Activae conda environment
 conda activate bamse-env
 #Test if BAMSE is working
