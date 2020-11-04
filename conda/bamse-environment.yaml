@@ -10,7 +10,11 @@ dependencies:
   - libcurl =7.71.1
   - R =4.0.0
   - bioconductor-dada2
-  - perl-statistics-descriptive
+  - r-dplyr
+  - r-devtools
   - r-optparse
+  - perl-statistics-descriptive
   - gawk =5.1.0
   - vsearch
+  - devtools:
+     - git+https://github.com/tobiasgf/lulu

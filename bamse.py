@@ -11,6 +11,7 @@ from shutil import which
 ####################
 # Argument parsing #
 ####################
+# add overwrite option -w
 
 parser = argparse.ArgumentParser(description='Runs bamse-dada2 pipeline.')
 parser.add_argument('-i', help="Data information file", dest="input", required=True)
@@ -174,6 +175,10 @@ if not os.path.isfile(in_f):
 
 if not os.path.isfile(tax):
     logfile.write("\tThe taxonomy database path is incorrect. \n")
+    sys.exit(0)
+
+if minq < 10:
+    logfile.write("\tThe minimum quality score allowed is 10. \n")
     sys.exit(0)
 
 ###############################
