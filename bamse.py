@@ -21,7 +21,7 @@ parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required
 parser.add_argument('-a', help="Amplicon length", dest="ampliconlength", required=True)
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
-parser.add_argument('-q', help="Desired minimum quality (phred) score", dest="qual", required=False)
+parser.add_argument('-q', help="Quality filtering stringency. 'loose' (q=20), 'default' (q=25), 'stringent' (q=30)", dest="qual", required=False)
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
 parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
 args = parser.parse_args()
@@ -47,8 +47,9 @@ if not os.path.exists(path):
 path = re.sub('/$','',path)
 
 # Define minQ value
+# ADD LOOSE/DEFAULT/STRINGENT 
 if not (args.qual):
-    qual = 30
+    qual = 'default'
 else:
     qual=args.qual
 
