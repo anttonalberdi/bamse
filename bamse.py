@@ -276,8 +276,8 @@ for line in inputfile:
                     logfile.close()
 
             #Create list of output files for preprocessing workflow
-            out_for = path+'/2-Filtered/'+name+'_1.fastq'
-            out_rev = path+'/2-Filtered/'+name+'_2.fastq'
+            out_for = path+'/3-Trimmed/'+name+'_1.fastq'
+            out_rev = path+'/3-Trimmed/'+name+'_2.fastq'
             outlist.append(out_for)
             outlist.append(out_rev)
 

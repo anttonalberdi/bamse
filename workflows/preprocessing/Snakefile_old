@@ -1,0 +1,108 @@
+import time
+
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
+
+##
+# Primer trimming
+##
+
+rule trim_log:
+    run:
+        logfile=open(logpath,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("{0} |    Trimming primers \r\n".format(current_time))
+        logfile.close()
+
+rule trim:
+    input:
+        read1="{projectpath}/0-Data/{sample}_1.fastq",
+        read2="{projectpath}/0-Data/{sample}_2.fastq"
+    threads: 1
+    output:
+        read1="{projectpath}/1-Primertrimmed/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{sample}_2.fastq"
+    params:
+        primer1=expand("{primer1}", primer1=config['primer1']),
+        primer2=expand("{primer2}", primer2=config['primer2'])
+    shell:
+        """
+        mkdir -p {wildcards.projectpath}/1-Primertrimmed
+        python {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
+        """
+
+##
+# Quality profiling of read 1
+##
+
+#rule quality1:
+    input:
+        read="{projectpath}/1-Primertrimmed/{sample}_1.fastq"
+    threads: 1
+    output:
+        readstats="{projectpath}/1-Primertrimmed/{sample}_1.stats"
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -i {input.read1} -p {output.readstats}
+        """
+
+##
+# Quality profiling of read 2
+##
+
+#rule quality2:
+    input:
+        read="{projectpath}/1-Primertrimmed/{sample}_2.fastq"
+    threads: 1
+    output:
+        readstats="{projectpath}/1-Primertrimmed/{sample}_2.stats"
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -i {input.read1} -p {output.readstats}
+        """
+
+##
+# Selection of parameters
+##
+
+rule parameters:
+    input:
+        readparam1="{projectpath}/1-Primertrimmed/{sample}_1.stats",
+        readparam2="{projectpath}/1-Primertrimmed/{sample}_2.stats"
+    threads: 1
+    output:
+        sampleparam="{projectpath}/1-Trimmed/{sample}.param"
+    params:
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
+        minq=expand("{minq}", minq=config['minq'])
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -c {output.sampleparam} -p {rules.get_paths.input.parampath}
+        """
+
+##
+# Read filtering and trimming
+##
+
+rule filter:
+    input:
+        read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
+        read2="{projectpath}/1-Trimmed/{sample}_2.fastq",
+        sampleparam="{projectpath}/1-Trimmed/{sample}.param"
+    threads: 1
+    output:
+        read1="{projectpath}/2-Filtered/{sample}_1.fastq",
+        read2="{projectpath}/2-Filtered/{sample}_2.fastq"
+    shell:
+        """
+        mkdir -p {wildcards.projectpath}/2-Filtered
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --params {input.sampleparam}
+        """

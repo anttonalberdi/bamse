@@ -9,6 +9,7 @@ rule get_paths:
         bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
         parampath=expand("{parampath}", parampath=config['parampath']),
         logpath=expand("{logpath}", logpath=config['logpath'])
+
 ##
 # Primer trimming
 ##
@@ -26,52 +27,67 @@ rule trim:
         read2="{projectpath}/0-Data/{sample}_2.fastq"
     threads: 1
     output:
-        read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
-        read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
+        read1="{projectpath}/1-Primertrimmed/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{sample}_2.fastq"
     params:
         primer1=expand("{primer1}", primer1=config['primer1']),
         primer2=expand("{primer2}", primer2=config['primer2'])
     shell:
         """
-        mkdir -p {wildcards.projectpath}/1-Trimmed
-        python {rules.get_paths.input.bamsepath}/bin/bamse-trimming.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
+        mkdir -p {wildcards.projectpath}/1-Primertrimmed
+        python {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
         """
 
 ##
-# Quality profiling
+# Measure overlaps and remove non-overlapping reads
 ##
 
-rule quality:
+rule overlapfilter:
     input:
-        read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
-        read2="{projectpath}/1-Trimmed/{sample}_2.fastq"
-    threads: 1
-    output:
-        sampleparam="{projectpath}/1-Trimmed/{sample}.param"
-    params:
-        parampath=expand("{parampath}", parampath=config['parampath']),
-        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
-        minq=expand("{minq}", minq=config['minq'])
-    shell:
-        """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-qualprof.sh -s {wildcards.sample} -f {input.read1} -r {input.read2} -l {params.ampliconlength} -q {params.minq} -n 1000 -c {output.sampleparam} -p {rules.get_paths.input.parampath}
-        """
-
-##
-# Read filtering and trimming
-##
-
-rule filter:
-    input:
-        read1="{projectpath}/1-Trimmed/{sample}_1.fastq",
-        read2="{projectpath}/1-Trimmed/{sample}_2.fastq",
-        sampleparam="{projectpath}/1-Trimmed/{sample}.param"
+        read1="{projectpath}/1-Primertrimmed/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{sample}_2.fastq"
     threads: 1
     output:
         read1="{projectpath}/2-Filtered/{sample}_1.fastq",
-        read2="{projectpath}/2-Filtered/{sample}_2.fastq"
+        read2="{projectpath}/2-Filtered/{sample}_2.fastq",
+        trimlength1="{projectpath}/2-Filtered/{sample}_1.trimlength",
+        trimlength2="{projectpath}/2-Filtered/{sample}_2.trimlength"
     shell:
         """
         mkdir -p {wildcards.projectpath}/2-Filtered
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filtering.R --i1 {input.read1} --i2 {input.read2} --o1 {output.read1} --o2 {output.read2} --params {input.sampleparam}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-overlapfilter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -h {output.trimlength1} -j {output.trimlength2}
+        """
+
+##
+# Trim read 1 according to overlap
+##
+
+rule overlapfilter1:
+    input:
+        read="{projectpath}/2-Filtered/{sample}_1.fastq",
+        lengths="{projectpath}/2-Filtered/{sample}_1.trimlength"
+    threads: 1
+    output:
+        read="{projectpath}/3-Trimmed/{sample}_1.fastq"
+    shell:
+        """
+        mkdir -p {wildcards.projectpath}/2-Filtered
+        python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
+        """
+
+##
+# Trim read 2 according to overlap
+##
+
+rule overlapfilter2:
+    input:
+        read="{projectpath}/2-Filtered/{sample}_2.fastq",
+        lengths="{projectpath}/2-Filtered/{sample}_2.trimlength"
+    threads: 1
+    output:
+        read="{projectpath}/3-Trimmed/{sample}_2.fastq"
+    shell:
+        """
+        mkdir -p {wildcards.projectpath}/3-Trimmed
+        python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
         """

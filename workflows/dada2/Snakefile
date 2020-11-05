@@ -12,16 +12,15 @@ rule get_paths:
 
 rule dada2:
     input:
-        dir="{projectpath}/2-Filtered"
+        dir="{projectpath}/3-Trimmed"
     threads: 40
     output:
         asvs="{projectpath}/ASVs.fasta",
         taxa="{projectpath}/ASV_taxa.txt",
         counts="{projectpath}/ASV_counts.txt"
     params:
-        overlap=expand("{overlap}", overlap=config['overlap']),
         taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy'])
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -o {params.overlap} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa}
         """

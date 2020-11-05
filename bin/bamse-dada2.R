@@ -11,7 +11,6 @@ library(dada2)
 option_list = list(
  make_option(c("-d", "--directory"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-t", "--taxonomy"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
- make_option(c("-o", "--overlap"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-a", "--asvfile"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-c", "--count"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-x", "--taxa"),type = "character",default = NULL, help = "Input directory",metavar = "character")
@@ -20,7 +19,6 @@ option_list = list(
 opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 dir<-opt$directory
-overlap <- as.numeric(opt$overlap)
 taxonomy <- opt$taxonomy
 asvfile <- opt$asvfile
 countfile <- opt$count
@@ -58,8 +56,14 @@ dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 # Merge amplicons
 #####
 
-merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=overlap, maxMismatch=round(overlap/3,0),verbose=TRUE)
+merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)
 seqtab <- makeSequenceTable(merged_amplicons)
+
+#Remove Ns
+loop <- c(1:length(merged_amplicons))
+for (i in loop){
+  merged_amplicons[[i]]$sequence <- gsub("NNNNNNNNNN","",merged_amplicons[[i]]$sequence)
+}
 
 #####
 # Chimera filtering
