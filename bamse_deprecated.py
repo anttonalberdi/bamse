@@ -21,7 +21,8 @@ parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required
 parser.add_argument('-a', help="Amplicon length", dest="ampliconlength", required=True)
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
-parser.add_argument('-q', help="Desired minimum quality (phred) score", dest="qual", required=False)
+parser.add_argument('-q', help="Desired minimum quality (phred) score", dest="minq", required=False)
+parser.add_argument('-o', help="Desired minimum read overlap", dest="overlap", required=False)
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
 parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
 args = parser.parse_args()
@@ -47,10 +48,10 @@ if not os.path.exists(path):
 path = re.sub('/$','',path)
 
 # Define minQ value
-if not (args.qual):
-    qual = 30
+if not (args.minq):
+    minq = 30
 else:
-    qual=args.qual
+    minq=args.minq
 
 # Define minQ value
 if not (args.overlap):
@@ -108,7 +109,7 @@ f.write("primer2:\n "+str(primR)+"\n")
 f.write("\n#Trimming and filtering\n")
 f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
 f.write("overlap:\n "+str(overlap)+"\n")
-f.write("qual:\n "+str(qual)+"\n")
+f.write("minq:\n "+str(minq)+"\n")
 f.close()
 
 #Append information to the log file
@@ -127,7 +128,7 @@ logfile.write("\tprimer2: "+str(primR)+"\n")
 logfile.write("#Trimming and filtering\n")
 logfile.write("\tampliconlength: "+str(ampliconlength)+"\n")
 logfile.write("\toverlap: "+str(overlap)+"\n")
-logfile.write("\qual: "+str(qual)+"\n")
+logfile.write("\tminq: "+str(minq)+"\n")
 logfile.close()
 
 ######################
