@@ -56,14 +56,20 @@ base=$(echo ${read1} | sed 's/_1.fastq//')
 #Test overlap (PEAR)
 pear -v 5 -n 400 -f ${read1} -r ${read2} -o ${base}
 
+#Filter quality
+#maq=17 is equal to phred=22
+#maq=18 is equal to phred=25
+#maq=21 is equal to phred=30
+bbduk.sh in=${base}.assembled.fastq out=${base}.assembled2.fastq maq=18
+
 #Extract headers
-grep "^@" ${base}.assembled.fastq | cut -d ' ' -f 1 > ${base}.assembled.txt
+grep "^@" ${base}.assembled2.fastq | cut -d ' ' -f 1 > ${base}.assembled.txt
 
 #Filter reads (BBmap)
 filterbyname.sh in=${read1} in2=${read2} out=${filt1} out2=${filt2} names=${base}.assembled.txt include=t substring=t overwrite=t
 
 #Trim reads
-cat ${base}.assembled.fastq | awk '{if(NR%4==2) print length($1)}' > ${base}_lm
+cat ${base}.assembled2.fastq | awk '{if(NR%4==2) print length($1)}' > ${base}_lm
 cat ${filt1} | awk '{if(NR%4==2) print length($1)}' > ${base}_l1
 cat ${filt2} | awk '{if(NR%4==2) print length($1)}' > ${base}_l2
 paste ${base}_l1 ${base}_l2 ${base}_lm | awk '{print ($1 + $2 - $3)}' > ${base}_o
@@ -81,3 +87,12 @@ paste ${base}_l1 ${base}_l2 ${base}_o | awk '{
     print ($2 - int($3 /2));
   else
     print ($2 - (int($3 /2)+1))}' > ${trimlength2}
+
+#Remove temorary files
+rm ${base}.assembled*
+rm ${base}.unassembled*
+rm ${base}.discarded.fastq
+rm ${base}_l1
+rm ${base}_l2
+rm ${base}_lm
+rm ${base}_o

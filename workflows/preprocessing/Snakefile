@@ -14,13 +14,6 @@ rule get_paths:
 # Primer trimming
 ##
 
-rule trim_log:
-    run:
-        logfile=open(logpath,"a+")
-        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-        logfile.write("{0} |    Trimming primers \r\n".format(current_time))
-        logfile.close()
-
 rule trim:
     input:
         read1="{projectpath}/0-Data/{sample}_1.fastq",
@@ -34,6 +27,7 @@ rule trim:
         primer2=expand("{primer2}", primer2=config['primer2'])
     shell:
         """
+        echo -e "\tTrimming primers of {wildcards.sample}" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/1-Primertrimmed
         python {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
         """
@@ -54,6 +48,7 @@ rule overlapfilter:
         trimlength2="{projectpath}/2-Filtered/{sample}_2.trimlength"
     shell:
         """
+        echo -e "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/2-Filtered
         sh {rules.get_paths.input.bamsepath}/bin/bamse-overlapfilter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -h {output.trimlength1} -j {output.trimlength2}
         """
@@ -71,6 +66,7 @@ rule overlapfilter1:
         read="{projectpath}/3-Trimmed/{sample}_1.fastq"
     shell:
         """
+        echo -e "\tTrimming sequences of {wildcards.sample} forward reads" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/2-Filtered
         python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
         """
@@ -88,6 +84,7 @@ rule overlapfilter2:
         read="{projectpath}/3-Trimmed/{sample}_2.fastq"
     shell:
         """
+        echo -e "\tTrimming sequences of {wildcards.sample} reverse reads" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/3-Trimmed
         python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
         """
