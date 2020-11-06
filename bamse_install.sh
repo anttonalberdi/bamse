@@ -26,9 +26,10 @@ dependencies:
   - vsearch
 EOL
 
-echo "########################"
-echo "### Installing BAMSE ###"
-echo "########################"
+echo ""
+echo "############################"
+echo "### Installing BAMSE 1.0 ###"
+echo "############################"
 echo ""
 echo "Creating basme-env conda environment"
 
@@ -36,11 +37,13 @@ echo "Creating basme-env conda environment"
 conda env create --file bamse-environment.yaml python=3.7.4
 
 # Activate environment
-eval $(conda shell.bash hook)
+echo "Activating conda environment"
+
+CONDA_PATH=$(which python | sed 's/bin\/python/etc\/profile.d\/conda.sh/')
+source $CONDA_PATH
 conda activate bamse-env
 
-echo "Creating basme-env conda environment"
-
+echo "Installing BAMSE"
 
 # Install BAMSE
 #Get current directory
