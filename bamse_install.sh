@@ -31,21 +31,22 @@ echo "############################"
 echo "### Installing BAMSE 1.0 ###"
 echo "############################"
 echo ""
-echo "Creating basme-env conda environment"
+
 
 # Install conda environment
+echo "Creating basme-env conda environment"
 conda env create --file bamse-environment.yaml python=3.7.4
+
+#Get conda path and source it
+CONDA_PATH=$(which python | sed 's/bin\/python/etc\/profile.d\/conda.sh/')
+source $CONDA_PATH
 
 # Activate environment
 echo "Activating conda environment"
-
-CONDA_PATH=$(which python | sed 's/bin\/python/etc\/profile.d\/conda.sh/')
-source $CONDA_PATH
 conda activate bamse-env
 
-echo "Installing BAMSE"
-
 # Install BAMSE
+echo "Installing BAMSE"
 #Get current directory
 CUR_DIR=`pwd -P`
 
@@ -62,11 +63,19 @@ cd bamse
 chmod +x bamse
 
 #Add to path
-BAMSE_ROOT=`pwd -P`
-export PATH=${BAMSE_ROOT}:${PATH}
+#Get conda path and source it
+ACTIVATE_PATH=$(which python | sed 's/bin\/python/etc\/conda\/activate.d\/bamse.sh/')
+echo -e "echo 'Activating BAMSE'" > $ACTIVATE_PATH
+echo -e "export PATH=${BAMSE_ROOT}:\${PATH}" >> $ACTIVATE_PATH
 
 #Return to initial Directory
 cd $CUR_DIR
 
+#Deactivate conda
+conda deactivate
+
 #Test bamse
-bamse -h
+echo ""
+echo "BAMSE has been installed succesfully. Run the following commands to start using it"
+echo "conda activate bamse-env"
+echo "bamse -h"
