@@ -4,7 +4,7 @@
 
 # Create environment yaml
 rm bamse-environment.yaml
-cat >> bamse-environment.yaml <<EOL
+cat > bamse-environment.yaml <<EOL
 name: bamse-env
 channels:
   - bioconda
