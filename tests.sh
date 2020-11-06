@@ -98,11 +98,11 @@ python /Users/anttonalberdi/github/bamse/bin/bamse-qualitytrim.py -i bamse-test/
 
 
 cd /opt/anaconda3/envs/bamse-env/lib
+rm -rf bamse
 git clone https://github.com/anttonalberdi/bamse.git
 cd bamse
 #Make it executable
 chmod +x bamse
 #Add to path
 BAMSE_ROOT=`pwd -P`
-echo -e "export PATH=${BAMSE_ROOT}:\${PATH}" >> ${HOME}/.bashrc
 export PATH=${BAMSE_ROOT}:${PATH}
