@@ -1,3 +1,6 @@
+
+echo "Installing BAMSE"
+
 #Get current directory
 CUR_DIR=`pwd -P`
 
