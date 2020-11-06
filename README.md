@@ -20,7 +20,7 @@ conda env create --file bamse-environment.yaml python=3.7.4
 conda activate bamse-env
 #Test if BAMSE is working
 bamse -h
-#If it is not run
+#If it is not working, run the following script
 sh post-link.sh
 #Test if BAMSE is working
 bamse -h
