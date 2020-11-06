@@ -12,18 +12,9 @@ To create the bamse-env conda environment that contains bamse and all its depend
 
 ```shell
 #Download the bamse-env conda environment installation files
-curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse-env/bamse-environment.yaml' > bamse-environment.yaml
-curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse-env/post-link.sh' > post-link.sh
-#Create conda environment (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
-conda env create --file bamse-environment.yaml python=3.7.4
-#Activate conda environment
-conda activate bamse-env
-#Test if BAMSE is working
-bamse -h
-#If it is not working, run the following script
-sh post-link.sh
-#Test if BAMSE is working
-bamse -h
+curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse_install.sh' > bamse_install.sh
+#Run bamse install (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
+sh bamse_install.sh
 ```
 
 ### Installation (Computerome2)
