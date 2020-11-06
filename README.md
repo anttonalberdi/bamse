@@ -4,9 +4,9 @@
 
 Step 1: Primer trimming
 
-Step 2: Read filtering based on quality and overlapping
+Step 2: Read filtering based on quality and overlapping patterns
 
-Step 3: Individual read trimming based on overlapping
+Step 3: Automated read trimming based on overlapping patterns
 
 Step 4: Error Learning
 
