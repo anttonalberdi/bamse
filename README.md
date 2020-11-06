@@ -1,24 +1,24 @@
 # BAMSE
 
-**B**acterial **AM**plicon **Se**quencing data processing pipeline
+**B**acterial **AM**plicon **Se**quencing data processing pipeline. To date, it consists of the following steps:
 
-Step 1: Primer trimming
+**Step 1**: Primer trimming
 
-Step 2: Read filtering based on quality and overlapping patterns
+**Step 2**: Read filtering based on quality and overlapping patterns
 
-Step 3: Automated read trimming based on overlapping patterns
+**Step 3**: Automated read trimming based on overlapping patterns
 
-Step 4: Error Learning
+**Step 4**: Error Learning
 
-Step 5: Dereplication
+**Step 5**: Dereplication
 
-Step 6: Dada algorithm
+**Step 6**: Dada algorithm
 
-Step 7: Read merging
+**Step 7**: Read merging
 
-Step 8: Chimera filtering
+**Step 8**: Chimera filtering
 
-Step 9: Taxonomy assignment
+**Step 9**: Taxonomy assignment
 
 ### Installation (local computer)
 Note that BAMSE works only with Python 3. In order to use BAMSE it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
