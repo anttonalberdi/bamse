@@ -11,9 +11,9 @@ Note that BAMSE works only with Python 3. In order to create the bamse-env conda
 To create the bamse-env conda environment that contains bamse and all its dependencies, perform the following steps:
 
 ```shell
-#Download the bamse-env conda environment installation files
+#Download the bamse-env conda environment installation file
 curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse_install.sh' > bamse_install.sh
-#Run bamse install (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
+#Run bamse installation script (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
 sh bamse_install.sh
 ```
 
