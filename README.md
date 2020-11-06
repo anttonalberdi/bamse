@@ -6,21 +6,24 @@
 ### Installation (local computer)
 BAMSE does not require an installation, as it can be directly run from the repository cloned from github. The best way to ensure BAMSE will run smoothly is to create a conda environment that contains all the dependencies BAMSE requires.
 
-In order to create the BAMSE conda environment, it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
+Note that BAMSE works only with Python 3. In order to create the bamse-env conda environment, it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
 
-Note that BAMSE works only with Python 3.
+To create the bamse-env conda environment that contains bamse and all its dependencies, perform the following steps:
 
 ```shell
-#Go to the directory where you want to install BAMSE
-cd /home/user/softwaredir
-#Clone the BAMSE repository
-git clone https://github.com/anttonalberdi/bamse.git
+#Download the bamse-env conda environment installation files
+curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse-env/bamse-environment.yaml' > bamse-environment.yaml
+curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse-env/post-link.sh' > post-link.sh
 #Create conda environment (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
-conda env create --file bamse/conda/bamse-environment.yaml python=3.7.4
-#Activae conda environment
+conda env create --file bamse-environment.yaml python=3.7.4
+#Activate conda environment
 conda activate bamse-env
 #Test if BAMSE is working
-python bamse/bamse.py -h
+bamse -h
+#If it is not run
+sh post-link.sh
+#Test if BAMSE is working
+bamse -h
 ```
 
 ### Installation (Computerome2)
