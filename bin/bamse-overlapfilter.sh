@@ -57,7 +57,7 @@ base=$(echo ${read1} | sed 's/_1.fastq//')
 pear -v 5 -n 400 -f ${read1} -r ${read2} -o ${base}
 
 #Filter quality
-#maq=17 is equal to phred=22
+#maq=16 is equal to phred=20
 #maq=18 is equal to phred=25
 #maq=21 is equal to phred=30
 bbduk.sh in=${base}.assembled.fastq out=${base}.assembled2.fastq maq=18

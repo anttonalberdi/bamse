@@ -1,0 +1,3 @@
+#DATAUNIT,SAMPLE,RUN,F_READ,R_READ
+SampleA,SampleA,Run1,/example/SampleA_1.fastq.gz,/example/SampleA_2.fastq.gz
+SampleB,SampleB,Run1,/example/SampleB_1.fastq.gz,/example/SampleB_2.fastq.gz

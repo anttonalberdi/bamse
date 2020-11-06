@@ -1,3 +1,0 @@
-#DATAUNIT,SAMPLE,RUN,F_READ,R_READ
-GM10.B02,Sample1,Run1,/home/projects/rawdata/GM10.B02.1.fq.gz,/home/projects/rawdata/GM10.B02.2.fq.gz
-GM9.P17,Sample1,Run1,/home/projects/rawdata/GM9.P17.1.fq.gz,/home/projects/rawdata/GM9.P17.2.fq.gz
