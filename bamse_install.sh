@@ -65,6 +65,7 @@ chmod +x bamse
 #Add to path
 #Get conda path and source it
 ACTIVATE_PATH=$(which python | sed 's/bin\/python/etc\/conda\/activate.d\/bamse.sh/')
+BAMSE_ROOT=$(which python | sed 's/bin\/python/lib\/bamse/')
 echo "echo 'Activating BAMSE'" > $ACTIVATE_PATH
 echo "export PATH=${BAMSE_ROOT}:\${PATH}" >> $ACTIVATE_PATH
 
