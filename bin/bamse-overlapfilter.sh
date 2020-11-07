@@ -78,7 +78,7 @@ if [ "$qual" == "strict" ]; then
   maq=21 #maq=21 is equal to phred=30
 fi
 
-bbduk.sh in=${base}.assembled.fastq out=${base}.assembled2.fastq maq=18
+bbduk.sh in=${base}.assembled.fastq out=${base}.assembled2.fastq maq=$maq
 
 #Extract headers
 grep "^@" ${base}.assembled2.fastq | cut -d ' ' -f 1 > ${base}.assembled.txt
