@@ -32,31 +32,14 @@ curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse_install.s
 sh bamse_install.sh
 ```
 
-### Installation (Computerome2)
-2- Clone the github repository. In Computerome2, load the git module before downloading the repository.
-
-```shell
-#Go to the directory where you want to install BAMSE
-cd /home/user/softwaredir
-#Clone the BAMSE repository
-module load tools git/2.4.4
-git clone https://github.com/anttonalberdi/bamse.git
-#Load dependencies
-module load tools anaconda3/4.4.0 perl/5.30.2 intel/perflibs gcc/9.3.0 R/4.0.0
-#Test if BAMSE is working
-python bamse/bamse.py -h
-```
-
-### Running
+### Running (local computer)
 For running the core workflow of bamse, use the following code:
 
 ```shell
-#Directory in which BAMSE script are stored
-bamsedir=/home/user/softwaredir/bamse
-#Directory in which you want to store the project files
-projectdir=/home/user/projects/test
-#Run the launching script
-python ${bamsedir}/bamse.py -i ${projectdir}/inputdata.txt -d ${projectdir} -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 40
+#Activate the bamse-env conda environment
+conda activate bamse-env
+#Run bamse
+bamse -i inputdata.txt -d /home/myprohectdir -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 4
 ```
 #### Parameters
 
