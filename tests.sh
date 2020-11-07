@@ -44,7 +44,9 @@ sh /Users/anttonalberdi/github/bamse/bin/bamse-qualprof.sh -i bamse-test/1-Trimm
 sh /Users/anttonalberdi/github/bamse/bin/bamse-qualprof.sh -i bamse-test/1-Trimmed/GM1.E31_2.fastq -s bamse-test/1-Trimmed/GM1.E31_2.stats
 
 
-python /Users/anttonalberdi/github/bamse/bamse.py -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
+python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
+conda activate bamse-env
+bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 
 ########
 # Overlaps
@@ -95,14 +97,5 @@ rm -rf /Users/anttonalberdi/bamse-test/1-Trimmed/GM1.E31_1_fastqc/
 sh /Users/anttonalberdi/github/bamse/bin/bamse-overlapfilter.sh -f bamse-test/1-Trimmed/GM1.E31_1.fastq -r bamse-test/1-Trimmed/GM1.E31_2.fastq -a bamse-test/2-Filtered/GM1.E31_1.fastq -b bamse-test/2-Filtered/GM1.E31_2.fastq -h bamse-test/2-Filtered/GM1.E31_1.trimlengths -j bamse-test/2-Filtered/GM1.E31_2.trimlengths
 python /Users/anttonalberdi/github/bamse/bin/bamse-qualitytrim.py -i bamse-test/2-Filtered/GM1.E31_1.fastq -l bamse-test/2-Filtered/GM1.E31_1.trimlengths -o bamse-test/3-Trimmed/GM1.E31_1.fastq
 
-
-
-cd /opt/anaconda3/envs/bamse-env/lib
-rm -rf bamse
-git clone https://github.com/anttonalberdi/bamse.git
-cd bamse
-#Make it executable
-chmod +x bamse
-#Add to path
-BAMSE_ROOT=`pwd -P`
-export PATH=${BAMSE_ROOT}:${PATH}
+python /Users/anttonalberdi/github/bamse/bin/bamse-asvmatch.py -i bamse-test/ASVs.fasta -o bamse-test/ASV_match.txt
+Rscript /Users/anttonalberdi/github/bamse/bin/bamse-lulu.R --i bamse-test/ASV_counts.txt --m bamse-test/ASV_match.txt --o bamse-test/ASV_counts_lulu.txt
