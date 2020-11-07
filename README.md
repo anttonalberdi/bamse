@@ -59,7 +59,7 @@ bamse -i inputdata.txt -d /home/myprohectdir -f CTANGGGNNGCANCAG -r GACTACNNGGGT
 
 Optional:
 
-**-q:** Desired minimum quality (phred) score. Note that BAMSE might need to change this, if the read-overlap is not long enough.
+**-q:** Desired quality filtering mode, either **loose** (q=20, 1 error expected every 100 nucleotides), **default** (q=25, 1 error expected every 500 nucleotides) or **strict** (q=30, 1 error expected every 1000 nucleotides).
 
 **-p:** Absolute path to the parameters file that BAMSE will create. By default, this will be stored in the working directory.
 
@@ -87,15 +87,4 @@ The data input file must be a simple text file with the information correspondin
 | Sample3_Rep1 | Sample3 | Run2 | Sample3_Rep1_1.fq.gz | Sample3_Rep1_2.fq.gz |
 | Sample3_Rep2 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
 
-An example data input file can be found in inputfile.txt
-
-If working in Computerome2, insert that code in a shell file, and submit a job using qsub.
-
-```shell
-echo "python ${bamsedir}/bamse.py -i ${projectdir}/inputdata.txt -d ${projectdir} -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 40" > bamsejob.sh
-
-workdir=/home/user/projectdir/
-bamsedir=/home/user/softwaredir/bamse
-
-qsub -V -A ku-cbd -W group_list=ku-cbd -v "workdir=${workdir},bamsedir=${bamsedir}"  -d `pwd` -e ${workdir}/BAMSE.err -o ${workdir}/BAMSE.out -l nodes=1:ppn=40,mem=180gb,walltime=1:00:00:00 -N BAMSE ${workdir}/bamsejob.sh
-```
+An example data input file can be found in example/inputfile.txt
