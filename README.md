@@ -2,9 +2,9 @@
 
 **B**acterial **AM**plicon **Se**quencing data processing pipeline. To date, it consists of the following steps:
 
-**Step 1**: Primer trimming
+**Step 1: Primer trimming**. BAMSE uses cutadapt to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
-**Step 2**: Read filtering based on quality and overlapping patterns
+**Step 2**: Read filtering based on quality and overlapping patterns. BAMSE uses PEAR to calculate overlap patterns, and remove the reads that do not overlap for being too short. BAMSE also uses BBduk to filter out reads under the specified quality scores: loose (q=20, 1 error expected every 100 nucleotides), default (q=25, 1 error expected every 500 nucleotides) or strict (q=30, 1 error expected every 1000 nucleotides).
 
 **Step 3**: Automated read trimming based on overlapping patterns
 
