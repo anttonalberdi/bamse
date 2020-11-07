@@ -38,3 +38,20 @@ rule lulu:
         """
         Rscipt {rules.get_paths.input.bamsepath}/bin/bamse-lulu.R --i {input.table} --m {input.match} --o {output.table}
         """
+
+##
+# LULU algorithm
+##
+
+rule lulufilter:
+    input:
+        asvs="{projectpath}/ASVs.fastq"
+        lulu="{projectpath}/ASV_lulu_count.txt"
+    threads: 40
+    output:
+        asvs="{projectpath}/ASVs_lulu.fastq"
+    params:
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-lulufilter-sh -i {input.asvs} -l {input.lulu} -o {output.asvs}
+        """
