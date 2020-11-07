@@ -27,9 +27,9 @@ rule trim:
         primer2=expand("{primer2}", primer2=config['primer2'])
     shell:
         """
-        echo -e "\tTrimming primers of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tTrimming primers of {wildcards.sample}" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/1-Primertrimmed
-        python {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.py -i1 {input.read1} -i2 {input.read2} -o1 {output.read1} -o2 {output.read2} -p1 {params.primer1} -p2 {params.primer2}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.sh -a {input.read1} -b {input.read2} -c {output.read1} -d {output.read2} -f {params.primer1} -r {params.primer2}
         """
 
 ##
@@ -52,7 +52,7 @@ rule overlapfilter:
         qual=expand("{qual}", qual=config['qual'])
     shell:
         """
-        echo -e "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/2-Filtered
         sh {rules.get_paths.input.bamsepath}/bin/bamse-overlapfilter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -h {output.trimlength1} -j {output.trimlength2} -n {params.minlength} -m {params.maxlength} -q {params.qual}
         """
@@ -70,7 +70,7 @@ rule overlapfilter1:
         read="{projectpath}/3-Trimmed/{sample}_1.fastq"
     shell:
         """
-        echo -e "\tTrimming sequences of {wildcards.sample} forward reads" >> {rules.get_paths.input.logpath}
+        echo "\tTrimming sequences of {wildcards.sample} forward reads" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/2-Filtered
         python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
         """
@@ -88,7 +88,7 @@ rule overlapfilter2:
         read="{projectpath}/3-Trimmed/{sample}_2.fastq"
     shell:
         """
-        echo -e "\tTrimming sequences of {wildcards.sample} reverse reads" >> {rules.get_paths.input.logpath}
+        echo "\tTrimming sequences of {wildcards.sample} reverse reads" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/3-Trimmed
         python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
         """
