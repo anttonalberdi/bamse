@@ -1,9 +1,9 @@
 #2020/10/25 - BAMSE 1.0
 #Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
-usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-1 read1.trimlengths] [-2 read2.trimlengths]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-1 read1.trimlengths] [-2 read2.trimlengths] [-n 400] [-m 450] [-q 'default']" 1>&2; exit 1; }
 
-while getopts ":f:r:a:b:h:j:" o; do
+while getopts ":f:r:a:b:h:j:n:m:q:" o; do
     case "${o}" in
 
         f)
@@ -24,7 +24,15 @@ while getopts ":f:r:a:b:h:j:" o; do
 		    j)
 		        j=${OPTARG}
 		        ;;
-
+        n)
+    		    n=${OPTARG}
+    		    ;;
+        m)
+        		m=${OPTARG}
+        		;;
+        q)
+          	q=${OPTARG}
+          	;;
         *)
             usage
             ;;
@@ -33,7 +41,7 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${a}" ] || [ -z "${b}" ] || [ -z "${h}" ] || [ -z "${j}" ]; then
+if [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${a}" ] || [ -z "${b}" ] || [ -z "${h}" ] || [ -z "${j}" ] || [ -z "${n}" ] || [ -z "${m}" ] || [ -z "${q}" ]; then
     usage
 fi
 
@@ -44,6 +52,9 @@ filt1=$a
 filt2=$b
 trimlength1=$h
 trimlength2=$j
+minlength=$n
+maxlength=$m
+qual=$q
 
 #Enable posix interface
 set +o posix
@@ -54,12 +65,19 @@ set +o posix
 
 base=$(echo ${read1} | sed 's/_1.fastq//')
 #Test overlap (PEAR)
-pear -v 5 -n 400 -f ${read1} -r ${read2} -o ${base}
+pear -v 5 -n ${minlength} -m ${maxlength} -f ${read1} -r ${read2} -o ${base}
 
 #Filter quality
-#maq=16 is equal to phred=20
-#maq=18 is equal to phred=25
-#maq=21 is equal to phred=30
+if [ "$qual" == "loose" ]; then
+  maq=16 #maq=16 is equal to phred=20
+fi
+if [ "$qual" == "default" ]; then
+  maq=18 #maq=18 is equal to phred=25
+fi
+if [ "$qual" == "strict" ]; then
+  maq=21 #maq=21 is equal to phred=30
+fi
+
 bbduk.sh in=${base}.assembled.fastq out=${base}.assembled2.fastq maq=18
 
 #Extract headers

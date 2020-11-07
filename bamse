@@ -20,12 +20,13 @@ parser.add_argument('-i', help="Data information file", dest="input", required=T
 parser.add_argument('-d', help="Working directory of the project", dest="workdir", required=True)
 parser.add_argument('-f', help="Forward primer sequence", dest="primF", required=True)
 parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required=True)
-parser.add_argument('-a', help="Amplicon length", dest="ampliconlength", required=True)
+parser.add_argument('-a', help="Expected average amplicon length", dest="ampliconlength", required=True)
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
-parser.add_argument('-q', help="Quality filtering stringency. 'loose' (q=20), 'default' (q=25), 'stringent' (q=30)", dest="qual", required=False)
+parser.add_argument('-q', help="Quality filtering stringency. 'loose' (q=20), 'default' (q=25), 'strict' (q=30)", dest="qual", required=False)
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
 parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
+parser.add_argument('-w', help="Overwrite contents in the working directory of the project", action='store_true', dest="overwrite", required=False)
 args = parser.parse_args()
 
 # Translate arguments
@@ -36,10 +37,15 @@ primR=args.primR
 ampliconlength=args.ampliconlength
 tax=args.tax
 cores=args.threads
+overwrite=args.overwrite
 
 # Retrieve current directory
 file = os.path.dirname(sys.argv[0])
 curr_dir = os.path.abspath(file)
+
+# Remove contents in the directory
+if overwrite = True:
+    #Add removing commands
 
 # Create workign directory if does not exist
 if not os.path.exists(path):
@@ -48,12 +54,17 @@ if not os.path.exists(path):
 #Remove last / to the working directory (if necessary)
 path = re.sub('/$','',path)
 
-# Define minQ value
-# ADD LOOSE/DEFAULT/STRINGENT
+# Define quality filtering value
 if not (args.qual):
     qual = 'default'
 else:
     qual=args.qual
+
+# Stop if value is incorrect
+if not (qual = 'loose') or (qual = 'default') or (qual = 'strict'):
+    logfile=open(log,"a+")
+    logfile.write("\tThe assigned quality parameter " + qual + " is incorrect.\n")
+    logfile.close()
 
 # Define minQ value
 if not (args.overlap):
@@ -79,6 +90,10 @@ if os.path.exists(param):
 
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
+
+#Calculate maximum and minimum lengths
+minlength = ampliconlength - 50
+maxlength = ampliconlength + 50
 
 ###################
 # Create log file #
@@ -110,7 +125,8 @@ f.write("primer1:\n "+str(primF)+"\n")
 f.write("primer2:\n "+str(primR)+"\n")
 f.write("\n#Trimming and filtering\n")
 f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
-f.write("overlap:\n "+str(overlap)+"\n")
+f.write("minlength:\n "+str(minlength)+"\n")
+f.write("maxlength:\n "+str(maxlength)+"\n")
 f.write("qual:\n "+str(qual)+"\n")
 f.close()
 
@@ -129,8 +145,9 @@ logfile.write("\tprimer1: "+str(primF)+"\n")
 logfile.write("\tprimer2: "+str(primR)+"\n")
 logfile.write("#Trimming and filtering\n")
 logfile.write("\tampliconlength: "+str(ampliconlength)+"\n")
-logfile.write("\toverlap: "+str(overlap)+"\n")
-logfile.write("\qual: "+str(qual)+"\n")
+logfile.write("\tminlength: "+str(minlength)+"\n")
+logfile.write("\tmaxlength: "+str(maxlength)+"\n")
+logfile.write("\t\qual: "+str(qual)+"\n")
 logfile.close()
 
 ######################

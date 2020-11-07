@@ -46,11 +46,14 @@ rule overlapfilter:
         read2="{projectpath}/2-Filtered/{sample}_2.fastq",
         trimlength1="{projectpath}/2-Filtered/{sample}_1.trimlength",
         trimlength2="{projectpath}/2-Filtered/{sample}_2.trimlength"
+    params:
+        minlength=expand("{minlength}", minlength=config['minlength']),
+        maxlength=expand("{maxlength}", maxlength=config['maxlength'])
     shell:
         """
         echo -e "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/2-Filtered
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-overlapfilter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -h {output.trimlength1} -j {output.trimlength2}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-overlapfilter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -h {output.trimlength1} -j {output.trimlength2} -n {params.minlength} -m {params.maxlength}
         """
 
 ##
