@@ -60,7 +60,7 @@ dir5to3=$(cat ${filt1}_a | wc -l)
 dir3to5=$(cat ${filt1}_b | wc -l)
 
 if [ "$dir3to5" -gt "$initial10" ]; then
-#It is ligation-based library; so dir3to5 reads need to be flipped
+#It is ligation-based library; so dir3to5 reads need to be flipped (change read number in reversed)
   cat ${filt1}_a ${filt2}_b | sed 's/2:N:0:/1:N:0:/g'> ${filt1}
   cat ${filt2}_a ${filt1}_b | sed 's/1:N:0:/2:N:0:/g' > ${filt2}
 else
