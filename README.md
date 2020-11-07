@@ -4,21 +4,21 @@
 
 **Step 1: Primer trimming**. BAMSE uses cutadapt to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
-**Step 2**: Read filtering based on quality and overlapping patterns. BAMSE uses PEAR to calculate overlap patterns, and remove the reads that do not overlap for being too short. BAMSE also uses BBduk to filter out reads under the specified quality scores: loose (q=20, 1 error expected every 100 nucleotides), default (q=25, 1 error expected every 500 nucleotides) or strict (q=30, 1 error expected every 1000 nucleotides).
+**Step 2: Read filtering**. Based on quality and overlapping patterns. BAMSE uses PEAR to calculate overlap patterns, and remove the reads that do not overlap for being too short. BAMSE also uses BBduk to filter out reads under the specified quality scores: loose (q=20, 1 error expected every 100 nucleotides), default (q=25, 1 error expected every 500 nucleotides) or strict (q=30, 1 error expected every 1000 nucleotides).
 
-**Step 3**: Automated read trimming based on overlapping patterns
+**Step 3: Read trimming**. BAMSE automatically trims each read based on overlapping patterns and quality scores to minimise the impact 3' quality decay. The forward and reverse reads are trimmed to the exact lengths for together yielding the expected amplicon sequence (no overlap).
 
-**Step 4**: Error Learning
+**Step 4: Error Learning**. BAMSE uses the DADA2 error learning algorithm to learn the error patterns in the analysed dataset.
 
-**Step 5**: Dereplication
+**Step 5: Dereplication**.  BAMSE uses the DADA2 dereplication script.
 
-**Step 6**: Dada algorithm
+**Step 6: Dada algorithm**. BAMSE runs the DADA2 algorithm for error correction.
 
-**Step 7**: Read merging
+**Step 7: Read merging**. BAMSE merges forward and reverse read by concatenating them (Note that the reads are trimmed to their exact optimal lengths in step 3).
 
-**Step 8**: Chimera filtering
+**Step 8: Chimera filtering**. BAMSE uses the DADA2 chimera filtering algorithm to filter out chimeric sequences.
 
-**Step 9**: Taxonomy assignment
+**Step 9: Taxonomy assignment**. BAMSE uses the DADA2 taxonomy assignment algorithm.
 
 ### Installation (local computer)
 Note that BAMSE works only with Python 3. In order to use BAMSE it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
