@@ -44,7 +44,7 @@ file = os.path.dirname(sys.argv[0])
 curr_dir = os.path.abspath(file)
 
 # Remove contents in the directory
-if overwrite = True:
+#if overwrite == True:
     #Add removing commands
 
 # Create workign directory if does not exist
@@ -54,46 +54,34 @@ if not os.path.exists(path):
 #Remove last / to the working directory (if necessary)
 path = re.sub('/$','',path)
 
-# Define quality filtering value
-if not (args.qual):
-    qual = 'default'
-else:
-    qual=args.qual
-
-# Stop if value is incorrect
-if not (qual = 'loose') or (qual = 'default') or (qual = 'strict'):
-    logfile=open(log,"a+")
-    logfile.write("\tThe assigned quality parameter " + qual + " is incorrect.\n")
-    logfile.close()
-
-# Define minQ value
-if not (args.overlap):
-    overlap = 5
-else:
-    overlap=args.overlap
-
 # Define param file
 if not (args.param):
-    param = os.path.join(os.path.abspath(path),"bamse.yaml")
+    param=os.path.join(os.path.abspath(path),"bamse.yaml")
 else:
     param=args.param
 
 # Define log file
 if not (args.log):
-    log = os.path.join(path,"bamse.log")
+    log=os.path.join(path,"bamse.log")
 else:
     log=args.log
+
+# Define quality filtering value
+if not (args.qual):
+    qual='default'
+else:
+    qual=args.qual
 
 #Remove param file if exists
 if os.path.exists(param):
     os.remove(param)
 
-curr_dir = os.path.dirname(sys.argv[0])
-bamsepath = os.path.abspath(curr_dir)
+curr_dir=os.path.dirname(sys.argv[0])
+bamsepath=os.path.abspath(curr_dir)
 
 #Calculate maximum and minimum lengths
-minlength = ampliconlength - 50
-maxlength = ampliconlength + 50
+minlength = int(ampliconlength) - 50
+maxlength = int(ampliconlength) + 50
 
 ###################
 # Create log file #
@@ -196,9 +184,10 @@ if not os.path.isfile(tax):
     logfile.write("\tThe taxonomy database path is incorrect. \n")
     sys.exit(0)
 
-if minq < 10:
-    logfile.write("\tThe minimum quality score allowed is 10. \n")
-    sys.exit(0)
+if not (qual == 'loose') or (qual == 'default') or (qual == 'strict'):
+    logfile=open(log,"a+")
+    logfile.write("\tThe assigned quality parameter " + qual + " is incorrect.\n")
+    logfile.close()
 
 ###############################
 # Prepare working directories #
