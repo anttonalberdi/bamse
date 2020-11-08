@@ -99,3 +99,4 @@ python /Users/anttonalberdi/github/bamse/bin/bamse-qualitytrim.py -i bamse-test/
 
 python /Users/anttonalberdi/github/bamse/bin/bamse-asvmatch.py -i bamse-test/ASVs.fasta -o bamse-test/ASV_match.txt
 Rscript /Users/anttonalberdi/github/bamse/bin/bamse-lulu.R --i bamse-test/ASV_counts.txt --m bamse-test/ASV_match.txt --o bamse-test/ASV_counts_lulu.txt
+sh /Users/anttonalberdi/github/bamse/bin/bamse-lulufilter.sh -i bamse-test/ASVs.fasta -l bamse-test/ASV_counts_lulu.txt -o bamse-test/ASVs_lulu.fasta

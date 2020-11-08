@@ -15,11 +15,11 @@ rule matching:
         fasta="{projectpath}/ASVs.fasta"
     threads: 40
     output:
-        match="{projectpath}/ASVs.match"
+        match="{projectpath}/ASV_match.txt"
     params:
     shell:
         """
-        python {rules.get_paths.input.bamsepath}/bin/bamse-asmatch.py -i {input.fasta} -o {output.match}
+        python {rules.get_paths.input.bamsepath}/bin/bamse-asvmatch.py -i {input.fasta} -o {output.match}
         """
 
 ##
@@ -28,30 +28,30 @@ rule matching:
 
 rule lulu:
     input:
-        table="{projectpath}/ASV_count.txt"
-        match="{projectpath}/ASVs_match.txt"
-    threads: 40
+        table="{projectpath}/ASV_counts.txt",
+        match="{projectpath}/ASV_match.txt"
+    threads: 1
     output:
-        table="{projectpath}/ASV_count_lulu.txt"
+        table="{projectpath}/ASV_counts_lulu.txt"
     params:
     shell:
         """
-        Rscipt {rules.get_paths.input.bamsepath}/bin/bamse-lulu.R --i {input.table} --m {input.match} --o {output.table}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-lulu.R --i {input.table} --m {input.match} --o {output.table}
         """
 
 ##
-# LULU algorithm
+# LULU filering
 ##
 
 rule lulufilter:
     input:
-        asvs="{projectpath}/ASVs.fastq"
-        lulu="{projectpath}/ASV_lulu_count.txt"
-    threads: 40
+        asvs="{projectpath}/ASVs.fasta",
+        lulu="{projectpath}/ASV_counts_lulu.txt"
+    threads: 1
     output:
-        asvs="{projectpath}/ASVs_lulu.fastq"
+        asvs="{projectpath}/ASVs_lulu.fasta"
     params:
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-lulufilter-sh -i {input.asvs} -l {input.lulu} -o {output.asvs}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-lulufilter.sh -i {input.asvs} -l {input.lulu} -o {output.asvs}
         """

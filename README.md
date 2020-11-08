@@ -20,6 +20,8 @@
 
 **Step 9: Taxonomy assignment**. BAMSE uses the DADA2 taxonomy assignment algorithm.
 
+**Step 10: LULU curation**. BAMSE applies the DADA2 algorithm to curate the ASV table.
+
 ### Installation (local computer)
 Note that BAMSE works only with Python 3. In order to use BAMSE it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
 

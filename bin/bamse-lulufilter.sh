@@ -1,10 +1,10 @@
+#!/bin/bash
 #2020/10/25 - BAMSE 1.0
-#Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
 usage() { echo "Usage: $0 [-i ASVs.fastq] [-l ASV_counts_lulu.txt] [-o ASVs_lulu.fastq]" 1>&2; exit 1; }
 
-while getopts ":f:r:a:b:h:j:n:m:q:" o; do
-    case "${o}" in
+while getopts ":i:l:o:" x; do
+    case "${x}" in
 
         i)
             i=${OPTARG}
@@ -31,11 +31,11 @@ input=$i
 lulutable=$l
 output=$o
 
-#Enable posix interface
-set +o posix
 
 #####
 # Filter fasta file
 #####
 
-grep -A1 -f <(cut -d',' -f1 $lulutable) ${input} > ${output}
+cut -d',' -f1 ${lulutable} | sed '1d' | sed 's/ASV/\>ASV/' | sed 's/$/\$/' > ${lulutable}.list
+grep -A1 -f ${lulutable}.list ${input} | grep -v -- '^--$' > ${output}
+rm ${lulutable}.list

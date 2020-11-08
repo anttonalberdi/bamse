@@ -335,17 +335,26 @@ path_snkf = os.path.join(bamsepath,'workflows/dada2/Snakefile')
 prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
-# Output log to logfile
-logfile=open(log,"a+")
-current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("{0} | BAMSE has completed succesfully \r\n".format(current_time))
-logfile.close()
 
 #####################
 # Run lulu workflow #
 #####################
 
+# Output log to logfile
+logfile=open(log,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("\n{0} | Running the polishing workflow \r\n".format(current_time))
+logfile.close()
 
+# Define output names
+out_polishing = path+'/ASV_counts_lulu.txt '+path+'/ASVs_lulu.fasta'
+curr_dir = os.path.dirname(sys.argv[0])
+bamsepath = os.path.abspath(curr_dir)
+path_snkf = os.path.join(bamsepath,'workflows/polishing/Snakefile')
+
+# Run snakemake
+prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_polishing+' --configfile '+param+' --cores '+cores+''
+subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ################################
 # Run decontamination workflow #
@@ -356,3 +365,10 @@ logfile.close()
 ###################################
 # Run diversity analysis workflow #
 ###################################
+
+
+# Output log to logfile
+logfile=open(log,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("{0} | BAMSE has completed succesfully \r\n".format(current_time))
+logfile.close()
