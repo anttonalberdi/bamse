@@ -1,7 +1,6 @@
 #2020/10/25 - BAMSE 1.0
 
 library(optparse)
-library(tidyverse)
 library(dada2)
 
 #####
@@ -31,15 +30,13 @@ logfile <- opt$log
 # Read rds files
 #####
 
-SequenceTableList <- list.files(path = dir, pattern = ".rds", full.names=TRUE) %>%
-  map(readRDS) %>%
-  bind_rows()
+SequenceTableList <- lapply(list.files(path = dir, pattern = ".rds", full.names=TRUE),readRDS)
 
 #####
 # Merge different runs
 #####
 
-seqtab <- mergeSequenceTable(SequenceTableList)
+seqtab <- mergeSequenceTables(SequenceTableList)
 
 #####
 # Chimera filtering
