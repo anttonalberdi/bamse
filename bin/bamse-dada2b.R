@@ -30,7 +30,8 @@ logfile <- opt$log
 # Read rds files
 #####
 
-SequenceTableList <- lapply(list.files(path = dir, pattern = ".rds", full.names=TRUE),readRDS)
+filelist <- list.files(path = dir, pattern = ".rds", full.names=TRUE)
+SequenceTableList <- lapply(filelist,readRDS)
 
 #####
 # Merge different run
@@ -42,6 +43,18 @@ seqtab <- SequenceTableList[1]
 seqtab <- mergeSequenceTables(tables=SequenceTableList)
 }
 
+# Output ASVs before chimera filtering to stats file
+path <- sub("4-DADA2","",dir)
+
+loop <- c(1:nrow(seqtab))
+for (i in loop){
+  name <- rownames(seqtab)[i]
+  name2 <- sub("_1.fastq","",name)
+  asvs <- rowSums(seqtab!=0)[i]
+  statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
+  write(paste("ASVs before chimera filtering",asvs,sep="\t"),file=statsfile,append=TRUE)
+}
+
 #####
 # Chimera filtering
 #####
@@ -51,6 +64,18 @@ write(line,file=logfile,append=TRUE)
 
 seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 asv_tab <- t(seqtab.nochim)
+
+# Output ASVs before chimera filtering to stats file
+path <- sub("4-DADA2","",dir)
+
+loop <- c(1:nrow(seqtab.nochim))
+for (i in loop){
+  name <- rownames(seqtab.nochim)[i]
+  name2 <- sub("_1.fastq","",name)
+  asvs <- rowSums(seqtab.nochim!=0)[i]
+  statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
+  write(paste("ASVs after chimera filtering",asvs,sep="\t"),file=statsfile,append=TRUE)
+}
 
 #####
 # Output ASV fasta
@@ -71,6 +96,18 @@ write(asv_fasta, asvfile)
 colnames(asv_tab) <- sub("_1.fastq", "", colnames(asv_tab))
 rownames(asv_tab) <- sub(">", "", asv_headers)
 write.table(asv_tab, countfile, sep=",", quote=F, col.names=NA)
+
+# Output ASV reads to stats file
+path <- sub("4-DADA2","",dir)
+
+loop <- c(1:ncol(asv_tab))
+for (i in loop){
+  name <- colnames(asv_tab)[i]
+  name2 <- sub("_1.fastq","",name)
+  counts <- sum(asv_tab[,i])
+  statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
+  write(paste("Reads represented by ASVs",counts,sep="\t"),file=statsfile,append=TRUE)
+}
 
 #####
 # Assign taxonomy

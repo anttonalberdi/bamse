@@ -114,3 +114,14 @@ rm ${base}_l1
 rm ${base}_l2
 rm ${base}_lm
 rm ${base}_o
+
+#####
+# Output read number per sample to stats file
+#####
+
+readnumber=$(cat ${filt1} | wc -l)
+readnumber2=$(( $readnumber / 4 ))
+statpath=$(echo ${filt1} | sed 's/2-Filtered.*/0-Stats/')
+statsfile=$(echo ${filt1} | sed 's/.*2-Filtered\///' | sed 's/.*\///' | sed 's/_1.fastq/\.txt/')
+stats=$(echo "${statpath}/${statsfile}")
+echo "Quality filtered $readnumber2" >> ${stats}

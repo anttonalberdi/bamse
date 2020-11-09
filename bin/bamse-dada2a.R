@@ -38,6 +38,17 @@ write(line,file=logfile,append=TRUE)
 drpFs <- derepFastq(filtFs, verbose=TRUE)
 drpRs <- derepFastq(filtRs, verbose=TRUE)
 
+#Output to stats file
+path <- sub("3-Trimmed.*","",dir)
+
+loop <- c(1:length(drpFs))
+for (i in loop){
+  name <- names(drpFs)[i]
+  name2 <- sub("_1.fastq","",name)
+  statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
+  dereplicated <- length(drpFs[[i]]$uniques)
+  write(paste("Dereplicated reads",dereplicated,sep="\t"),file=statsfile,append=TRUE)
+}
 
 #####
 # Learn errors

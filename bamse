@@ -215,10 +215,11 @@ dir0 = os.path.join(path,"0-Data")
 ## If input directory does not exist, make it
 if not os.path.exists(dir0):
     os.makedirs(dir0)
-#if not os.path.exists(dir1):
-#    os.makedirs(dir1)
-#if not os.path.exists(dir2):
-#    os.makedirs(dir2)
+
+## If stats directory does not exist, make it
+statsdir = os.path.join(path,"0-Stats")
+if not os.path.exists(statsdir):
+    os.makedirs(statsdir)
 
 #################
 # Transfer data #

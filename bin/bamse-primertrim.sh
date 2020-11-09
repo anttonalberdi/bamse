@@ -51,11 +51,21 @@ cutadapt --pair-adapters -e 0.2 -g ^${primer1} -G ^${primer2} --discard-untrimme
 cutadapt --pair-adapters -e 0.2 -g ^${primer2} -G ^${primer1} --discard-untrimmed -o ${filt1}_b -p ${filt2}_b ${read1} ${read2}
 
 #####
+# Output initial read number per sample to stats file
+#####
+
+initialreadnumber=$(cat ${read1} | wc -l)
+initialreadnumber2=$(( $initialreadnumber / 4 ))
+statpath=$(echo ${read1} | sed 's/0-Data.*/0-Stats/')
+statsfile=$(echo ${read1} | sed 's/.*0-Data\///' | sed 's/.*\///' | sed 's/_1.fastq/\.txt/')
+stats=$(echo "${statpath}/${statsfile}")
+echo "Initial reads\t${initialreadnumber2}" > ${stats}
+
+#####
 # Check library type
 #####
 
-initial=$(cat ${read1} | wc -l)
-initial10=$(($initial / 10))
+initial10=$(($initialreadnumber / 10))
 dir5to3=$(cat ${filt1}_a | wc -l)
 dir3to5=$(cat ${filt1}_b | wc -l)
 
@@ -71,3 +81,11 @@ fi
 
 #Remove temporary files
 rm ${filt1}_a ${filt1}_b ${filt2}_a ${filt2}_b
+
+#####
+# Output read number per sample to stats file
+#####
+
+readnumber=$(cat ${filt1} | wc -l)
+readnumber2=$(( $readnumber / 4 ))
+echo "Primers trimmed reads\t$readnumber2" >> ${stats}
