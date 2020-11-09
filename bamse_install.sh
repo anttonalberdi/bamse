@@ -33,7 +33,6 @@ echo "### Installing BAMSE 1.0 ###"
 echo "############################"
 echo ""
 
-
 # Install conda environment
 echo "Creating basme-env conda environment"
 conda env create --file bamse-environment.yaml python=3.7.4

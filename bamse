@@ -24,8 +24,6 @@ import re
 import time
 from shutil import which
 
-
-
 ####################
 # Argument parsing #
 ####################
@@ -402,9 +400,9 @@ path_snkf = os.path.join(bamsepath,'workflows/polishing/Snakefile')
 prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_polishing+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
-################################
-# Run decontamination workflow #
-################################
+#########################################
+# Common contaminant detection workflow #
+#########################################
 
 
 
