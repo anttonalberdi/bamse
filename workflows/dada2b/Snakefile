@@ -11,9 +11,9 @@ rule get_paths:
 # Error learning and dada2
 ##
 
-rule dada2:
+rule dada2b:
     input:
-        dir="{projectpath}/3-Trimmed"
+        dir="{projectpath}/4-DADA2/"
     threads: 40
     output:
         asvs="{projectpath}/ASVs.fasta",
@@ -23,5 +23,5 @@ rule dada2:
         taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy'])
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa} -l {rules.get_paths.input.logpath}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2b.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa} -l {rules.get_paths.input.logpath}
         """

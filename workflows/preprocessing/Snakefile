@@ -16,12 +16,12 @@ rule get_paths:
 
 rule trim:
     input:
-        read1="{projectpath}/0-Data/{sample}_1.fastq",
-        read2="{projectpath}/0-Data/{sample}_2.fastq"
+        read1="{projectpath}/0-Data/{run}/{sample}_1.fastq",
+        read2="{projectpath}/0-Data/{run}/{sample}_2.fastq"
     threads: 1
     output:
-        read1="{projectpath}/1-Primertrimmed/{sample}_1.fastq",
-        read2="{projectpath}/1-Primertrimmed/{sample}_2.fastq"
+        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
     params:
         primer1=expand("{primer1}", primer1=config['primer1']),
         primer2=expand("{primer2}", primer2=config['primer2'])
@@ -38,14 +38,14 @@ rule trim:
 
 rule overlapfilter:
     input:
-        read1="{projectpath}/1-Primertrimmed/{sample}_1.fastq",
-        read2="{projectpath}/1-Primertrimmed/{sample}_2.fastq"
+        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
     threads: 1
     output:
-        read1="{projectpath}/2-Filtered/{sample}_1.fastq",
-        read2="{projectpath}/2-Filtered/{sample}_2.fastq",
-        trimlength1="{projectpath}/2-Filtered/{sample}_1.trimlength",
-        trimlength2="{projectpath}/2-Filtered/{sample}_2.trimlength"
+        read1="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
+        read2="{projectpath}/2-Filtered/{run}/{sample}_2.fastq",
+        trimlength1="{projectpath}/2-Filtered/{run}/{sample}_1.trimlength",
+        trimlength2="{projectpath}/2-Filtered/{run}/{sample}_2.trimlength"
     params:
         minlength=expand("{minlength}", minlength=config['minlength']),
         maxlength=expand("{maxlength}", maxlength=config['maxlength']),
@@ -63,11 +63,11 @@ rule overlapfilter:
 
 rule overlapfilter1:
     input:
-        read="{projectpath}/2-Filtered/{sample}_1.fastq",
-        lengths="{projectpath}/2-Filtered/{sample}_1.trimlength"
+        read="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
+        lengths="{projectpath}/2-Filtered/{run}/{sample}_1.trimlength"
     threads: 1
     output:
-        read="{projectpath}/3-Trimmed/{sample}_1.fastq"
+        read="{projectpath}/3-Trimmed/{run}/{sample}_1.fastq"
     shell:
         """
         echo "\tTrimming sequences of {wildcards.sample} forward reads" >> {rules.get_paths.input.logpath}
@@ -81,11 +81,11 @@ rule overlapfilter1:
 
 rule overlapfilter2:
     input:
-        read="{projectpath}/2-Filtered/{sample}_2.fastq",
-        lengths="{projectpath}/2-Filtered/{sample}_2.trimlength"
+        read="{projectpath}/2-Filtered/{run}/{sample}_2.fastq",
+        lengths="{projectpath}/2-Filtered/{run}/{sample}_2.trimlength"
     threads: 1
     output:
-        read="{projectpath}/3-Trimmed/{sample}_2.fastq"
+        read="{projectpath}/3-Trimmed/{run}/{sample}_2.fastq"
     shell:
         """
         echo "\tTrimming sequences of {wildcards.sample} reverse reads" >> {rules.get_paths.input.logpath}

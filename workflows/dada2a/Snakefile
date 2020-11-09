@@ -1,0 +1,39 @@
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
+##
+# Error learning and dada2
+##
+
+rule dada2a:
+    input:
+        dir="{projectpath}/3-Trimmed/{run}"
+    threads: 40
+    output:
+        rds="{projectpath}/4-DADA2/{run}.rds"
+    shell:
+        """
+        mkdir -p {wildcards.projectpath}/4-DADA2
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -l {rules.get_paths.input.logpath}
+        """
+
+rule dada2b:
+    input:
+        dir="{projectpath}/4-DADA2/"
+    threads: 40
+    output:
+        asvs="{projectpath}/ASVs.fasta",
+        taxa="{projectpath}/ASV_taxa.txt",
+        counts="{projectpath}/ASV_counts.txt"
+    params:
+        taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy'])
+    shell:
+        """
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2b.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa} -l {rules.get_paths.input.logpath}
+        """

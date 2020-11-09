@@ -1,6 +1,7 @@
 #2020/10/25 - BAMSE 1.0
 
 library(optparse)
+library(tidyverse)
 library(dada2)
 
 #####
@@ -27,58 +28,18 @@ taxafile <- opt$taxa
 logfile <- opt$log
 
 #####
-# List files
+# Read rds files
 #####
 
-filtFs <- list.files(path = dir, pattern = "_1.fastq", full.names=TRUE)
-filtRs <- list.files(path = dir, pattern = "_2.fastq", full.names=TRUE)
+SequenceTableList <- list.files(path = dir, pattern = ".rds", full.names=TRUE) %>%
+  map(readRDS) %>%
+  bind_rows()
 
 #####
-# Dereplicate
+# Merge different runs
 #####
 
-#Append to log file
-line="  Dereplicating samples"
-write(line,file=logfile,append=TRUE)
-
-drpFs <- derepFastq(filtFs, verbose=TRUE)
-drpRs <- derepFastq(filtRs, verbose=TRUE)
-
-
-#####
-# Learn errors
-#####
-
-#Append to log file
-line="  Learning errors"
-write(line,file=logfile,append=TRUE)
-
-errFs <- learnErrors(filtFs, multithread=TRUE)
-errRs <- learnErrors(filtRs, multithread=TRUE)
-
-#####
-# Dada
-#####
-
-line="  Generating ASVs"
-write(line,file=logfile,append=TRUE)
-
-dadaFs <- dada(drpFs, err=errFs, multithread=TRUE)
-dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
-
-#####
-# Merge amplicons
-#####
-
-merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)
-
-#Remove Ns
-loop <- c(1:length(merged_amplicons))
-for (i in loop){
-  merged_amplicons[[i]]$sequence <- gsub("NNNNNNNNNN","",merged_amplicons[[i]]$sequence)
-}
-
-seqtab <- makeSequenceTable(merged_amplicons)
+seqtab <- mergeSequenceTable(SequenceTableList)
 
 #####
 # Chimera filtering
