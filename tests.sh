@@ -43,9 +43,8 @@ GM9.H39_r3,GM9.H39_r3,Run1,/home/projects/ku-cbd/people/antalb/Israel_bat_microb
 sh /Users/anttonalberdi/github/bamse/bin/bamse-qualprof.sh -i bamse-test/1-Trimmed/GM1.E31_1.fastq -s bamse-test/1-Trimmed/GM1.E31_1.stats
 sh /Users/anttonalberdi/github/bamse/bin/bamse-qualprof.sh -i bamse-test/1-Trimmed/GM1.E31_2.fastq -s bamse-test/1-Trimmed/GM1.E31_2.stats
 
-
-python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 conda activate bamse-env
+python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 
 ########
@@ -100,3 +99,18 @@ python /Users/anttonalberdi/github/bamse/bin/bamse-qualitytrim.py -i bamse-test/
 python /Users/anttonalberdi/github/bamse/bin/bamse-asvmatch.py -i bamse-test/ASVs.fasta -o bamse-test/ASV_match.txt
 Rscript /Users/anttonalberdi/github/bamse/bin/bamse-lulu.R --i bamse-test/ASV_counts.txt --m bamse-test/ASV_match.txt --o bamse-test/ASV_counts_lulu.txt
 sh /Users/anttonalberdi/github/bamse/bin/bamse-lulufilter.sh -i bamse-test/ASVs.fasta -l bamse-test/ASV_counts_lulu.txt -o bamse-test/ASVs_lulu.fasta
+
+### Mock community
+#https://www.nature.com/articles/s41467-019-13036-1
+#https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA552603
+
+
+python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
+
+conda activate bamse-env
+
+python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
+
+
+
+bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4

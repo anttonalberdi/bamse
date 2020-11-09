@@ -1,6 +1,6 @@
 # BAMSE
 
-**B**acterial **AM**plicon **Se**quencing data processing pipeline. To date, it consists of the following steps:
+**B**acterial **AM**plicon **Se**quencing data processing pipeline. BAMSE is a snakemake-based pipeline consisting of multiple concatenated workflows to prepare, generate, curate and analyse ASV-based processing of amplicon sequencing data. To date (November 2020), the pipeline consists of the following steps:
 
 **Step 1: Primer trimming**. BAMSE uses cutadapt to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
@@ -23,9 +23,9 @@
 **Step 10: LULU curation**. BAMSE applies the DADA2 algorithm to curate the ASV table.
 
 ### Installation (local computer)
-Note that BAMSE works only with Python 3. In order to use BAMSE it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
+BAMSE works on Python 3. In order to use BAMSE it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
 
-To create the bamse-env conda environment that contains bamse and all its dependencies, perform the following steps:
+Once miniconda3 is installed, BAMSE and the conda environment containing all the dependencies required to run it smoothly, can be installed following these two simple steps:
 
 ```shell
 #Download the bamse-env conda environment installation file
