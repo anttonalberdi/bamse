@@ -20,7 +20,7 @@ For running the core workflow of bamse, use the following code:
 #Activate the bamse-env conda environment
 conda activate bamse-env
 #Run bamse
-bamse -i inputdata.txt -d /home/myprohectdir -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 4
+bamse -i inputdata.txt -d /home/myprojectdir -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 4
 ```
 
 ## Included steps
