@@ -1,14 +1,30 @@
 #!/usr/bin/env python
 
-import argparse
-import subprocess
 import os
 import sys
+
+####################
+# Check if conda environment bamse-env is active #
+####################
+
+syspath = sys.prefix
+
+if not "bamse-env" in syspath:
+    print("#####################")
+    print("#### BAMSE v1.0 ##### ERROR!")
+    print("#####################")
+    print("\nThe conda environment bamse-env is not activated\nType the following code before running bamse:\n\tconda activate bamse-env\n")
+    sys.exit(0)
+
+import argparse
+import subprocess
 import ruamel.yaml
 import pathlib
 import re
 import time
 from shutil import which
+
+
 
 ####################
 # Argument parsing #
