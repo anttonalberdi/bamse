@@ -33,10 +33,14 @@ logfile <- opt$log
 SequenceTableList <- lapply(list.files(path = dir, pattern = ".rds", full.names=TRUE),readRDS)
 
 #####
-# Merge different runs
+# Merge different run
 #####
 
-seqtab <- mergeSequenceTables(SequenceTableList)
+if(length(SequenceTableList) == 1){
+seqtab <- SequenceTableList[1]
+}else{
+seqtab <- mergeSequenceTables(tables=SequenceTableList)
+}
 
 #####
 # Chimera filtering
