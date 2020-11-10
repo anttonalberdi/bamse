@@ -424,6 +424,13 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run diversity analysis workflow #
 ###################################
 
+###################################
+# Merge stats files into one file #
+###################################
+
+
+
+
 
 # Output log to logfile
 logfile=open(log,"a+")

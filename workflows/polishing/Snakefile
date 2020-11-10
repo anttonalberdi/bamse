@@ -32,11 +32,12 @@ rule lulu:
         match="{projectpath}/ASV_match.txt"
     threads: 1
     output:
-        table="{projectpath}/ASV_counts_lulu.txt"
+        table="{projectpath}/ASV_counts_lulu.txt",
+        map="{projectpath}/ASVs_lulu.txt"
     params:
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-lulu.R --i {input.table} --m {input.match} --o {output.table}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-lulu.R --i {input.table} --m {input.match} --o {output.table} --r {output.map}
         """
 
 ##

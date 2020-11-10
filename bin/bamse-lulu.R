@@ -2,9 +2,10 @@ library(optparse)
 library(gtools)
 
 option_list = list(
- make_option("--i",type = "character",default = NULL,help = "Input ASV table",metavar = "character"),
- make_option("--m", type = "character", default = "NULL", help = "Match file", metavar = "character"),
- make_option("--o",type = "character",default = NULL,help = "Output ASV table",metavar = "character")
+ make_option("--i", type = "character",default = NULL,help = "Input ASV table",metavar = "character"),
+ make_option("--m", type = "character",default = NULL, help = "Match file", metavar = "character"),
+ make_option("--o", type = "character",default = NULL,help = "Output ASV table",metavar = "character"),
+ make_option("--r", type = "character",default = NULL,help = "Output ASV mapping results",metavar = "character")
 );
 
 opt_parser = OptionParser(option_list = option_list)
@@ -13,6 +14,7 @@ opt = parse_args(opt_parser)
 table <- opt$i
 match <- opt$m
 output <- opt$o
+output2 <- opt$r
 
 #Declare LULU function
 lulu <- function(otutable, matchlist, minimum_ratio_type = "min", minimum_ratio = 1, minimum_match = 84, minimum_relative_cooccurence = 0.95) {
@@ -150,9 +152,25 @@ matchtable <- read.table(match,sep="\t",header=FALSE)
 
 #Run LULU algorithm
 curated_result <- lulu(asvtable, matchtable)
-
 curated_ASVtable <- curated_result$curated_table
 curated_ASVtable <- curated_ASVtable[mixedorder(rownames(curated_ASVtable)),]
+curated_ASVmap <- curated_result$otu_map
+
+# Output ASV reads to stats file
+path <- sub("ASV_counts.txt","",table)
+
+loop <- c(1:ncol(curated_ASVtable))
+for (i in loop){
+  name <- colnames(curated_ASVtable)[i]
+  name2 <- sub("_1.fastq","",name)
+  asvs <- colSums(curated_ASVtable!=0)[i]
+  #counts <- sum(curated_ASVtable[,i])
+  statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
+  write(paste("OTUs after LULU curation",asvs,sep="\t"),file=statsfile,append=TRUE)
+  #write(paste("Reads represented by ASVs after LULU curation",counts,sep="\t"),file=statsfile,append=TRUE)
+}
+
 
 #Output curated table
 write.table(curated_ASVtable,output,sep=",",quote=FALSE)
+write.table(curated_ASVmap,output2,sep=",",quote=FALSE)
