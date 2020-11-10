@@ -1,5 +1,4 @@
 #2020/10/25 - BAMSE 1.0
-#Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
 usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-1 read1.trimlengths] [-2 read2.trimlengths] [-n 400] [-m 450] [-q 'default']" 1>&2; exit 1; }
 
@@ -122,6 +121,3 @@ statpath=$(echo ${filt1} | sed 's/2-Filtered.*/0-Stats/')
 statsfile=$(echo ${filt1} | sed 's/.*2-Filtered\///' | sed 's/.*\///' | sed 's/_1.fastq/\.txt/')
 stats=$(echo "${statpath}/${statsfile}")
 echo 'Quality filtered\t'$readnumber2 >> ${stats}
-
-
-#awk -vn=8 '{a[NR]=$0}END{ x=1; while (x<=n){ for(i=x;i<=length(a);i+=n) printf a[i]" "; print ""; x++; } }'
