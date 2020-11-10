@@ -56,9 +56,6 @@ minlength=$n
 maxlength=$m
 qual=$q
 
-#Enable posix interface
-set +o posix
-
 #####
 # Obtain quality profiles
 #####
@@ -124,4 +121,7 @@ readnumber2=$(( $readnumber / 4 ))
 statpath=$(echo ${filt1} | sed 's/2-Filtered.*/0-Stats/')
 statsfile=$(echo ${filt1} | sed 's/.*2-Filtered\///' | sed 's/.*\///' | sed 's/_1.fastq/\.txt/')
 stats=$(echo "${statpath}/${statsfile}")
-echo "Quality filtered $readnumber2" >> ${stats}
+echo 'Quality filtered\t'$readnumber2 >> ${stats}
+
+
+#awk -vn=8 '{a[NR]=$0}END{ x=1; while (x<=n){ for(i=x;i<=length(a);i+=n) printf a[i]" "; print ""; x++; } }'

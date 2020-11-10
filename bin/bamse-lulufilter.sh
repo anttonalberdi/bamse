@@ -39,3 +39,13 @@ output=$o
 cut -d',' -f1 ${lulutable} | sed '1d' | sed 's/ASV/\>ASV/' | sed 's/$/\$/' > ${lulutable}.list
 grep -A1 -f ${lulutable}.list ${input} | grep -v -- '^--$' > ${output}
 rm ${lulutable}.list
+
+#####
+# Merge stats info
+#####
+
+#Merge info
+#cut -f2 bamse-test/0-Stats/* | awk -vn=8 '{a[NR]=$0}END{ x=1; while (x<=n){ for(i=x;i<=length(a);i+=n) printf a[i]" "; print ""; x++; } }' > bamse-test/statistics.txt
+#names
+#headers=$(ls -a bamse-test/0-Stats/* | sed 's/.*\///' | sed 's/\.txt//' | tr "\n" "\t")
+#echo "${headers}" | cat - bamse-test/statistics.txt > bamse-test/statistics2.txt
