@@ -45,7 +45,7 @@ To date (November 2020), the pipeline consists of the following steps:
 
 **Step 9: Taxonomy assignment**. BAMSE uses the DADA2 taxonomy assignment algorithm.
 
-**Step 10: LULU curation**. BAMSE applies the DADA2 algorithm to curate the ASV table.
+**Step 10: LULU curation**. BAMSE applies the LULU algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
 
 ## Parameters
 
@@ -61,7 +61,7 @@ To date (November 2020), the pipeline consists of the following steps:
 
 **-x:** Absolute path to the taxonomy database, which can be downloaded here: https://zenodo.org/record/3731176/files/silva_species_assignment_v138.fa.gz
 
-**-t:** Number of threads (e.g. 40).
+**-t:** Number of threads (e.g. 8).
 
 Optional:
 
@@ -97,4 +97,4 @@ An example data input file can be found in example/inputfile.txt
 
 ## Example
 
-I will add a detailed example here. 
+I will add a detailed example here.
