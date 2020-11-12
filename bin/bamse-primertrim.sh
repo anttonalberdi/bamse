@@ -1,5 +1,6 @@
+#!/bin/bash
+
 #2020/10/25 - BAMSE 1.0
-#Perl script taken from: http://userweb.eng.gla.ac.uk/umer.ijaz/bioinformatics/QC.html#perbase_quality_FASTQ.sh
 
 usage() { echo "Usage: $0 [-a read1.fastq] [-b read2.fastq] [-c read1.trimmed.fastq] [-d read2.trimmed.fastq] [-f primer1] [-r primer2]" 1>&2; exit 1; }
 

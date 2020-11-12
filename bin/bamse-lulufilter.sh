@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #2020/10/25 - BAMSE 1.0
 
 usage() { echo "Usage: $0 [-i ASVs.fastq] [-l ASV_counts_lulu.txt] [-o ASVs_lulu.fastq]" 1>&2; exit 1; }

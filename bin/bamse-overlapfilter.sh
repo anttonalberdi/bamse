@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #2020/10/25 - BAMSE 1.0
 
 usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-1 read1.trimlengths] [-2 read2.trimlengths] [-n 400] [-m 450] [-q 'default']" 1>&2; exit 1; }
