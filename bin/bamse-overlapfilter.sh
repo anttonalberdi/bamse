@@ -66,13 +66,13 @@ base=$(echo ${read1} | sed 's/_1.fastq//')
 pear -v 5 -n ${minlength} -m ${maxlength} -f ${read1} -r ${read2} -o ${base}
 
 #Filter quality
-if [ "$qual" == "loose" ]; then
+if [ "$qual" = "loose" ]; then
   maq=16 #maq=16 is equal to phred=20
 fi
-if [ "$qual" == "default" ]; then
+if [ "$qual" = "default" ]; then
   maq=18 #maq=18 is equal to phred=25
 fi
-if [ "$qual" == "strict" ]; then
+if [ "$qual" = "strict" ]; then
   maq=21 #maq=21 is equal to phred=30
 fi
 
