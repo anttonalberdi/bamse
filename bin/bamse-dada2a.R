@@ -35,8 +35,8 @@ filtRs <- list.files(path = dir, pattern = "_2.fastq", full.names=TRUE)
 line="  Dereplicating samples"
 write(line,file=logfile,append=TRUE)
 
-drpFs <- derepFastq(filtFs, verbose=TRUE)
-drpRs <- derepFastq(filtRs, verbose=TRUE)
+drpFs <- derepFastq(filtFs)
+drpRs <- derepFastq(filtRs)
 
 #Output to stats file
 path <- sub("3-Trimmed.*","",dir)
