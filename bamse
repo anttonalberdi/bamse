@@ -178,7 +178,7 @@ if not is_tool('R'):
 
 else:
     dadacheck='Rscript '+bamsepath+'/bin/dadacheck.R'
-    dadacheckresult=subprocess.Popen(dadacheck, shell=True).wait()
+    dadacheckresult=subprocess.Popen(dadacheck, shell=True , executable='/bin/bash').wait()
     if dadacheckresult == 'FALSE':
         logfile.write("\tDada2 is not installed in R. \n")
         sys.exit(0)
@@ -279,10 +279,10 @@ for line in inputfile:
                 if os.path.isfile(in_for):
                     if in_for.endswith('.gz'):
                         read1Cmd = 'gunzip -c '+in_for+' > '+runpath+'/'+name+'_1.fastq'
-                        subprocess.Popen(read1Cmd, shell=True).wait()
+                        subprocess.Popen(read1Cmd, shell=True , executable='/bin/bash').wait()
                     else:
                         read1Cmd = 'cp '+in_for+' '+runpath+'/'+name+'_1.fastq'
-                        subprocess.Popen(read1Cmd, shell=True).wait()
+                        subprocess.Popen(read1Cmd, shell=True , executable='/bin/bash').wait()
                 else:
                     logfile=open(log,"a+")
                     logfile.write("\tThe file " + in_for + " does not exist.\n")
@@ -299,10 +299,10 @@ for line in inputfile:
                 if os.path.isfile(in_rev):
                     if in_for.endswith('.gz'):
                         read2Cmd = 'gunzip -c '+in_rev+' > '+runpath+'/'+name+'_2.fastq'
-                        subprocess.Popen(read2Cmd, shell=True).wait()
+                        subprocess.Popen(read2Cmd, shell=True , executable='/bin/bash').wait()
                     else:
                         read2Cmd = 'cp '+in_rev+' '+runpath+'/'+name+'_2.fastq'
-                        subprocess.Popen(read2Cmd, shell=True).wait()
+                        subprocess.Popen(read2Cmd, shell=True , executable='/bin/bash').wait()
                 else:
                     logfile=open(log,"a+")
                     logfile.write("\tThe file " + in_rev + " does not exist.\n")
@@ -334,7 +334,7 @@ out_preprocessing = " ".join(outlist)
 
 # Run snakemake
 prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+''
-subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+subprocess.Popen(prep_snk_Cmd, shell=True , executable='/bin/bash').wait()
 
 ########################
 # Run DADA2 A workflow #     Error learning and dada2 of each run individually
@@ -355,7 +355,7 @@ path_snkf = os.path.join(bamsepath,'workflows/dada2a/Snakefile')
 
 # Run snakemake
 prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2a+' --configfile '+param+' --cores '+cores+''
-subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+subprocess.Popen(prep_snk_Cmd, shell=True , executable='/bin/bash').wait()
 
 ########################
 # Run DADA2 B workflow #      Merge the different runs, and output results
@@ -375,7 +375,7 @@ path_snkf = os.path.join(bamsepath,'workflows/dada2b/Snakefile')
 
 # Run snakemake
 prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2b+' --configfile '+param+' --cores '+cores+''
-subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+subprocess.Popen(prep_snk_Cmd, shell=True , executable='/bin/bash').wait()
 
 #####################
 # Run LULU workflow #      Curate ASV list and resulting ASV table
@@ -395,7 +395,7 @@ path_snkf = os.path.join(bamsepath,'workflows/polishing/Snakefile')
 
 # Run snakemake
 prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_polishing+' --configfile '+param+' --cores '+cores+''
-subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+subprocess.Popen(prep_snk_Cmd, shell=True , executable='/bin/bash').wait()
 
 #########################################
 # Common contaminant detection workflow #
