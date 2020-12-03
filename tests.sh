@@ -1,3 +1,8 @@
+##### TODO
+
+# Remove if file becomes 0
+
+
 #tests
 
 rm -rf bamse
@@ -110,6 +115,11 @@ python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d ba
 conda activate bamse-env
 
 python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
+
+nano  bamse-test/inputdata.txt
+
+
+
 
 
 

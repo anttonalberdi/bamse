@@ -27,6 +27,17 @@ logfile <- opt$log
 filtFs <- list.files(path = dir, pattern = "_1.fastq", full.names=TRUE)
 filtRs <- list.files(path = dir, pattern = "_2.fastq", full.names=TRUE)
 
+#Detect empty files
+filtFs_info = file.info(filtFs)
+filtFs_empty = rownames(filtFs_info[filtFs_info$size == 0, ])
+
+filtRs_info = file.info(filtRs)
+filtRs_empty = rownames(filtRs_info[filtRs_info$size == 0, ])
+
+#Remove empty files
+filtFs <- filtFs[!filtFs %in% filtFs_empty]
+filtRs <- filtRs[!filtRs %in% filtRs_empty]
+
 #####
 # Dereplicate
 #####

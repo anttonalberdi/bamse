@@ -15,7 +15,6 @@ dependencies:
   - cutadapt =2.10
   - pear =0.9.6
   - bbmap =38.87
-  - pandas =1.1.3
   - libcurl =7.71.1
   - R =4.0.0
   - bioconductor-dada2
