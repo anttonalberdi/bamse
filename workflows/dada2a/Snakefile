@@ -22,18 +22,3 @@ rule dada2a:
         mkdir -p {wildcards.projectpath}/4-DADA2
         Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -l {rules.get_paths.input.logpath}
         """
-
-rule dada2b:
-    input:
-        dir="{projectpath}/4-DADA2/"
-    threads: 40
-    output:
-        asvs="{projectpath}/ASVs.fasta",
-        taxa="{projectpath}/ASV_taxa.txt",
-        counts="{projectpath}/ASV_counts.txt"
-    params:
-        taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy'])
-    shell:
-        """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2b.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa} -l {rules.get_paths.input.logpath}
-        """

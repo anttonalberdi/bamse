@@ -38,9 +38,9 @@ SequenceTableList <- lapply(filelist,readRDS)
 #####
 
 if(length(SequenceTableList) == 1){
-seqtab <- SequenceTableList[1]
+seqtab <- as.matrix(SequenceTableList[[1]])
 }else{
-seqtab <- mergeSequenceTables(tables=SequenceTableList)
+seqtab <- as.matrix(mergeSequenceTables(tables=SequenceTableList))
 }
 
 # Output ASVs before chimera filtering to stats file
