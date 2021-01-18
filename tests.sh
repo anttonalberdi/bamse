@@ -52,6 +52,11 @@ conda activate bamse-env
 python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 
+
+
+
+
+
 ########
 # Overlaps
 #########
@@ -112,6 +117,7 @@ sh /Users/anttonalberdi/github/bamse/bin/bamse-lulufilter.sh -i bamse-test/ASVs.
 
 python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 
+conda remove --name bamse-env --all
 conda activate bamse-env
 
 python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
@@ -124,3 +130,6 @@ nano  bamse-test/inputdata.txt
 
 
 bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
+
+
+bamse -i bamse-example/inputdata.txt -d bamse-example -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4

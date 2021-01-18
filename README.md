@@ -59,7 +59,7 @@ To date (November 2020), the pipeline consists of the following steps:
 
 **-a:** Expected sequence length without primers (e.g. 440).
 
-**-x:** Absolute path to the taxonomy database, which can be downloaded here: https://zenodo.org/record/3731176/files/silva_species_assignment_v138.fa.gz
+**-x:** Absolute path to the taxonomy database, which can be downloaded here: https://zenodo.org/record/3731176/files/silva_nr_v138_train_set.fa.gz
 
 **-t:** Number of threads (e.g. 8).
 
