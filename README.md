@@ -20,7 +20,36 @@ For running the core workflow of bamse, use the following code:
 #Activate the bamse-env conda environment
 conda activate bamse-env
 #Run bamse
-bamse -i inputdata.txt -d /home/myprojectdir -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x silva_nr_v132_train_set.fa.gz -t 4
+bamse -i [datafile] -d [project_directory] -f [forward_primer_sequence] -r [reverse_primer_sequence] -a [amplicon_length] -x [taxonomy_database_file] -t [number_of_threads]
+```
+
+## Example
+```shell
+# Check the current directory
+pwd #in this example we will consider the command outputs: /home/projects
+
+# Create the project directory in the current directory
+mkdir bamse_example
+
+# Move to the project directory
+cd bamse_example
+
+# Create the input data file using a text editor and save it in the project directory. It should look something like this:
+SampleA Replicate1 Run1 sampleA_rep1_1.fastq sampleA_rep1_2.fastq
+SampleA Replicate2 Run1 sampleA_rep2_1.fastq sampleA_rep2_2.fastq
+SampleB Replicate1 Run1 sampleB_rep1_1.fastq sampleB_rep1_2.fastq
+SampleB Replicate2 Run1 sampleB_rep2_1.fastq sampleB_rep2_2.fastq
+SampleC Replicate1 Run2 sampleC_rep1_1.fastq sampleC_rep1_2.fastq
+SampleC Replicate1 Run2 sampleC_rep1_1.fastq sampleC_rep1_2.fastq
+
+#Download the taxonomy database and save it in the project directory
+curl 'https://zenodo.org/record/3731176/files/silva_nr_v138_train_set.fa.gz'
+
+#Activate the conda environment (this can be done at any step)
+conda activate bamse-env
+
+#Launch the job
+bamse -i /home/projects/bamse_example/inputdata.txt -d /home/projects/bamse_example/ -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x /home/projects/bamse_example/silva_nr_v138_train_set.fa.gz -t 4
 ```
 
 ## Included steps
