@@ -124,7 +124,3 @@ The data input file must be a simple text file with the information correspondin
 | Sample3_Rep2 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
 
 An example data input file can be found in example/inputfile.txt
-
-## Example
-
-I will add a detailed example here.
