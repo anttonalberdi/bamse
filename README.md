@@ -35,7 +35,7 @@ mkdir bamse_example
 cd bamse_example
 
 # Create the input data file using a text editor and save it in the project directory. It should look something like this:
-#Sample #Replicate #Run #Forward_read        #Reverse_read
+#Sample,#Replicate,#Run,#Forward_read,#Reverse_read
 SampleA,Replicate1,Run1,sampleA_rep1_1.fastq,sampleA_rep1_2.fastq
 SampleA,Replicate2,Run1,sampleA_rep2_1.fastq,sampleA_rep2_2.fastq
 SampleB,Replicate1,Run1,sampleB_rep1_1.fastq,sampleB_rep1_2.fastq
