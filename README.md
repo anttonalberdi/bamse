@@ -35,12 +35,13 @@ mkdir bamse_example
 cd bamse_example
 
 # Create the input data file using a text editor and save it in the project directory. It should look something like this:
-SampleA Replicate1 Run1 sampleA_rep1_1.fastq sampleA_rep1_2.fastq
-SampleA Replicate2 Run1 sampleA_rep2_1.fastq sampleA_rep2_2.fastq
-SampleB Replicate1 Run1 sampleB_rep1_1.fastq sampleB_rep1_2.fastq
-SampleB Replicate2 Run1 sampleB_rep2_1.fastq sampleB_rep2_2.fastq
-SampleC Replicate1 Run2 sampleC_rep1_1.fastq sampleC_rep1_2.fastq
-SampleC Replicate1 Run2 sampleC_rep1_1.fastq sampleC_rep1_2.fastq
+#Sample #Replicate #Run #Forward_read        #Reverse_read
+SampleA,Replicate1,Run1,sampleA_rep1_1.fastq,sampleA_rep1_2.fastq
+SampleA,Replicate2,Run1,sampleA_rep2_1.fastq,sampleA_rep2_2.fastq
+SampleB,Replicate1,Run1,sampleB_rep1_1.fastq,sampleB_rep1_2.fastq
+SampleB,Replicate2,Run1,sampleB_rep2_1.fastq,sampleB_rep2_2.fastq
+SampleC,Replicate1,Run2,sampleC_rep1_1.fastq,sampleC_rep1_2.fastq
+SampleC,Replicate1,Run2,sampleC_rep1_1.fastq,sampleC_rep1_2.fastq
 
 #Download the taxonomy database and save it in the project directory
 curl 'https://zenodo.org/record/3731176/files/silva_nr_v138_train_set.fa.gz'
