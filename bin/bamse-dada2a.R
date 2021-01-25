@@ -103,9 +103,10 @@ dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 # Merge amplicons
 #####
 
+merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)
+
 #If more than one sample
 if (length(filtFs) > 1){
-  merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)
 
   #Remove Ns
   loop <- c(1:length(merged_amplicons))
