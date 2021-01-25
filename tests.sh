@@ -132,4 +132,4 @@ nano  bamse-test/inputdata.txt
 bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 
 
-bamse -i bamse-example/inputdata.txt -d bamse-example -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
+bamse -i bamse-example/inputdata.txt -d bamse-example -f ACTCCTACGGGAGGCAGCAG -r GGACTACHVGGGTWTCTAAT -a 440 -x bamse-example/silva_nr_v138_train_set.fa.gz -t 4

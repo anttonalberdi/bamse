@@ -58,12 +58,20 @@ maxlength=$m
 qual=$q
 
 #####
+# Identify phred score and transform if necessary
+#####
+
+reformat.sh in=${read1} in2=${read2} out=${read1}.tmp out2=${read2}.tmp qin=auto qout=33
+mv ${read1}.tmp ${read1}
+mv ${read2}.tmp ${read2}
+
+#####
 # Obtain quality profiles
 #####
 
 base=$(echo ${read1} | sed 's/_1.fastq//')
 #Test overlap (PEAR)
-pear -v 5 -n ${minlength} -m ${maxlength} -f ${read1} -r ${read2} -o ${base}
+pear -v 5 -n ${minlength} -m ${maxlength} -f ${read1} -r ${read2} -o ${base} -b 33
 
 #Filter quality
 if [ "$qual" = "loose" ]; then
@@ -76,7 +84,7 @@ if [ "$qual" = "strict" ]; then
   maq=21 #maq=21 is equal to phred=30
 fi
 
-bbduk.sh in=${base}.assembled.fastq out=${base}.assembled2.fastq maq=$maq
+bbduk.sh in=${base}.assembled.fastq out=${base}.assembled2.fastq maq=$maq qin=33
 
 #Extract headers
 grep "^@" ${base}.assembled2.fastq | cut -d ' ' -f 1 > ${base}.assembled.txt
