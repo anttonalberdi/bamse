@@ -107,7 +107,6 @@ merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = T
 
 #If more than one sample
 if (length(filtFs) > 1){
-
   #Remove Ns
   loop <- c(1:length(merged_amplicons))
   for (i in loop){
