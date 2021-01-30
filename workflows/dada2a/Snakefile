@@ -19,6 +19,6 @@ rule dada2a:
         rds="{projectpath}/3-DADA2/{run}.rds"
     shell:
         """
-        mkdir -p {wildcards.projectpath}/4-DADA2
+        mkdir -p {wildcards.projectpath}/3-DADA2
         Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -l {rules.get_paths.input.logpath}
         """
