@@ -112,7 +112,7 @@ paste ${base}_l1 ${base}_l2 ${base}_o | awk '{
   else
     print ($2 - (int($3 /2)+1))}' > ${trimlength2}
 
-#Remove temorary files
+#Remove temporary files
 rm ${base}.assembled*
 rm ${base}.unassembled*
 rm ${base}.discarded.fastq

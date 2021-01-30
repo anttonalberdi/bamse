@@ -102,22 +102,24 @@ dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 #####
 # Merge amplicons
 #####
+merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs)
 
-merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)
+#Removed from prebious version
+#merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)#
 
 #If more than one sample
-if (length(filtFs) > 1){
-  #Remove Ns
-  loop <- c(1:length(merged_amplicons))
-  for (i in loop){
-    merged_amplicons[[i]]$sequence <- gsub("NNNNNNNNNN","",merged_amplicons[[i]]$sequence)
-  }
-}
+#if (length(filtFs) > 1){
+#  #Remove Ns
+#  loop <- c(1:length(merged_amplicons))
+#  for (i in loop){
+#    merged_amplicons[[i]]$sequence <- gsub("NNNNNNNNNN","",merged_amplicons[[i]]$sequence)
+#  }
+#}
 
 #If a single sample
-if (length(filtFs) == 1){
-  merged_amplicons$sequence <- gsub("NNNNNNNNNN","",merged_amplicons$sequence)
-}
+#if (length(filtFs) == 1){
+#  merged_amplicons$sequence <- gsub("NNNNNNNNNN","",merged_amplicons$sequence)
+#}
 
 #####
 # Make sequence table

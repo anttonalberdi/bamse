@@ -328,7 +328,7 @@ current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 logfile.write("\n{0} | Starting preprocessing workflow \r\n".format(current_time))
 logfile.close()
 
-path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
+path_snkf = os.path.join(bamsepath,'workflows/preprocessing2/Snakefile')
 #Transform output file list into space-separated string (only for development)
 out_preprocessing = " ".join(outlist)
 
