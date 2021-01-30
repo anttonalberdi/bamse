@@ -10,6 +10,7 @@ channels:
   - conda-forge
   - anaconda
 dependencies:
+  - adapterremoval
   - snakemake-minimal >=5.24.1
   - ruamel.yaml
   - cutadapt =2.10
