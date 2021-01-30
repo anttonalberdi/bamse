@@ -45,10 +45,11 @@ rule filterandtim:
         read1="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
         read2="{projectpath}/2-Filtered/{run}/{sample}_2.fastq"
     params:
-        qual=expand("{qual}", qual=config['qual'])
+        qual=expand("{qual}", qual=config['qual']),
+        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength'])
     shell:
         """
         echo "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
         mkdir -p {wildcards.projectpath}/2-Filtered
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-filter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -q {params.qual} -t 1
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-filter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -l {params.ampliconlength} -q {params.qual} -t 1
         """

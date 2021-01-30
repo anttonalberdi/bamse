@@ -2,9 +2,9 @@
 
 #2020/10/25 - BAMSE 1.0
 
-usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-q quality] [-t threads]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-q quality] [-l ampliconlength] [-t threads]" 1>&2; exit 1; }
 
-while getopts ":f:r:a:b:q:t:" o; do
+while getopts ":f:r:a:b:q:l:t:" o; do
     case "${o}" in
 
         f)
@@ -22,6 +22,9 @@ while getopts ":f:r:a:b:q:t:" o; do
         q)
             q=${OPTARG}
             ;;
+        l)
+            l=${OPTARG}
+            ;
         t)
             t=${OPTARG}
             ;;
@@ -33,7 +36,7 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${a}" ] || [ -z "${b}" ] || [ -z "${q}" ] || [ -z "${t}" ]; then
+if [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${a}" ] || [ -z "${b}" ] || [ -z "${q}" ] || [ -z "${l}" ] || [ -z "${t}" ]; then
     usage
 fi
 
@@ -43,6 +46,7 @@ read2=$r
 filt1=$a
 filt2=$b
 qual=$q
+length=$l
 threads=$t
 
 #####
@@ -73,7 +77,8 @@ reformat.sh in=${read1} in2=${read2} out=${read1}.tmp1 out2=${read2}.tmp1 qin=au
 # Trim low-quality 3' ends
 #####
 
-AdapterRemoval --file1 ${read1}.tmp1 --file2 ${read2}.tmp1 --threads ${threads} --qualitybase-output 33 --qualitymax 62 --mate-separator '/' --output1 ${read1}.tmp2 --output2 ${read2}.tmp2 --trimqualities --trimwindows 5 --minquality ${phred} --preserve5p --trimns
+minreadlength=$(($length / 2))
+AdapterRemoval --file1 ${read1}.tmp1 --file2 ${read2}.tmp1 --threads ${threads} --qualitybase-output 33 --qualitymax 62 --mate-separator '/' --output1 ${read1}.tmp2 --output2 ${read2}.tmp2 --trimqualities --trimwindows 5 --minquality ${phred} --preserve5p --trimns --minlength ${minreadlength}
 
 #####
 # Filter low-quality reads
