@@ -10,10 +10,11 @@ library(dada2)
 
 option_list = list(
  make_option(c("-d", "--directory"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
- make_option(c("-t", "--taxonomy"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
- make_option(c("-a", "--asvfile"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
- make_option(c("-c", "--count"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
- make_option(c("-x", "--taxa"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
+ make_option(c("-t", "--taxonomy"),type = "character",default = NULL, help = "Output taxonomy file",metavar = "character"),
+ make_option(c("-a", "--asvfile"),type = "character",default = NULL, help = "Output ASV sequence file",metavar = "character"),
+ make_option(c("-c", "--count"),type = "character",default = NULL, help = "Output count table",metavar = "character"),
+ make_option(c("-x", "--taxa"),type = "character",default = NULL, help = "Taxonomy database path",metavar = "character"),
+ make_option(c("-f", "--fold"),type = "character",default = NULL, help = "Min Fold Parent Over Abundance",metavar = "character"),
  make_option(c("-l", "--log"),type = "character",default = NULL, help = "Log file",metavar = "character")
 );
 
@@ -24,6 +25,7 @@ taxonomy <- opt$taxonomy
 asvfile <- opt$asvfile
 countfile <- opt$count
 taxafile <- opt$taxa
+fold <- opt$fold
 logfile <- opt$log
 
 #####
@@ -62,7 +64,7 @@ for (i in loop){
 line="  Filtering chimeras"
 write(line,file=logfile,append=TRUE)
 
-seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE, minFoldParentOverAbundance=as.numeric(fold))
 asv_tab <- t(seqtab.nochim)
 
 # Output ASVs before chimera filtering to stats file

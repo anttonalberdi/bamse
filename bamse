@@ -38,6 +38,7 @@ parser.add_argument('-a', help="Expected average amplicon length", dest="amplico
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
 parser.add_argument('-q', help="Quality filtering stringency. 'loose' (q=20), 'default' (q=25), 'strict' (q=30)", dest="qual", required=False)
+parser.add_argument('-m', help="Minimum fold to consider parent ASVs for chimera detection", dest="fold", required=False)
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
 parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
 parser.add_argument('-w', help="Overwrite contents in the working directory of the project", action='store_true', dest="overwrite", required=False)
@@ -50,6 +51,7 @@ primF=args.primF
 primR=args.primR
 ampliconlength=args.ampliconlength
 tax=args.tax
+fold=args.fold
 cores=args.threads
 overwrite=args.overwrite
 
@@ -85,6 +87,12 @@ if not (args.qual):
     qual='default'
 else:
     qual=args.qual
+
+# Define quality filtering value
+if not (args.fold):
+    fold=1
+else:
+    fold=args.fold
 
 #Remove param file if exists
 if os.path.exists(param):
@@ -122,6 +130,7 @@ f.write("projectpath:\n "+str(path)+"\n")
 f.write("parampath:\n "+str(param)+"\n")
 f.write("logpath:\n "+str(log)+"\n")
 f.write("taxonomy:\n "+str(tax)+"\n")
+f.write("fold:\n "+str(fold)+"\n")
 f.write("\n#Primers\n")
 f.write("primer1:\n "+str(primF)+"\n")
 f.write("primer2:\n "+str(primR)+"\n")
@@ -142,6 +151,7 @@ logfile.write("\tprojectpath: "+str(path)+"\n")
 logfile.write("\tparampath: "+str(param)+"\n")
 logfile.write("\tlogpath: "+str(log)+"\n")
 logfile.write("\ttaxonomy: "+str(tax)+"\n")
+logfile.write("\tfold: "+str(fold)+"\n")
 logfile.write("#Primers\n")
 logfile.write("\tprimer1: "+str(primF)+"\n")
 logfile.write("\tprimer2: "+str(primR)+"\n")

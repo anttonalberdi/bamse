@@ -95,6 +95,8 @@ Optional:
 
 **-q:** Desired quality filtering mode, either **loose** (q=20, 1 error expected every 100 nucleotides), **default** (q=25, 1 error expected every 500 nucleotides) or **strict** (q=30, 1 error expected every 1000 nucleotides).
 
+**-m:** Stringency level of the DADA2 chimera filtering (default is 1). The higher then number the looser the definition of chimeras (more final ASVs retrieved).
+
 **-p:** Absolute path to the parameters file that BAMSE will create. By default, this will be stored in the working directory.
 
 **-l:** Absolute path to the log file that BAMSE will create. By default, this will be stored in the working directory.
