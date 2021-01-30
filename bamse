@@ -263,7 +263,7 @@ for line in inputfile:
                 os.makedirs(runpath)
 
             #Create list of final files for workflow DADA2 A
-            out_run = path+'/4-DADA2/'+run+'.rds'
+            out_run = path+'/3-DADA2/'+run+'.rds'
             runlist.append(out_run)
 
             # Transfer, rename and decompress data
@@ -309,8 +309,8 @@ for line in inputfile:
                     logfile.close()
 
             #Create list of output files for preprocessing workflow
-            out_for = path+'/3-Trimmed/'+run+'/'+name+'_1.fastq'
-            out_rev = path+'/3-Trimmed/'+run+'/'+name+'_2.fastq'
+            out_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
+            out_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
             outlist.append(out_for)
             outlist.append(out_rev)
 
