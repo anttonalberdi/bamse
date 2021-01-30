@@ -77,7 +77,8 @@ reformat.sh in=${read1} in2=${read2} out=${read1}.tmp1 out2=${read2}.tmp1 qin=au
 # Trim low-quality 3' ends
 #####
 
-minreadlength=$(($length / 2 - 30))
+readlength=$(readlength.sh in=${read1} in2=${read2} | grep "Max:" | cut -f2)
+minreadlength=$(($length - $readlength))
 AdapterRemoval --file1 ${read1}.tmp1 --file2 ${read2}.tmp1 --threads ${threads} --qualitybase-output 33 --qualitymax 62 --mate-separator '/' --output1 ${read1}.tmp2 --output2 ${read2}.tmp2 --trimqualities --trimwindows 5 --minquality ${phred} --preserve5p --trimns --minlength ${minreadlength}
 
 #####
