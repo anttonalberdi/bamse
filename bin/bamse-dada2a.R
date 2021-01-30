@@ -54,7 +54,7 @@ drpFs <- derepFastq(filtFs)
 drpRs <- derepFastq(filtRs)
 
 #Output to stats file
-path <- sub("3-Trimmed.*","",dir)
+path <- sub("2-Filtered.*","",dir)
 
 #If more than one sample
 if (length(filtFs) > 1){

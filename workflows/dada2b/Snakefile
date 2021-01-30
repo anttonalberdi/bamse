@@ -13,7 +13,7 @@ rule get_paths:
 
 rule dada2b:
     input:
-        dir="{projectpath}/4-DADA2/"
+        dir="{projectpath}/3-DADA2/"
     threads: 40
     output:
         asvs="{projectpath}/ASVs.fasta",

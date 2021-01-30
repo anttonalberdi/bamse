@@ -13,10 +13,10 @@ rule get_paths:
 
 rule dada2a:
     input:
-        dir="{projectpath}/3-Trimmed/{run}"
+        dir="{projectpath}/2-Filtered/{run}"
     threads: 40
     output:
-        rds="{projectpath}/4-DADA2/{run}.rds"
+        rds="{projectpath}/3-DADA2/{run}.rds"
     shell:
         """
         mkdir -p {wildcards.projectpath}/4-DADA2

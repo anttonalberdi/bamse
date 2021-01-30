@@ -44,7 +44,7 @@ seqtab <- as.matrix(mergeSequenceTables(tables=SequenceTableList))
 }
 
 # Output ASVs before chimera filtering to stats file
-path <- sub("4-DADA2","",dir)
+path <- sub("3-DADA2","",dir)
 
 loop <- c(1:nrow(seqtab))
 for (i in loop){
@@ -66,7 +66,7 @@ seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE
 asv_tab <- t(seqtab.nochim)
 
 # Output ASVs before chimera filtering to stats file
-path <- sub("4-DADA2","",dir)
+path <- sub("3-DADA2","",dir)
 
 loop <- c(1:nrow(seqtab.nochim))
 for (i in loop){
@@ -98,7 +98,7 @@ rownames(asv_tab) <- sub(">", "", asv_headers)
 write.table(asv_tab, countfile, sep=",", quote=F, col.names=NA)
 
 # Output ASV reads to stats file
-path <- sub("4-DADA2","",dir)
+path <- sub("3-DADA2","",dir)
 
 loop <- c(1:ncol(asv_tab))
 for (i in loop){
