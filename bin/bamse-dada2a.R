@@ -102,7 +102,7 @@ dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 #####
 # Merge amplicons
 #####
-merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs)
+merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=5)
 
 #Removed from prebious version
 #merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)#
