@@ -59,23 +59,21 @@ To date (November 2020), the pipeline consists of the following steps:
 
 **Step 1: Primer trimming**. BAMSE uses cutadapt to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
-**Step 2: Read filtering**. Based on quality and overlapping patterns. BAMSE uses PEAR to calculate overlap patterns, and remove the reads that do not overlap for being too short. BAMSE also uses BBduk to filter out reads under the specified quality scores: loose (q=20, 1 error expected every 100 nucleotides), default (q=25, 1 error expected every 500 nucleotides) or strict (q=30, 1 error expected every 1000 nucleotides).
+**Step 2: Read filtering**. BAMSE first uses adapterremoval to trim 3' nucleotides and then BBduk to filter out reads under the specified quality scores: loose (q=20, 1 error expected every 100 nucleotides), default (q=25, 1 error expected every 500 nucleotides) or strict (q=30, 1 error expected every 1000 nucleotides).
 
-**Step 3: Read trimming**. BAMSE automatically trims each read based on overlapping patterns and quality scores to minimise the impact 3' quality decay. The forward and reverse reads are trimmed to the exact lengths for together yielding the expected amplicon sequence (no overlap).
+**Step 3: Error Learning**. BAMSE uses the DADA2 error learning algorithm to learn the error patterns in the analysed dataset.
 
-**Step 4: Error Learning**. BAMSE uses the DADA2 error learning algorithm to learn the error patterns in the analysed dataset.
+**Step 4: Dereplication**.  BAMSE uses the DADA2 dereplication script.
 
-**Step 5: Dereplication**.  BAMSE uses the DADA2 dereplication script.
+**Step 5: Dada algorithm**. BAMSE runs the DADA2 algorithm for error correction.
 
-**Step 6: Dada algorithm**. BAMSE runs the DADA2 algorithm for error correction.
+**Step 6: Read merging**. BAMSE merges forward and reverse read by concatenating them (Note that the reads are trimmed to their exact optimal lengths in step 3).
 
-**Step 7: Read merging**. BAMSE merges forward and reverse read by concatenating them (Note that the reads are trimmed to their exact optimal lengths in step 3).
+**Step 7: Chimera filtering**. BAMSE uses the DADA2 chimera filtering algorithm to filter out chimeric sequences.
 
-**Step 8: Chimera filtering**. BAMSE uses the DADA2 chimera filtering algorithm to filter out chimeric sequences.
+**Step 10: Taxonomy assignment**. BAMSE uses the DADA2 taxonomy assignment algorithm.
 
-**Step 9: Taxonomy assignment**. BAMSE uses the DADA2 taxonomy assignment algorithm.
-
-**Step 10: LULU curation**. BAMSE applies the LULU algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
+**Step 11: LULU curation**. BAMSE applies the LULU algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
 
 ## Parameters
 
