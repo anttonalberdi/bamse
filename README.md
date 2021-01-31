@@ -124,4 +124,5 @@ The data input file must be a simple text file with the information correspondin
 | Sample3_Rep1 | Sample3 | Run2 | Sample3_Rep1_1.fq.gz | Sample3_Rep1_2.fq.gz |
 | Sample3_Rep2 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
 
+**Note that the replicate treatment has not been implemented yet. Replicates will be treated as independent samples.**
 An example data input file can be found in example/inputfile.txt
