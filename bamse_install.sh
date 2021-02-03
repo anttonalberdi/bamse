@@ -10,10 +10,8 @@ channels:
   - conda-forge
   - anaconda
 dependencies:
-  - raxml-ng
   - snakemake-minimal >=5.24.1
   - adapterremoval
-  - clustalomega
   - ruamel.yaml
   - cutadapt =2.10
   - bbmap =38.87
