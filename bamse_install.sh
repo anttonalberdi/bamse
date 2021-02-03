@@ -9,12 +9,15 @@ channels:
   - bioconda
   - conda-forge
   - anaconda
+  - genomedk
+  - biobuilds
 dependencies:
-  - adapterremoval
   - snakemake-minimal >=5.24.1
+  - adapterremoval
+  - raxml-ng
+  - clustalomega
   - ruamel.yaml
   - cutadapt =2.10
-  - pear =0.9.6
   - bbmap =38.87
   - libcurl =7.71.1
   - R =4.0.0

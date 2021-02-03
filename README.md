@@ -76,6 +76,9 @@ uses BBduk to filter out reads under the specified quality threshold. The minimu
 
 **Step 11: LULU curation**. BAMSE applies the LULU algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
 
+**Step 12: Phylogenetic tree**.
+
+
 ## Parameters
 
 **-i:** Data information file.

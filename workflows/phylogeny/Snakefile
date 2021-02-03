@@ -1,0 +1,24 @@
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
+##
+# Error learning and dada2
+##
+
+rule phylogeny:
+    input:
+        fasta="{projectpath}/ASVs.fasta"
+    threads: 40
+    output:
+        alignment="{projectpath}/ASVs.align.fasta",
+        tree="{projectpath}/ASVs.tre"
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-phylogeny.sh -i {input.fasta} -a {output.alignment} -t {output.tree}
+        """
