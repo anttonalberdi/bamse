@@ -6,7 +6,8 @@ rule get_paths:
     input:
         bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
         parampath=expand("{parampath}", parampath=config['parampath']),
-        logpath=expand("{logpath}", logpath=config['logpath'])
+        logpath=expand("{logpath}", logpath=config['logpath']),
+        projectpath=expand("{projectpath}", projectpath=config['projectpath'])
 ##
 # Error learning and dada2
 ##
@@ -14,11 +15,11 @@ rule get_paths:
 rule phylogeny:
     input:
         fasta="{projectpath}/ASVs.fasta"
-    threads: 40
+    threads: 4
     output:
-        alignment="{projectpath}/ASVs.align.fasta",
+        alignment="{projectpath}/4-Phylogeny/ASVs.align.fasta",
         tree="{projectpath}/ASVs.tre"
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-phylogeny.sh -i {input.fasta} -a {output.alignment} -t {output.tree}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-phylogeny.sh -i {input.fasta} -a {output.alignment} -d {rules.get_paths.input.projectpath} -t {output.tree} -c {threads}
         """

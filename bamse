@@ -424,6 +424,10 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run ASV phylogeny #
 #####################
 
+phylopath=path+'/4-Phylogeny/'
+if not os.path.exists(phylopath):
+    os.makedirs(phylopath)
+
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
@@ -431,7 +435,7 @@ logfile.write("\n{0} | Running the polishing workflow \r\n".format(current_time)
 logfile.close()
 
 # Define output names
-out_polishing = path+'/ASVs.align.fasta '+path+'/ASVs.tre'
+out_polishing = path+'/4-Phylogeny/ASVs.align.fasta '+path+'/ASVs.tre'
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/phylogeny/Snakefile')

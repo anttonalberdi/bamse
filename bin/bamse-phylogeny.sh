@@ -2,9 +2,9 @@
 
 #2020/10/25 - BAMSE 1.0
 
-usage() { echo "Usage: $0 [-i ASVs.fastq] [-a ASVs.align.fastq] [-t ASVs.tree] [-c threads]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-i ASVs.fastq] [-a ASVs.align.fastq] [-d projectdir] [-t ASVs.tree] [-c threads]" 1>&2; exit 1; }
 
-while getopts ":i:a:t:c:" x; do
+while getopts ":i:a:d:t:c:" x; do
     case "${x}" in
 
         i)
@@ -12,6 +12,9 @@ while getopts ":i:a:t:c:" x; do
             ;;
         a)
             a=${OPTARG}
+            ;;
+        d)
+            d=${OPTARG}
             ;;
         t)
             t=${OPTARG}
@@ -27,12 +30,13 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "${i}" ] || [ -z "${a}" ] || [ -z "${t}" ] || [ -z "${c}" ]; then
+if [ -z "${i}" ] || [ -z "${a}" ] || [ -z "${d}" ] || [ -z "${t}" ] || [ -z "${c}" ]; then
     usage
 fi
 
 fasta=$i
 alignment=$a
+projectdir=$d
 tree=$t
 threads=$c
 
@@ -46,4 +50,5 @@ clustalo -i ${fasta} -o ${alignment} --threads ${threads}
 # Build tree
 #####
 
-raxml-ng --msa ${alignment} --model GTR --tree pars{1} --prefix ${alignment} --lh-epsilon 1.0 --spr-cutoff 0.5 --threads ${threads} --seed 100 --force
+iqtree -s ${alignment} -T 4 -m GTR
+mv ${projectdir}/4-Phylogeny/ASVs.align.fasta.treefile ${tree}
