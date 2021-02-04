@@ -25,6 +25,8 @@ dependencies:
   - perl-statistics-descriptive
   - gawk =5.1.0
   - vsearch
+  - clustalo
+  - iqtree
 EOL
 
 echo ""

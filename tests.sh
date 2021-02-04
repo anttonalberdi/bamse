@@ -117,7 +117,14 @@ sh /Users/anttonalberdi/github/bamse/bin/bamse-lulufilter.sh -i bamse-test/ASVs.
 
 python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
 
+conda deactivate
 conda remove --name bamse-env --all
+#Download the bamse-env conda environment installation file
+curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse_install.sh' > bamse_install.sh
+#Run bamse installation script (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
+sh bamse_install.sh
+
+
 conda activate bamse-env
 
 python /Users/anttonalberdi/github/bamse/bamse -i bamse-test/inputdata.txt -d bamse-test -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x bamse-test/silva_nr_v132_train_set.fa.gz -t 4
