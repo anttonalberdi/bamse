@@ -68,7 +68,7 @@ uses BBduk to filter out reads under the specified quality threshold. The minimu
 
 **Step 5: Dada algorithm**. BAMSE runs the DADA2 algorithm for error correction.
 
-**Step 6: Read merging**. BAMSE merges forward and reverse read by concatenating them (Note that the reads are trimmed to their exact optimal lengths in step 3).
+**Step 6: Read merging**. BAMSE merges forward and reverse reads using DADA2.
 
 **Step 7: Chimera filtering**. BAMSE uses the DADA2 chimera filtering algorithm to filter out chimeric sequences.
 
