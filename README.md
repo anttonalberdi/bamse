@@ -55,7 +55,7 @@ bamse -i /home/projects/bamse_example/inputdata.txt -d /home/projects/bamse_exam
 
 ## Included steps
 
-To date (November 2020), the pipeline consists of the following steps:
+To date (February 2021), the pipeline consists of the following steps:
 
 **Step 1: Primer trimming**. BAMSE uses cutadapt to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
