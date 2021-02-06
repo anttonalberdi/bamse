@@ -262,10 +262,9 @@ for line in inputfile:
             line=line.replace('\n', '')
             linelist = line.split(',') # Create a list of each line
             name=linelist[0]
-            sample=linelist[1]
-            run=linelist[2]
-            in_for=linelist[3]
-            in_rev=linelist[4]
+            run=linelist[1]
+            in_for=linelist[2]
+            in_rev=linelist[3]
 
             #Create run folder if it does not exist
             runpath=path+'/0-Data/'+run
