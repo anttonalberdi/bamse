@@ -72,10 +72,13 @@ To date (February 2021), the pipeline consists of the following steps:
 
 **Step 10: Taxonomy assignment**. BAMSE uses the **DADA2** taxonomy assignment algorithm.
 
+**New step coming soon: Taxonomy filtering**. BAMSE will only retain ASVs assigned at least to a Bacteria/Archaea Phylum level.
+
 **Step 11: LULU curation**. BAMSE applies the **LULU** algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
 
 **Step 12: Phylogenetic tree**. BAMSE runs **Clustal Omega** for aligning the ASV sequences and **IQ-Tree** for building a Maximum Likelihood phylogenetic tree that can be used for calculating phylogenetic diversity metrics.
 
+**New step coming soon: ASV clustering**. BAMSE will use VSEARCH to cluster/bin ASVs using an identity threshold (default 97%).
 
 ## Parameters
 
