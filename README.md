@@ -118,14 +118,13 @@ The data input file must be a simple text file with the information correspondin
 
 **Reverse read:** Absolute path to the reverse read. Both compressed (e.g. fq.gz, fastq.gz) and uncompressed (e.g. fq, fastq) files are accepted.
 
-| Data unit (replicate) | Sample | Run | Forward read | Reverse read |
-| ----------- | ----------- | ----------- | ----------- | ----------- |
-| Sample1_Rep1 | Sample1 | Run1 | Sample1_Rep1_1.fq.gz | Sample1_Rep1_2.fq.gz |
-| Sample1_Rep2 | Sample1 | Run1 | Sample1_Rep2_1.fq.gz | Sample1_Rep2_2.fq.gz |
-| Sample2_Rep1 | Sample2 | Run1 | Sample2_Rep1_1.fq.gz | Sample2_Rep1_2.fq.gz |
-| Sample2_Rep2 | Sample2 | Run1 | Sample2_Rep2_1.fq.gz | Sample2_Rep2_2.fq.gz |
-| Sample3_Rep1 | Sample3 | Run2 | Sample3_Rep1_1.fq.gz | Sample3_Rep1_2.fq.gz |
-| Sample3_Rep2 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
+| Sample | Run | Forward read | Reverse read |
+| ----------- | ----------- | ----------- | ----------- |
+| Sample1 | Run1 | Sample1_Rep1_1.fq.gz | Sample1_Rep1_2.fq.gz |
+| Sample1 | Run1 | Sample1_Rep2_1.fq.gz | Sample1_Rep2_2.fq.gz |
+| Sample2 | Run1 | Sample2_Rep1_1.fq.gz | Sample2_Rep1_2.fq.gz |
+| Sample2 | Run1 | Sample2_Rep2_1.fq.gz | Sample2_Rep2_2.fq.gz |
+| Sample3 | Run2 | Sample3_Rep1_1.fq.gz | Sample3_Rep1_2.fq.gz |
+| Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
 
-**Note that the replicate treatment has not been implemented yet. Replicates will be treated as independent samples.**
 An example data input file can be found in example/inputfile.txt
