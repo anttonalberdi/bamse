@@ -4,7 +4,7 @@
 
 ## Quickstart (installation and running)
 
-BAMSE works on Python 3. In order to use BAMSE it is necessary to install miniconda3: https://docs.conda.io/en/latest/miniconda.html
+BAMSE works on Python 3. In order to use BAMSE it is necessary to previously have installed miniconda3: https://docs.conda.io/en/latest/miniconda.html
 
 Once miniconda3 is installed, BAMSE and the conda environment containing all the dependencies required to run it smoothly, can be installed following these two simple steps:
 
@@ -35,13 +35,15 @@ mkdir bamse_example
 cd bamse_example
 
 # Create the input data file using a text editor and save it in the project directory. It should look something like this:
-#Sample,#Replicate,#Run,#Forward_read,#Reverse_read
-SampleA,Run1,sampleA_1.fastq,sampleA_2.fastq
-SampleB,Run1,sampleB_1.fastq,sampleB_2.fastq
-SampleC,Run2,sampleC_1.fastq,sampleC_2.fastq
+#Sample,#Run,#Forward_read,#Reverse_read
+SampleA,Run1,/mydir/sampleA_1.fastq,/mydir/sampleA_2.fastq
+SampleB,Run1,/mydir/sampleB_1.fastq,/mydir/sampleB_2.fastq
+SampleC,Run2,/mydir/sampleC_1.fastq,/mydir/sampleC_2.fastq
+#*It is recommended to use absolute paths (e.g. ''/home/projects/rawdata/sampleA_1.fastq', rather than 'sampleA_1.fastq') to avoid issues.
 
 #Download the taxonomy database and save it in the project directory
 curl 'https://zenodo.org/record/3731176/files/silva_nr_v138_train_set.fa.gz'
+#The database can be stored elsewhere, but in that case ensure the correct path is inputed to BAMSE.
 
 #Activate the conda environment (this can be done at any step)
 conda activate bamse-env
@@ -54,26 +56,25 @@ bamse -i /home/projects/bamse_example/inputdata.txt -d /home/projects/bamse_exam
 
 To date (February 2021), the pipeline consists of the following steps:
 
-**Step 1: Primer trimming**. BAMSE uses cutadapt to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
+**Step 1: Primer trimming**. BAMSE uses **Cutadapt** to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
-**Step 2: Read filtering**. BAMSE first uses adapterremoval to trim 3'-end nucleotides under the selected quality threshold. The minimum sequence length to be considered for downstream analyses is calculated by subtracting the read length to the expected maximum amplicon length (e.g. if amplicon length is 440 nt, and read-length after primer-trimming is 280 nt, then the minimum sequence length is 440-280= 160 nt.). This ensures that if one of the reads exhibits a considerable drop of quality in its 3' end, this might be compensated by the paired sequence. Once low-quality nucleotides are trimmed, BAMSE
-uses BBduk to filter out reads under the specified quality threshold. The minimum quality threshold can be chosen among three levels of stringency: 'loose' (q=20, one error allowed every 100 nucleotides), 'default' (q=25, one error allowed every 500 nucleotides) and 'strict' (q=30, one error allowed every 1000 nucleotides).
+**Step 2: Read filtering**. BAMSE first uses **Adapterremoval** to trim 3'-end nucleotides under the selected quality threshold. The minimum sequence length to be considered for downstream analyses is calculated by subtracting the read length to the expected maximum amplicon length (e.g. if amplicon length is 440 nt, and read-length after primer-trimming is 280 nt, then the minimum sequence length is 440-280= 160 nt.). This ensures that if one of the reads exhibits a considerable drop of quality in its 3' end, this might be compensated by the paired sequence. Once low-quality nucleotides are trimmed, BAMSE uses **BBduk** to filter out reads under the specified quality threshold. The minimum quality threshold can be chosen among three levels of stringency: 'loose' (q=20, one error allowed every 100 nucleotides), 'default' (q=25, one error allowed every 500 nucleotides) and 'strict' (q=30, one error allowed every 1000 nucleotides).
 
-**Step 3: Error Learning**. BAMSE uses the DADA2 error learning algorithm to learn the error patterns in the analysed dataset.
+**Step 3: Error Learning**. BAMSE uses the **DADA2** error learning algorithm to learn the error patterns in the analysed dataset.
 
-**Step 4: Dereplication**.  BAMSE uses the DADA2 dereplication script.
+**Step 4: Dereplication**.  BAMSE uses the **DADA2** dereplication script.
 
-**Step 5: Dada algorithm**. BAMSE runs the DADA2 algorithm for error correction.
+**Step 5: Dada algorithm**. BAMSE runs the **DADA2** algorithm for error correction.
 
-**Step 6: Read merging**. BAMSE merges forward and reverse reads using DADA2.
+**Step 6: Read merging**. BAMSE merges forward and reverse reads using **DADA2**.
 
-**Step 7: Chimera filtering**. BAMSE uses the DADA2 chimera filtering algorithm to filter out chimeric sequences.
+**Step 7: Chimera filtering**. BAMSE uses the **DADA2** chimera filtering algorithm to filter out chimeric sequences.
 
-**Step 10: Taxonomy assignment**. BAMSE uses the DADA2 taxonomy assignment algorithm.
+**Step 10: Taxonomy assignment**. BAMSE uses the **DADA2** taxonomy assignment algorithm.
 
-**Step 11: LULU curation**. BAMSE applies the LULU algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
+**Step 11: LULU curation**. BAMSE applies the **LULU** algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
 
-**Step 12: Phylogenetic tree**. BAMSE runs Clustal Omega for aligning the ASV sequences and IQ-Tree for building a Maximum Likelihood phylogenetic tree that can be used for calculating phylogenetic diversity metrics.
+**Step 12: Phylogenetic tree**. BAMSE runs **Clustal Omega** for aligning the ASV sequences and **IQ-Tree** for building a Maximum Likelihood phylogenetic tree that can be used for calculating phylogenetic diversity metrics.
 
 
 ## Parameters
