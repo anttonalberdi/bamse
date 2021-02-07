@@ -76,6 +76,8 @@ To date (February 2021), the pipeline consists of the following steps:
 
 **Step 12: LULU curation (optional)**. BAMSE applies the **LULU** algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
 
+**Coming soon: ASV table filtering**. BAMSE will filter the ASV table based on a number of criteria, including estimated diversity completeness level of each sample, minimum read number and minimum relative representation of ASVs.
+
 **Step 13: Phylogenetic tree**. BAMSE runs **Clustal Omega** for aligning the ASV sequences and **IQ-Tree** for building a Maximum Likelihood phylogenetic tree that can be used for calculating phylogenetic diversity metrics.
 
 **Step 14: ASV clustering**. BAMSE uses **VSEARCH** to cluster/bin ASVs using an identity threshold (default 97%), and stores output files along with the original ones.
