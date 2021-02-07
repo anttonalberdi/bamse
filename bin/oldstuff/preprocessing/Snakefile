@@ -1,0 +1,94 @@
+import time
+
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
+
+##
+# Primer trimming
+##
+
+rule trim:
+    input:
+        read1="{projectpath}/0-Data/{run}/{sample}_1.fastq",
+        read2="{projectpath}/0-Data/{run}/{sample}_2.fastq"
+    threads: 1
+    output:
+        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
+    params:
+        primer1=expand("{primer1}", primer1=config['primer1']),
+        primer2=expand("{primer2}", primer2=config['primer2'])
+    shell:
+        """
+        echo "\tTrimming primers of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        mkdir -p {wildcards.projectpath}/1-Primertrimmed
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.sh -a {input.read1} -b {input.read2} -c {output.read1} -d {output.read2} -f {params.primer1} -r {params.primer2}
+        """
+
+##
+# Measure overlaps and remove non-overlapping reads
+##
+
+rule overlapfilter:
+    input:
+        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
+    threads: 1
+    output:
+        read1="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
+        read2="{projectpath}/2-Filtered/{run}/{sample}_2.fastq",
+        trimlength1="{projectpath}/2-Filtered/{run}/{sample}_1.trimlength",
+        trimlength2="{projectpath}/2-Filtered/{run}/{sample}_2.trimlength"
+    params:
+        minlength=expand("{minlength}", minlength=config['minlength']),
+        maxlength=expand("{maxlength}", maxlength=config['maxlength']),
+        qual=expand("{qual}", qual=config['qual'])
+    shell:
+        """
+        echo "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        mkdir -p {wildcards.projectpath}/2-Filtered
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-overlapfilter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -h {output.trimlength1} -j {output.trimlength2} -n {params.minlength} -m {params.maxlength} -q {params.qual}
+        """
+
+##
+# Trim read 1 according to overlap
+##
+
+rule overlapfilter1:
+    input:
+        read="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
+        lengths="{projectpath}/2-Filtered/{run}/{sample}_1.trimlength"
+    threads: 1
+    output:
+        read="{projectpath}/3-Trimmed/{run}/{sample}_1.fastq"
+    shell:
+        """
+        echo "\tTrimming sequences of {wildcards.sample} forward reads" >> {rules.get_paths.input.logpath}
+        mkdir -p {wildcards.projectpath}/2-Filtered
+        python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
+        """
+
+##
+# Trim read 2 according to overlap
+##
+
+rule overlapfilter2:
+    input:
+        read="{projectpath}/2-Filtered/{run}/{sample}_2.fastq",
+        lengths="{projectpath}/2-Filtered/{run}/{sample}_2.trimlength"
+    threads: 1
+    output:
+        read="{projectpath}/3-Trimmed/{run}/{sample}_2.fastq"
+    shell:
+        """
+        echo "\tTrimming sequences of {wildcards.sample} reverse reads" >> {rules.get_paths.input.logpath}
+        mkdir -p {wildcards.projectpath}/3-Trimmed
+        python {rules.get_paths.input.bamsepath}/bin/bamse-overlaptrim.py -i {input.read} -l {input.lengths} -o {output.read}
+        """

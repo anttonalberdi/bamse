@@ -400,7 +400,7 @@ else:
        print("reads under the quality threshold specified. These preprocessed files will")
        print("be stored in the folder '2-Filtered'.\n")
 
-       path_snkf = os.path.join(bamsepath,'workflows/preprocessing2/Snakefile')
+       path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
        #Transform output file list into space-separated string (only for development)
        out_preprocessing = " ".join(outlist)
 
