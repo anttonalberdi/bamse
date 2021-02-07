@@ -78,7 +78,7 @@ To date (February 2021), the pipeline consists of the following steps:
 
 **Step 13: Phylogenetic tree**. BAMSE runs **Clustal Omega** for aligning the ASV sequences and **IQ-Tree** for building a Maximum Likelihood phylogenetic tree that can be used for calculating phylogenetic diversity metrics.
 
-**Step 14: ASV clustering**. BAMSE uses VSEARCH to cluster/bin ASVs using an identity threshold (default 97%), and stores output files along with the original ones.
+**Step 14: ASV clustering**. BAMSE uses **VSEARCH** to cluster/bin ASVs using an identity threshold (default 97%), and stores output files along with the original ones.
 
 ## Parameters
 
@@ -131,3 +131,12 @@ The data input file must be a simple text file with the information correspondin
 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
 
 An example data input file can be found in example/inputfile.txt
+
+## References
+If you use BAMSE, please acknowledge the following publications:
+* Callahan, Benjamin J., et al. "DADA2: high-resolution sample inference from Illumina amplicon data." Nature methods 13.7 (2016): 581-583.
+* Nguyen, Lam-Tung, et al. "IQ-TREE: a fast and effective stochastic algorithm for estimating maximum-likelihood phylogenies." Molecular biology and evolution 32.1 (2015): 268-274.
+* Sievers, Fabian, and Desmond G. Higgins. "Clustal omega." Current protocols in bioinformatics 48.1 (2014): 3-13.
+* Schubert, Mikkel, Stinus Lindgreen, and Ludovic Orlando. "AdapterRemoval v2: rapid adapter trimming, identification, and read merging." BMC research notes 9.1 (2016): 1-7.
+* Martin, Marcel. "Cutadapt removes adapter sequences from high-throughput sequencing reads." EMBnet. journal 17.1 (2011): 10-12.
+* Bushnell, B. "BBTools: a suite of fast, multithreaded bioinformatics tools designed for analysis of DNA and RNA sequence data." Joint Genome Institute (2018).
