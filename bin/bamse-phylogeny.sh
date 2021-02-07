@@ -51,4 +51,4 @@ clustalo -i ${fasta} -o ${alignment} --threads ${threads}
 #####
 
 iqtree -s ${alignment} -T 4 -m GTR
-mv ${projectdir}/4-Phylogeny/ASVs.align.fasta.treefile ${tree}
+mv ${projectdir}/6-Phylogeny/ASVs.align.fasta.treefile ${tree}

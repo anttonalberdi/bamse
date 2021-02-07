@@ -72,13 +72,13 @@ To date (February 2021), the pipeline consists of the following steps:
 
 **Step 10: Taxonomy assignment**. BAMSE uses the **DADA2** taxonomy assignment algorithm.
 
-**New step coming soon: Taxonomy filtering**. BAMSE will only retain ASVs assigned at least to a Bacteria/Archaea Phylum level.
+**Step 11: Taxonomy filtering**. BAMSE only retains ASVs assigned at least to a Bacteria/Archaea Phylum level.
 
-**Step 11: LULU curation**. BAMSE applies the **LULU** algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
+**Step 12: LULU curation (optional)**. BAMSE applies the **LULU** algorithm to curate the ASV table and merge the ASVs that are considered "child" (potentially erroneous) sequences of other ASVs based on their co-occurrence patterns.
 
-**Step 12: Phylogenetic tree**. BAMSE runs **Clustal Omega** for aligning the ASV sequences and **IQ-Tree** for building a Maximum Likelihood phylogenetic tree that can be used for calculating phylogenetic diversity metrics.
+**Step 13: Phylogenetic tree**. BAMSE runs **Clustal Omega** for aligning the ASV sequences and **IQ-Tree** for building a Maximum Likelihood phylogenetic tree that can be used for calculating phylogenetic diversity metrics.
 
-**New step coming soon: ASV clustering**. BAMSE will use VSEARCH to cluster/bin ASVs using an identity threshold (default 97%).
+**Step 14: ASV clustering**. BAMSE uses VSEARCH to cluster/bin ASVs using an identity threshold (default 97%), and stores output files along with the original ones.
 
 ## Parameters
 
@@ -105,6 +105,8 @@ Optional:
 **-p:** Absolute path to the parameters file that BAMSE will create. By default, this will be stored in the working directory.
 
 **-l:** Absolute path to the log file that BAMSE will create. By default, this will be stored in the working directory.
+
+**-u:** BAMSE runs LULU polishing.
 
 #### Data information file
 The data input file must be a simple text file with the information corresponding to each dataset specified in a different row and **separated by commas**. The minimum information required is:

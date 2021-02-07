@@ -157,7 +157,7 @@ curated_ASVtable <- curated_ASVtable[mixedorder(rownames(curated_ASVtable)),]
 curated_ASVmap <- curated_result$otu_map
 
 # Output ASV reads to stats file
-path <- sub("ASV_counts.txt","",table)
+path <- sub("ASV_counts.csv","",table)
 
 loop <- c(1:ncol(curated_ASVtable))
 for (i in loop){

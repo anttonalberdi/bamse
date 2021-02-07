@@ -7,22 +7,42 @@ rule get_paths:
         bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
         parampath=expand("{parampath}", parampath=config['parampath']),
         logpath=expand("{logpath}", logpath=config['logpath'])
+
 ##
-# Error learning and dada2
+# Error learning, DADA2 and taxonomy filtering
 ##
 
 rule dada2b:
     input:
         dir="{projectpath}/3-DADA2/"
-    threads: 40
     output:
-        asvs="{projectpath}/ASVs.fasta",
-        taxa="{projectpath}/ASV_taxa.txt",
-        counts="{projectpath}/ASV_counts.txt"
+        asvs="{projectpath}/3-DADA2/ASVs.fasta",
+        taxa="{projectpath}/3-DADA2/ASV_taxa.txt",
+        counts="{projectpath}/3-DADA2/ASV_counts.csv"
     params:
         taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy']),
         fold=expand("{fold}", fold=config['fold'])
     shell:
         """
         Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2b.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa} -f {params.fold} -l {rules.get_paths.input.logpath}
+        """
+
+##
+# Taxonomy filtering
+##
+
+rule taxafilt:
+    input:
+        asvs="{projectpath}/3-DADA2/ASVs.fasta",
+        taxa="{projectpath}/3-DADA2/ASV_taxa.txt",
+        counts="{projectpath}/3-DADA2/ASV_counts.csv"
+    output:
+        filtlist="{projectpath}/4-Taxonomyfilter/ASVs.filt.txt",
+        filtasv="{projectpath}/4-Taxonomyfilter/ASVs.filt.fasta",
+        asvs="{projectpath}/ASVs.fasta",
+        taxa="{projectpath}/ASV_taxa.txt",
+        counts="{projectpath}/ASV_counts.csv"
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-taxonomyfilter.sh -a {input.asvs} -c {input.counts} -t {input.taxa} -f {output.filtlist} -s {output.filtasv} -u {output.asvs} -v {output.counts} -w {output.taxa}
         """

@@ -9,7 +9,7 @@ rule get_paths:
         logpath=expand("{logpath}", logpath=config['logpath']),
         projectpath=expand("{projectpath}", projectpath=config['projectpath'])
 ##
-# Error learning and dada2
+# Maximum likelihood phylogenety generation
 ##
 
 rule phylogeny:
@@ -17,7 +17,7 @@ rule phylogeny:
         fasta="{projectpath}/ASVs.fasta"
     threads: 4
     output:
-        alignment="{projectpath}/4-Phylogeny/ASVs.align.fasta",
+        alignment="{projectpath}/6-Phylogeny/ASVs.align.fasta",
         tree="{projectpath}/ASVs.tre"
     shell:
         """

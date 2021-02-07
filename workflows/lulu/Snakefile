@@ -15,7 +15,7 @@ rule matching:
         fasta="{projectpath}/ASVs.fasta"
     threads: 40
     output:
-        match="{projectpath}/ASV_match.txt"
+        match="{projectpath}/5-LULU/ASV_match.txt"
     params:
     shell:
         """
@@ -28,12 +28,12 @@ rule matching:
 
 rule lulu:
     input:
-        table="{projectpath}/ASV_counts.txt",
-        match="{projectpath}/ASV_match.txt"
+        table="{projectpath}/ASV_counts.csv",
+        match="{projectpath}/5-LULU/ASV_match.txt"
     threads: 1
     output:
-        table="{projectpath}/ASV_counts_lulu.txt",
-        map="{projectpath}/ASVs_lulu.txt"
+        table="{projectpath}/ASV_counts.lulu.csv",
+        map="{projectpath}/5-LULU/ASVs.lulu.txt"
     params:
     shell:
         """
@@ -47,10 +47,10 @@ rule lulu:
 rule lulufilter:
     input:
         asvs="{projectpath}/ASVs.fasta",
-        lulu="{projectpath}/ASV_counts_lulu.txt"
+        lulu="{projectpath}/ASV_counts.lulu.csv"
     threads: 1
     output:
-        asvs="{projectpath}/ASVs_lulu.fasta"
+        asvs="{projectpath}/ASVs.lulu.fasta"
     params:
     shell:
         """

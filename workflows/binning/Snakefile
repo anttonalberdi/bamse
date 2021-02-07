@@ -1,0 +1,63 @@
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath']),
+        projectpath=expand("{projectpath}", projectpath=config['projectpath'])
+##
+# Binning into OTUs
+##
+
+rule phylogeny:
+    input:
+        fasta="{projectpath}/ASVs.fasta",
+        counts="{projectpath}/ASV_counts.csv"
+    threads: 4
+    output:
+        map="{projectpath}/7-Binning/binmap.txt",
+        fastacounts="{projectpath}/7-Binning/ASVs.counts.fasta",
+        fastasorted="{projectpath}/7-Binning/ASVs.sorted.fasta",
+        bin="{projectpath}/7-Binning/bintable.txt",
+        fasta="{projectpath}/ASVs.binned.fasta"
+    shell:
+        """
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-binning.sh -a {input.counts} -f {input.fasta} -m {output.map} -c {output.fastacounts} -s {output.fastasorted} -t {output.bin} -b {output.fasta}
+        """
+
+##
+# Aggregate count table
+##
+
+rule binaggregate:
+    input:
+        asv="{projectpath}/ASV_counts.csv",
+        bin="{projectpath}/7-Binning/bintable.txt"
+    threads: 1
+    output:
+        asv="{projectpath}/ASV_counts.binned.csv",
+    params:
+    shell:
+        """
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-binaggregate.R --i {input.asv} --b {input.bin} --o {output.asv}
+        """
+
+##
+# Prune phylogenetic tree
+##
+
+rule binphylogeny:
+    input:
+        asv="{projectpath}/ASV_counts.binned.csv",
+        tree="{projectpath}/ASVs.tre"
+    threads: 1
+    output:
+        tree="{projectpath}/ASVs.binned.tre"
+    params:
+    shell:
+        """
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-binphylogeny.R --i {input.asv} --t {input.tree} --o {output.tree}
+        """

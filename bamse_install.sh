@@ -22,6 +22,7 @@ dependencies:
   - r-devtools
   - r-optparse
   - r-gtools
+  - r-ape
   - perl-statistics-descriptive
   - gawk =5.1.0
   - vsearch

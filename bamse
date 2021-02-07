@@ -39,6 +39,7 @@ parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="t
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
 parser.add_argument('-q', help="Quality filtering stringency. 'loose' (q=20), 'default' (q=25), 'strict' (q=30)", dest="qual", required=False)
 parser.add_argument('-m', help="Minimum fold to consider parent ASVs for chimera detection", dest="fold", required=False)
+parser.add_argument('-u', help="Whether to run LULU clustering", dest="lulu", required=False ,action='store_true')
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
 parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
 parser.add_argument('-w', help="Overwrite contents in the working directory of the project", action='store_true', dest="overwrite", required=False)
@@ -54,6 +55,7 @@ tax=args.tax
 fold=args.fold
 cores=args.threads
 overwrite=args.overwrite
+luluarg=args.lulu
 
 # Retrieve current directory
 file = os.path.dirname(sys.argv[0])
@@ -352,7 +354,7 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("\n{0} | Starting dada2 workflow part A \r\n".format(current_time))
+logfile.write("\n{0} | Running DADA2 error learning \r\n".format(current_time))
 logfile.close()
 
 # Define output names
@@ -370,14 +372,18 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run DADA2 B workflow #      Merge the different runs, and output results
 ########################
 
+taxonfilterpath=path+'/4-Taxonomyfilter/'
+if not os.path.exists(taxonfilterpath):
+    os.makedirs(taxonfilterpath)
+
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("\n{0} | Starting dada2 workflow part B \r\n".format(current_time))
+logfile.write("\n{0} | Running DADA2 ASV generation and taxonomy annotation \r\n".format(current_time))
 logfile.close()
 
 # Define output names
-out_dada2b = path+'/ASV_counts.txt '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
+out_dada2b = path+'/ASV_counts.csv '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/dada2b/Snakefile')
@@ -390,21 +396,28 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run LULU workflow #      Curate ASV list and resulting ASV table
 #####################
 
-# Output log to logfile
-logfile=open(log,"a+")
-current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("\n{0} | Running the polishing workflow \r\n".format(current_time))
-logfile.close()
+if luluarg == True:
 
-# Define output names
-out_polishing = path+'/ASV_counts_lulu.txt '+path+'/ASVs_lulu.fasta'
-curr_dir = os.path.dirname(sys.argv[0])
-bamsepath = os.path.abspath(curr_dir)
-path_snkf = os.path.join(bamsepath,'workflows/polishing/Snakefile')
+    lulupath=path+'/5-LULU/'
+    if not os.path.exists(taxonfilterpath):
+        os.makedirs(taxonfilterpath)
 
-# Run snakemake
-prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_polishing+' --configfile '+param+' --cores '+cores+''
-subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+    # Output log to logfile
+    logfile=open(log,"a+")
+    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+    logfile.write("\n{0} | Running the LULU curation \r\n".format(current_time))
+    logfile.close()
+
+    # Define output names
+    out_lulu = path+'/ASV_counts.lulu.csv '+path+'/ASVs.lulu.fasta'
+    curr_dir = os.path.dirname(sys.argv[0])
+    bamsepath = os.path.abspath(curr_dir)
+    path_snkf = os.path.join(bamsepath,'workflows/lulu/Snakefile')
+
+    # Run snakemake
+    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_lulu+' --configfile '+param+' --cores '+cores+''
+    subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+
 
 #########################################
 # Common contaminant detection workflow #
@@ -423,26 +436,49 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run ASV phylogeny #
 #####################
 
-phylopath=path+'/4-Phylogeny/'
+phylopath=path+'/6-Phylogeny/'
 if not os.path.exists(phylopath):
     os.makedirs(phylopath)
 
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("\n{0} | Running the polishing workflow \r\n".format(current_time))
+logfile.write("\n{0} | Running ASV phylogeny \r\n".format(current_time))
 logfile.close()
 
 # Define output names
-out_polishing = path+'/4-Phylogeny/ASVs.align.fasta '+path+'/ASVs.tre'
+out_phylogeny = path+'/6-Phylogeny/ASVs.align.fasta '+path+'/ASVs.tre'
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/phylogeny/Snakefile')
 
 # Run snakemake
-prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_polishing+' --configfile '+param+' --cores '+cores+''
+prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_phylogeny+' --configfile '+param+' --cores '+cores+''
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
+############################
+# Run OTU binning workflow #
+############################
+
+binpath=path+'/7-Binning/'
+if not os.path.exists(binpath):
+    os.makedirs(binpath)
+
+# Output log to logfile
+logfile=open(log,"a+")
+current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+logfile.write("\n{0} | Running ASV binning \r\n".format(current_time))
+logfile.close()
+
+# Define output names
+out_binning = path+'/7-Binning/binmap.txt '+path+'/7-Binning/ASVs.counts.fasta '+path+'/7-Binning/ASVs.sorted.fasta '+path+'/7-Binning/bintable.txt '+path+'/ASVs.binned.fasta '+path+'/ASV_counts.binned.csv '+path+'/ASVs.binned.tre'
+curr_dir = os.path.dirname(sys.argv[0])
+bamsepath = os.path.abspath(curr_dir)
+path_snkf = os.path.join(bamsepath,'workflows/binning/Snakefile')
+
+# Run snakemake
+prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_binning+' --configfile '+param+' --cores '+cores+''
+subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 
 ###################################
