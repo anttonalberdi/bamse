@@ -2,10 +2,10 @@
 
 #2020/10/25 - BAMSE 1.0
 
-usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-q quality] [-l ampliconlength] [-t threads]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-f read1.fq] [-r read2.fq] [-a read1.filt.fq] [-b read2.filt.fq] [-q quality] [-l ampliconlength] [-t threads] [-o logfile]" 1>&2; exit 1; }
 
-while getopts ":f:r:a:b:q:l:t:" o; do
-    case "${o}" in
+while getopts ":f:r:a:b:q:l:t:o:" x; do
+    case "${x}" in
 
         f)
             f=${OPTARG}
@@ -28,6 +28,9 @@ while getopts ":f:r:a:b:q:l:t:" o; do
         t)
             t=${OPTARG}
             ;;
+        o)
+            o=${OPTARG}
+            ;;
         *)
             usage
             ;;
@@ -36,7 +39,7 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${a}" ] || [ -z "${b}" ] || [ -z "${q}" ] || [ -z "${l}" ] || [ -z "${t}" ]; then
+if [ -z "${f}" ] || [ -z "${r}" ] || [ -z "${a}" ] || [ -z "${b}" ] || [ -z "${q}" ] || [ -z "${l}" ] || [ -z "${t}" ] || [ -z "${o}" ]; then
     usage
 fi
 
@@ -48,6 +51,7 @@ filt2=$b
 qual=$q
 length=$l
 threads=$t
+logfile=$o
 
 #####
 # Define quality threshold
@@ -71,7 +75,7 @@ fi
 # Identify phred score and transform if necessary
 #####
 
-reformat.sh in=${read1} in2=${read2} out=${read1}.tmp1 out2=${read2}.tmp1 qin=auto qout=33
+reformat.sh in=${read1} in2=${read2} out=${read1}.tmp1 out2=${read2}.tmp1 qin=auto qout=33 2> /dev/null
 
 #####
 # Trim low-quality 3' ends
@@ -79,13 +83,13 @@ reformat.sh in=${read1} in2=${read2} out=${read1}.tmp1 out2=${read2}.tmp1 qin=au
 
 readlength=$(readlength.sh in=${read1} in2=${read2} | grep "Max:" | cut -f2)
 minreadlength=$(($length - $readlength))
-AdapterRemoval --file1 ${read1}.tmp1 --file2 ${read2}.tmp1 --threads ${threads} --qualitybase-output 33 --qualitymax 62 --mate-separator '/' --output1 ${read1}.tmp2 --output2 ${read2}.tmp2 --trimqualities --trimwindows 5 --minquality ${phred} --preserve5p --trimns --minlength ${minreadlength}
+AdapterRemoval --file1 ${read1}.tmp1 --file2 ${read2}.tmp1 --threads ${threads} --qualitybase-output 33 --qualitymax 62 --mate-separator '/' --output1 ${read1}.tmp2 --output2 ${read2}.tmp2 --trimqualities --trimwindows 5 --minquality ${phred} --preserve5p --trimns --minlength ${minreadlength} > /dev/null
 
 #####
 # Filter low-quality reads
 #####
 
-bbduk.sh in=${read1}.tmp2 in2=${read2}.tmp2 out=${filt1} out2=${filt2} maq=$maq qin=33 qout=33
+bbduk.sh in=${read1}.tmp2 in2=${read2}.tmp2 out=${filt1} out2=${filt2} maq=$maq qin=33 qout=33 > /dev/null
 
 #####
 # Remove temporary files

@@ -25,7 +25,7 @@ rule phylogeny:
         fasta="{projectpath}/ASVs.binned.fasta"
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-binning.sh -a {input.counts} -f {input.fasta} -m {output.map} -c {output.fastacounts} -s {output.fastasorted} -t {output.bin} -b {output.fasta}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-binning.sh -a {input.counts} -f {input.fasta} -m {output.map} -c {output.fastacounts} -s {output.fastasorted} -t {output.bin} -b {output.fasta} >> {rules.get_paths.input.logpath}
         """
 
 ##
@@ -42,7 +42,7 @@ rule binaggregate:
     params:
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-binaggregate.R --i {input.asv} --b {input.bin} --o {output.asv}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-binaggregate.R --i {input.asv} --b {input.bin} --o {output.asv} >> {rules.get_paths.input.logpath}
         """
 
 ##
@@ -59,5 +59,5 @@ rule binphylogeny:
     params:
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-binphylogeny.R --i {input.asv} --t {input.tree} --o {output.tree}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-binphylogeny.R --i {input.asv} --t {input.tree} --o {output.tree} >> {rules.get_paths.input.logpath}
         """

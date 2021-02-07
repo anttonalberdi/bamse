@@ -61,7 +61,7 @@ paste <(cat ${counts} | sed '1d' | cut -d',' -f1 | sed 's/$/\$/g') <(paste -d'='
 awk 'FNR==NR{A[$1]=$2;next}{for(i in A)gsub(i,A[i])}1' ${binmap} ${asvfasta} > ${asvfastacounts}
 
 #Sort ASVs by counts
-vsearch --sortbysize ${asvfastacounts} --output ${asvfastasorted}
+vsearch --sortbysize ${asvfastacounts} --output ${asvfastasorted} 2> /dev/null
 
 #Perform clustering
 VSEARCH --cluster_size ${asvfastasorted} \
@@ -71,4 +71,4 @@ VSEARCH --cluster_size ${asvfastasorted} \
     --sizein \
     --fasta_width 0 \
     --uc ${bintable} \
-    --centroids - | sed 's/\;.*//g' > ${asvfastabinned}
+    --centroids - 2> /dev/null | sed 's/\;.*//g' > ${asvfastabinned} 

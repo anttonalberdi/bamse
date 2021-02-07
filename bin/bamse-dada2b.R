@@ -1,6 +1,7 @@
 #2020/10/25 - BAMSE 1.0
 
 library(optparse)
+library(Rcpp)
 library(dada2)
 
 #####

@@ -27,9 +27,10 @@ rule trim:
         primer2=expand("{primer2}", primer2=config['primer2'])
     shell:
         """
-        echo "\tTrimming primers of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tTrimming primers from {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tTrimming primers from {wildcards.sample}"
         mkdir -p {wildcards.projectpath}/1-Primertrimmed
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.sh -a {input.read1} -b {input.read2} -c {output.read1} -d {output.read2} -f {params.primer1} -r {params.primer2}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.sh -a {input.read1} -b {input.read2} -c {output.read1} -d {output.read2} -f {params.primer1} -r {params.primer2} >> {rules.get_paths.input.logpath}
         """
 
 ##
@@ -50,6 +51,7 @@ rule filterandtim:
     shell:
         """
         echo "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tFiltering reads of {wildcards.sample}"
         mkdir -p {wildcards.projectpath}/2-Filtered
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-filter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -l {params.ampliconlength} -q {params.qual} -t 1
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-filter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -l {params.ampliconlength} -q {params.qual} -t 1 -o {rules.get_paths.input.logpath} 2>> {rules.get_paths.input.logpath}
         """

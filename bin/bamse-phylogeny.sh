@@ -44,11 +44,11 @@ threads=$c
 # Perform alignment
 #####
 
-clustalo -i ${fasta} -o ${alignment} --threads ${threads}
+clustalo -i ${fasta} -o ${alignment} --threads ${threads} 2> /dev/null
 
 #####
 # Build tree
 #####
 
-iqtree -s ${alignment} -T 4 -m GTR
+iqtree -s ${alignment} -T 4 -m GTR 2> /dev/null
 mv ${projectdir}/6-Phylogeny/ASVs.align.fasta.treefile ${tree}
