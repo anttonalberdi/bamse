@@ -44,7 +44,7 @@ threads=$c
 # Perform alignment
 #####
 
-clustalo -i ${fasta} -o ${alignment} --threads ${threads} 2> /dev/null
+clustalo -i ${fasta} -o ${alignment} 2> /dev/null
 
 #####
 # Build tree
