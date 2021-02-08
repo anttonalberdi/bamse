@@ -23,6 +23,24 @@ conda activate bamse-env
 bamse -i [datafile] -d [project_directory] -f [forward_primer_sequence] -r [reverse_primer_sequence] -a [amplicon_length] -x [taxonomy_database_file] -t [number_of_threads]
 ```
 
+## Update BAMSE
+
+In order to update BAMSE you need to remove the conda environment, download it from Github and install it again.
+
+```shell
+#Get out from the conda environment (if active)
+conda deactivate
+#Remove the conda environment
+conda remove --name bamse-env --all
+#Download the bamse-env conda environment installation file
+curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse_install.sh' > bamse_install.sh
+#Run bamse installation script (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
+sh bamse_install.sh
+#Activate the bamse-env conda environment
+conda activate bamse-env
+
+```
+
 ## Example
 ```shell
 # Check the current directory
