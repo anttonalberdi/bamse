@@ -239,6 +239,7 @@ if  qual != 'loose' and qual != 'default' and qual != 'strict':
     logfile.write("ERROR! The assigned quality parameter " + qual + " is incorrect.\n")
     logfile.close()
     print("\tERROR! The assigned quality parameter " + qual + " is incorrect")
+    sys.exit(0)
 
 ###############################
 # Prepare working directories #
