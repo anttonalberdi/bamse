@@ -226,17 +226,17 @@ else:
 
 if not os.path.isfile(in_f):
     logfile.write("\tERROR! The input data file does not exist. \n")
-    print("\tERROR! The input data file does not exist.")
+    print("ERROR! The input data file does not exist.")
     sys.exit(0)
 
 if not os.path.isfile(tax):
     logfile.write("\tERROR! The taxonomy database path is incorrect. \n")
-    print("\tERROR! The taxonomy database path is incorrect.")
+    print("ERROR! The taxonomy database path is incorrect.")
     sys.exit(0)
 
-if not (qual == 'loose') or (qual == 'default') or (qual == 'strict'):
+if  qual != 'loose' and qual != 'default' and qual != 'strict':
     logfile=open(log,"a+")
-    logfile.write("\tERROR! The assigned quality parameter " + qual + " is incorrect.\n")
+    logfile.write("ERROR! The assigned quality parameter " + qual + " is incorrect.\n")
     logfile.close()
     print("\tERROR! The assigned quality parameter " + qual + " is incorrect")
 
