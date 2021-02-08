@@ -60,7 +60,7 @@ SampleC,Run2,/mydir/sampleC_1.fastq,/mydir/sampleC_2.fastq
 #*It is recommended to use absolute paths (e.g. ''/home/projects/rawdata/sampleA_1.fastq', rather than 'sampleA_1.fastq') to avoid issues.
 
 #Download the taxonomy database and save it in the project directory
-curl 'https://zenodo.org/record/3731176/files/silva_nr_v138_train_set.fa.gz'
+curl 'https://zenodo.org/record/3731176/files/silva_nr_v138_train_set.fa.gz' > silva_nr_v138_train_set.fa.gz
 #The database can be stored elsewhere, but in that case ensure the correct path is inputed to BAMSE.
 
 #Activate the conda environment (this can be done at any step)

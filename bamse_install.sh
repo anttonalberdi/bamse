@@ -37,7 +37,7 @@ echo "############################"
 echo ""
 
 # Install conda environment
-echo "Creating basme-env conda environment"
+echo "Creating bamse-env conda environment"
 conda env create --file bamse-environment.yaml python=3.7.4
 
 #Get conda path and source it
