@@ -24,9 +24,20 @@ logfile <- opt$log
 #####
 # List files
 #####
+#This step has been updated in February 2021 to avoid forward and reverse read to be sorted differently
+#if there are names that interfere with the _1 and _2 suffixes.
 
-filtFs <- list.files(path = dir, pattern = "_1.fastq", full.names=TRUE)
-filtRs <- list.files(path = dir, pattern = "_2.fastq", full.names=TRUE)
+filtFs_list <- gsub("_1.fastq","",list.files(path = dir, pattern = "_1.fastq", full.names=TRUE))
+filtRs_list <- gsub("_2.fastq","",list.files(path = dir, pattern = "_2.fastq", full.names=TRUE))
+
+#Check if both vectors contain the same elements
+if (setequal(filtFs_list, filtRs_list) == TRUE){
+  filtFs <- paste(filtFs_list,"_1.fastq",sep="")
+  filtRs <- paste(filtFs_list,"_2.fastq",sep="")
+}else{
+  write("ERROR! The forward and reverse reads do not match",file=statsfile,append=TRUE)
+  print("ERROR! The forward and reverse reads do not match")
+}
 
 #####
 # Detect and remove empty files
@@ -105,23 +116,6 @@ dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 #####
 merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=5)
 
-#Removed from prebious version
-#merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, justConcatenate = TRUE)#
-
-#If more than one sample
-#if (length(filtFs) > 1){
-#  #Remove Ns
-#  loop <- c(1:length(merged_amplicons))
-#  for (i in loop){
-#    merged_amplicons[[i]]$sequence <- gsub("NNNNNNNNNN","",merged_amplicons[[i]]$sequence)
-#  }
-#}
-
-#If a single sample
-#if (length(filtFs) == 1){
-#  merged_amplicons$sequence <- gsub("NNNNNNNNNN","",merged_amplicons$sequence)
-#}
-
 #####
 # Make sequence table
 #####
@@ -132,6 +126,4 @@ seqtab <- makeSequenceTable(merged_amplicons)
 # Save R object
 #####
 
-#run <- sub('.*\\/', '', dir)
-#outputfile2 <- paste(outputfile,run,sep="")
 saveRDS(seqtab,outputfile)
