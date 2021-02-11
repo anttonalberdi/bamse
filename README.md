@@ -210,7 +210,7 @@ The DADA2 step is split in two parts. In the initial part error correction and A
   - 3-DADA2/ASVs.fasta
 
 #### Taxonomy filter folder
-The "raw" DADA2 output stored in the previous folder will be filtered to only retain ASVs with meaningful taxonomy. These include ASVs with a taxonomic annotation at least at the Phylum level. The taxonomy filter folder contains the sequences (ASVs.filt.fasta) and taxonomic annotations (ASVs.filt.txt) of the removed ASVs. The ASVs with correct annotations are stored in the main project directory.
+The "raw" DADA2 output stored in the previous folder will be filtered to only retain ASVs with meaningful taxonomy. These include ASVs with a taxonomic annotation at least at the Phylum level. The taxonomy filter folder contains the sequences (ASVs.filt.fasta) and taxonomic annotations (ASVs.filt.txt) of the removed ASVs. The ASVs with correct annotations are stored in the main project directory. The original non-filtered files can be found in the previous DADA2 folder.
 
 - 4-Taxonomyfilter
   - 4-Taxonomyfilter/ASVs.filt.fasta
