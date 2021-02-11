@@ -159,13 +159,14 @@ An example data input file can be found in example/inputfile.txt
 ## Snakemake output
 BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequentially create the following folders and files throughout the process. The most relevant files are bolded.
 
+#### Data folder
 - 0-Data
   - 0-Data/RUN1
-- 0-Data/RUN1/SAMPLEA_1.fastq
-- 0-Data/RUN1/SAMPLEA_2.fastq
-- 0-Data/RUN2
-- 0-Data/RUN2/SAMPLEB_1.fastq
-- 0-Data/RUN2/SAMPLEB_2.fastq
+  - 0-Data/RUN1/SAMPLEA_1.fastq
+  - 0-Data/RUN1/SAMPLEA_2.fastq
+  - 0-Data/RUN2
+  - 0-Data/RUN2/SAMPLEB_1.fastq
+  - 0-Data/RUN2/SAMPLEB_2.fastq
 
 - 0-Stats
 - 0-Stats/SAMPLE.txt
