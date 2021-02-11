@@ -164,57 +164,57 @@ This folder contains the raw data copied from the directory specified in the inp
 
 - 0-Data
   - 0-Data/RUN1
-  - 0-Data/RUN1/SAMPLEA_1.fastq
-  - 0-Data/RUN1/SAMPLEA_2.fastq
+    - 0-Data/RUN1/SAMPLEA_1.fastq
+    - 0-Data/RUN1/SAMPLEA_2.fastq
   - 0-Data/RUN2
-  - 0-Data/RUN2/SAMPLEB_1.fastq
-  - 0-Data/RUN2/SAMPLEB_2.fastq
+    - 0-Data/RUN2/SAMPLEB_1.fastq
+    - 0-Data/RUN2/SAMPLEB_2.fastq
 
 #### Data folder
 BAMSE will output here the read count statistics for each sample.
 
 - 0-Stats
-- 0-Stats/SAMPLEA.txt
-- 0-Stats/SAMPLEB.txt
+  - 0-Stats/SAMPLEA.txt
+  - 0-Stats/SAMPLEB.txt
 
 #### Primertrimmed folder
 This folder contains the primer-trimmed files. Files are organised by run as specified in the input file. Note that if the project has many samples this folder can occupy considerable space in the computer.
 
 - 1-Primertrimmed
-- 1-Primertrimmed/RUN1
-- 1-Primertrimmed/RUN1/SAMPLEA_1.fastq
-- 1-Primertrimmed/RUN1/SAMPLEA_2.fastq
-- 1-Primertrimmed/RUN2
-- 1-Primertrimmed/RUN2/SAMPLEB_1.fastq
-- 1-Primertrimmed/RUN2/SAMPLEB_2.fastq
+  - 1-Primertrimmed/RUN1
+    - 1-Primertrimmed/RUN1/SAMPLEA_1.fastq
+    - 1-Primertrimmed/RUN1/SAMPLEA_2.fastq
+  - 1-Primertrimmed/RUN2
+    - 1-Primertrimmed/RUN2/SAMPLEB_1.fastq
+    - 1-Primertrimmed/RUN2/SAMPLEB_2.fastq
 
 #### Filtered folder
 This folder contains the quality-trimmed and length-filtered paired reads. Files are organised by run as specified in the input file. Note that if the project has many samples this folder can occupy considerable space in the computer.
 
 - 2-Filtered
-- 2-Filtered/RUN1
-- 2-Filtered/RUN1/SAMPLEA_1.fastq
-- 2-Filtered/RUN1/SAMPLEA_2.fastq
-- 2-Filtered/RUN2
-- 2-Filtered/RUN2/SAMPLEB_1.fastq
-- 2-Filtered/RUN2/SAMPLEB_2.fastq
+  - 2-Filtered/RUN1
+    - 2-Filtered/RUN1/SAMPLEA_1.fastq
+    - 2-Filtered/RUN1/SAMPLEA_2.fastq
+  - 2-Filtered/RUN2
+    - 2-Filtered/RUN2/SAMPLEB_1.fastq
+    - 2-Filtered/RUN2/SAMPLEB_2.fastq
 
 #### DADA2 folder
 The DADA2 step is split in two parts. In the initial part error correction and ASV generation is carried out, and the resulting data are stored as *.rds (Rdata) files. BAMSE will generate one *.rds file per run, as specified in the input file. In the second step, chimeras will be filtered before annotating the taxonomy. This second step will create three files containing, the ASV sequences (ASVs.fasta), taxonomy annotations (ASV_taxa.txt) and the ASV:sample table (ASV_counts.csv).
 
 - 3-DADA2
-- 3-DADA2/RUN1.rds
-- 3-DADA2/RUN2.rds
-- 3-DADA2/ASV_counts.csv
-- 3-DADA2/ASV_taxa.txt
-- 3-DADA2/ASVs.fasta
+  - 3-DADA2/RUN1.rds
+  - 3-DADA2/RUN2.rds
+  - 3-DADA2/ASV_counts.csv
+  - 3-DADA2/ASV_taxa.txt
+  - 3-DADA2/ASVs.fasta
 
 #### Taxonomy filter folder
 The "raw" DADA2 output stored in the previous folder will be filtered to only retain ASVs with meaningful taxonomy. These include ASVs with a taxonomic annotation at least at the Phylum level. The taxonomy filter folder contains the sequences (ASVs.filt.fasta) and taxonomic annotations (ASVs.filt.txt) of the removed ASVs. The ASVs with correct annotations are stored in the main project directory.
 
 - 4-Taxonomyfilter
-- 4-Taxonomyfilter/ASVs.filt.fasta
-- 4-Taxonomyfilter/ASVs.filt.txt
+  - 4-Taxonomyfilter/ASVs.filt.fasta
+  - 4-Taxonomyfilter/ASVs.filt.txt
 
 - **ASV_counts.csv**
 - **ASV_taxa.txt**
@@ -223,22 +223,24 @@ The "raw" DADA2 output stored in the previous folder will be filtered to only re
 #### ASV phylogeny folder
 The ASV phylogeny folder contains the files required or created by IQ-Tree when generating the Maximum Likelihood phylogeny of the ASVs. The resulting tree is stored in the main project directory.
 
-- 6-Phylogeny/ASVs.align.fasta
-- 6-Phylogeny/ASVs.align.fasta.bionj
-- 6-Phylogeny/ASVs.align.fasta.ckp.gz
-- 6-Phylogeny/ASVs.align.fasta.iqtree
-- 6-Phylogeny/ASVs.align.fasta.log
-- 6-Phylogeny/ASVs.align.fasta.mldist
+- 6-Phylogeny/
+  - 6-Phylogeny/ASVs.align.fasta
+  - 6-Phylogeny/ASVs.align.fasta.bionj
+  - 6-Phylogeny/ASVs.align.fasta.ckp.gz
+  - 6-Phylogeny/ASVs.align.fasta.iqtree
+  - 6-Phylogeny/ASVs.align.fasta.log
+  - 6-Phylogeny/ASVs.align.fasta.mldist
 
 - **ASVs.tre**
 
 #### Binning folder
 ASV sequences are binned into OTUs of 97% identity. The files required for the transformation are stored in the binning folder, while the binned results are stored in the main project directory.
 
-- 7-Binning/ASVs.counts.fasta
-- 7-Binning/ASVs.sorted.fasta
-- 7-Binning/binmap.txt
-- 7-Binning/bintable.txt
+- 7-Binning
+  - 7-Binning/ASVs.counts.fasta
+  - 7-Binning/ASVs.sorted.fasta
+  - 7-Binning/binmap.txt
+  - 7-Binning/bintable.txt
 
 - **ASV_counts.binned.csv**
 - **ASV_taxa.binned.txt**
@@ -249,6 +251,5 @@ If you use BAMSE, please acknowledge the following publications:
 * Callahan, Benjamin J., et al. "DADA2: high-resolution sample inference from Illumina amplicon data." Nature methods 13.7 (2016): 581-583.
 * Nguyen, Lam-Tung, et al. "IQ-TREE: a fast and effective stochastic algorithm for estimating maximum-likelihood phylogenies." Molecular biology and evolution 32.1 (2015): 268-274.
 * Sievers, Fabian, and Desmond G. Higgins. "Clustal omega." Current protocols in bioinformatics 48.1 (2014): 3-13.
-* Schubert, Mikkel, Stinus Lindgreen, and Ludovic Orlando. "AdapterRemoval v2: rapid adapter trimming, identification, and read merging." BMC research notes 9.1 (2016): 1-7.
 * Martin, Marcel. "Cutadapt removes adapter sequences from high-throughput sequencing reads." EMBnet. journal 17.1 (2011): 10-12.
 * Bushnell, B. "BBTools: a suite of fast, multithreaded bioinformatics tools designed for analysis of DNA and RNA sequence data." Joint Genome Institute (2018).
