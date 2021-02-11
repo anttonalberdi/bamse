@@ -1,6 +1,6 @@
 # BAMSE
 
-**B**acterial **AM**plicon **Se**quencing data processing pipeline. BAMSE is a snakemake-based pipeline consisting of multiple concatenated workflows to prepare, generate, curate and analyse ASV-based processing of amplicon sequencing data.
+**B**acterial **AM**plicon **Se**quencing data processing pipeline. BAMSE is a snakemake-based pipeline consisting of multiple concatenated workflows to prepare, generate, curate and analyse ASV-based processing of amplicon sequencing data. BAMSE includes a unique quality-filtering approach that ensures optimal quality filtering of sequences, as well as phylogeny-building and binning/clustering steps.
 
 ## Quickstart (installation and running)
 
@@ -13,14 +13,6 @@ Once miniconda3 is installed, BAMSE and the conda environment containing all the
 curl 'https://raw.githubusercontent.com/anttonalberdi/bamse/main/bamse_install.sh' > bamse_install.sh
 #Run bamse installation script (Note that if this is the first time you create a conda environment, downloading all dependencies will take a while)
 sh bamse_install.sh
-```
-For running the core workflow of bamse, use the following code:
-
-```shell
-#Activate the bamse-env conda environment
-conda activate bamse-env
-#Run bamse
-bamse -i [datafile] -d [project_directory] -f [forward_primer_sequence] -r [reverse_primer_sequence] -a [amplicon_length] -x [taxonomy_database_file] -t [number_of_threads]
 ```
 
 ## Update BAMSE
@@ -41,7 +33,7 @@ conda activate bamse-env
 
 ```
 
-## Example
+## Run BAMSE
 ```shell
 # Check the current directory
 pwd #in this example we will consider the command outputs: /home/projects
@@ -52,7 +44,7 @@ mkdir bamse_example
 # Move to the project directory
 cd bamse_example
 
-# Create the input data file using a text editor and save it in the project directory. It should look something like this:
+# Create the input data file using a text editor and save it in the project directory. The file must contain four columns separated by commas. It should look something like this:
 #Sample,#Run,#Forward_read,#Reverse_read
 SampleA,Run1,/mydir/sampleA_1.fastq,/mydir/sampleA_2.fastq
 SampleB,Run1,/mydir/sampleB_1.fastq,/mydir/sampleB_2.fastq
@@ -66,7 +58,7 @@ curl 'https://zenodo.org/record/3731176/files/silva_nr_v138_train_set.fa.gz' > s
 #Activate the conda environment (this can be done at any step)
 conda activate bamse-env
 
-#Launch the job
+#Launch the job (note that more arguments can be included, as specified below)
 bamse -i /home/projects/bamse_example/inputdata.txt -d /home/projects/bamse_example/ -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT -a 440 -x /home/projects/bamse_example/silva_nr_v138_train_set.fa.gz -t 4
 ```
 
