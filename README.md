@@ -74,10 +74,9 @@ bamse -i /home/projects/bamse_example/inputdata.txt -d /home/projects/bamse_exam
 
 To date (February 2021), the pipeline consists of the following steps:
 
-**Step 1: Primer trimming**. BAMSE uses **Cutadapt** to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
+**Step 1: Primer trimming**. BAMSE uses **Cutadapt** to trim the specified primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
-**Step 2: Read filtering**. BAMSE first uses a custom method by which reads are trimmed from the 3' end until the maximum expected error (cumulative from 5' end) of the read is reached, and then read pairs shorter than the length required to achieve the required read overlap are filtered out.
-The default maximum expected errors is 2, and the minimum overlap 5, but these parameters can be modified.
+**Step 2: Read filtering**. BAMSE first uses a custom script that trims the 3'-end of the reads until the maximum expected error (cumulative from 5' end) is reached. Then, read pairs shorter than the length needed to achieve the required read overlap are filtered out. The default maximum expected errors per read is 2, and the minimum overlap is 5 nucleotides. These parameters can be modified through the flags -e and -o, respectivelly.
 
 **Step 3: Error Learning**. BAMSE uses the **DADA2** error learning algorithm to learn the error patterns in the analysed dataset.
 
@@ -156,6 +155,69 @@ The data input file must be a simple text file with the information correspondin
 | Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
 
 An example data input file can be found in example/inputfile.txt
+
+## Snakemake output
+BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequentially create the following folders and files throughout the process. The most relevant files are bolded.
+
+- 0-Data
+- 0-Data/RUN1
+- 0-Data/RUN1/SAMPLEA_1.fastq
+- 0-Data/RUN1/SAMPLEA_2.fastq
+- 0-Data/RUN2
+- 0-Data/RUN2/SAMPLEB_1.fastq
+- 0-Data/RUN2/SAMPLEB_2.fastq
+
+- 0-Stats
+- 0-Stats/SAMPLE.txt
+
+- 1-Primertrimmed
+- 1-Primertrimmed/RUN1
+- 1-Primertrimmed/RUN1/SAMPLEA_1.fastq
+- 1-Primertrimmed/RUN1/SAMPLEA_2.fastq
+- 1-Primertrimmed/RUN2
+- 1-Primertrimmed/RUN2/SAMPLEB_1.fastq
+- 1-Primertrimmed/RUN2/SAMPLEB_2.fastq
+
+- 2-Filtered
+- 2-Filtered/RUN1
+- 2-Filtered/RUN1/SAMPLEA_1.fastq
+- 2-Filtered/RUN1/SAMPLEA_2.fastq
+- 2-Filtered/RUN2
+- 2-Filtered/RUN2/SAMPLEB_1.fastq
+- 2-Filtered/RUN2/SAMPLEB_2.fastq
+
+- 3-DADA2
+- 3-DADA2/RUN1.rds
+- 3-DADA2/RUN2.rds
+- 3-DADA2/ASV_counts.csv
+- 3-DADA2/ASV_taxa.txt
+- 3-DADA2/ASVs.fasta
+
+- 4-Taxonomyfilter
+- 4-Taxonomyfilter/ASVs.filt.fasta
+- 4-Taxonomyfilter/ASVs.filt.txt
+
+- **ASV_counts.csv**
+- **ASV_taxa.txt**
+- **ASVs.fasta**
+
+- 6-Phylogeny/ASVs.align.fasta
+- 6-Phylogeny/ASVs.align.fasta.bionj
+- 6-Phylogeny/ASVs.align.fasta.ckp.gz
+- 6-Phylogeny/ASVs.align.fasta.iqtree
+- 6-Phylogeny/ASVs.align.fasta.log
+- 6-Phylogeny/ASVs.align.fasta.mldist
+
+- **ASVs.tre**
+
+- 7-Binning/ASVs.counts.fasta
+- 7-Binning/ASVs.sorted.fasta
+- 7-Binning/binmap.txt
+- 7-Binning/bintable.txt
+
+- **ASV_counts.binned.csv**
+- **ASV_taxa.binned.txt**
+- **ASVs.binned.fasta**
 
 ## References
 If you use BAMSE, please acknowledge the following publications:
