@@ -157,9 +157,11 @@ The data input file must be a simple text file with the information correspondin
 An example data input file can be found in example/inputfile.txt
 
 ## Snakemake output
-BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequentially create the following folders and files throughout the process. The most relevant files are bolded.
+BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequentially create the following folders and files throughout the process. The most relevant files are bolded. If any of these files are already generated BAMSE will not run the processes needed to generate them again, and will follow the pipeline from that checkpoint. If you want to re-run a specific step, remove the files, and BAMSE will start from the immediate previous step.
 
 #### Data folder
+This folder contains the raw data copied from the directory specified in the input file. Files are oranised by run as specified in the input file. A simple set-up of two runs and one sample per run is shown in the following:
+
 - 0-Data
   - 0-Data/RUN1
   - 0-Data/RUN1/SAMPLEA_1.fastq
@@ -168,8 +170,15 @@ BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequ
   - 0-Data/RUN2/SAMPLEB_1.fastq
   - 0-Data/RUN2/SAMPLEB_2.fastq
 
+#### Data folder
+BAMSE will output here the read count statistics for each sample.
+
 - 0-Stats
-- 0-Stats/SAMPLE.txt
+- 0-Stats/SAMPLEA.txt
+- 0-Stats/SAMPLEB.txt
+
+#### Primertrimmed folder
+This folder contains the primer-trimmed files. Files are organised by run as specified in the input file. Note that if the project has many samples this folder can occupy considerable space in the computer.
 
 - 1-Primertrimmed
 - 1-Primertrimmed/RUN1
@@ -179,6 +188,9 @@ BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequ
 - 1-Primertrimmed/RUN2/SAMPLEB_1.fastq
 - 1-Primertrimmed/RUN2/SAMPLEB_2.fastq
 
+#### Filtered folder
+This folder contains the quality-trimmed and length-filtered paired reads. Files are organised by run as specified in the input file. Note that if the project has many samples this folder can occupy considerable space in the computer.
+
 - 2-Filtered
 - 2-Filtered/RUN1
 - 2-Filtered/RUN1/SAMPLEA_1.fastq
@@ -187,12 +199,18 @@ BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequ
 - 2-Filtered/RUN2/SAMPLEB_1.fastq
 - 2-Filtered/RUN2/SAMPLEB_2.fastq
 
+#### DADA2 folder
+The DADA2 step is split in two parts. In the initial part error correction and ASV generation is carried out, and the resulting data are stored as *.rds (Rdata) files. BAMSE will generate one *.rds file per run, as specified in the input file. In the second step, chimeras will be filtered before annotating the taxonomy. This second step will create three files containing, the ASV sequences (ASVs.fasta), taxonomy annotations (ASV_taxa.txt) and the ASV:sample table (ASV_counts.csv).
+
 - 3-DADA2
 - 3-DADA2/RUN1.rds
 - 3-DADA2/RUN2.rds
 - 3-DADA2/ASV_counts.csv
 - 3-DADA2/ASV_taxa.txt
 - 3-DADA2/ASVs.fasta
+
+#### Taxonomy filter folder
+The "raw" DADA2 output stored in the previous folder will be filtered to only retain ASVs with meaningful taxonomy. These include ASVs with a taxonomic annotation at least at the Phylum level. The taxonomy filter folder contains the sequences (ASVs.filt.fasta) and taxonomic annotations (ASVs.filt.txt) of the removed ASVs. The ASVs with correct annotations are stored in the main project directory.
 
 - 4-Taxonomyfilter
 - 4-Taxonomyfilter/ASVs.filt.fasta
@@ -202,6 +220,9 @@ BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequ
 - **ASV_taxa.txt**
 - **ASVs.fasta**
 
+#### ASV phylogeny folder
+The ASV phylogeny folder contains the files required or created by IQ-Tree when generating the Maximum Likelihood phylogeny of the ASVs. The resulting tree is stored in the main project directory.
+
 - 6-Phylogeny/ASVs.align.fasta
 - 6-Phylogeny/ASVs.align.fasta.bionj
 - 6-Phylogeny/ASVs.align.fasta.ckp.gz
@@ -210,6 +231,9 @@ BAMSE implements Snakemake for efficient processing of the data. BAMSE will sequ
 - 6-Phylogeny/ASVs.align.fasta.mldist
 
 - **ASVs.tre**
+
+#### Binning folder
+ASV sequences are binned into OTUs of 97% identity. The files required for the transformation are stored in the binning folder, while the binned results are stored in the main project directory.
 
 - 7-Binning/ASVs.counts.fasta
 - 7-Binning/ASVs.sorted.fasta
