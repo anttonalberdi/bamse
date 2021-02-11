@@ -76,7 +76,8 @@ To date (February 2021), the pipeline consists of the following steps:
 
 **Step 1: Primer trimming**. BAMSE uses **Cutadapt** to trim the primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
-**Step 2: Read filtering**. BAMSE first uses **Adapterremoval** to trim 3'-end nucleotides under the selected quality threshold. The minimum sequence length to be considered for downstream analyses is calculated by subtracting the read length to the expected maximum amplicon length (e.g. if amplicon length is 440 nt, and read-length after primer-trimming is 280 nt, then the minimum sequence length is 440-280= 160 nt.). This ensures that if one of the reads exhibits a considerable drop of quality in its 3' end, this might be compensated by the paired sequence. Once low-quality nucleotides are trimmed, BAMSE uses **BBduk** to filter out reads under the specified quality threshold. The minimum quality threshold can be chosen among three levels of stringency: 'loose' (q=20, one error allowed every 100 nucleotides), 'default' (q=25, one error allowed every 500 nucleotides) and 'strict' (q=30, one error allowed every 1000 nucleotides).
+**Step 2: Read filtering**. BAMSE first uses a custom method by which reads are trimmed from the 3' end until the maximum expected error (cumulative from 5' end) of the read is reached, and then read pairs shorter than the length required to achieve the required read overlap are filtered out.
+The default maximum expected errors is 2, and the minimum overlap 5, but these parameters can be modified.
 
 **Step 3: Error Learning**. BAMSE uses the **DADA2** error learning algorithm to learn the error patterns in the analysed dataset.
 
@@ -117,6 +118,10 @@ To date (February 2021), the pipeline consists of the following steps:
 **-t:** Number of threads (e.g. 8).
 
 Optional:
+
+**-e:** Maximum expected error per read (default 2).
+
+**-o:** Minimum overlap for merging reads (default 5).
 
 **-q:** Desired quality filtering mode, either **loose** (q=20, 1 error expected every 100 nucleotides), **default** (q=25, 1 error expected every 500 nucleotides) or **strict** (q=30, 1 error expected every 1000 nucleotides).
 

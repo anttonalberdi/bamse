@@ -56,18 +56,44 @@ logfile=$o
 #####
 # Define quality threshold
 #####
+#Phred and maq values are different, because BBDuk calculates average
+#quality score by converting to probability scale, taking an average,
+#and then converting back to Phred scale. So for example, a 2bp read
+#with quality scores 10 and 20 would yield an average quality of
+#(0.9+0.99)/2=0.945 -> Q12.6 rather than Q15 with a linear average.
+
+#If all nucleotides have the same quality score, then average Phred and
+#Maq are identical, but if there are differneces across positions, Maq
+#value decreases.
+
+#E=sum(10^(-Q/10))
+#E < expected errors
+#Q < phred score of each Site
+#E < the summatory of all nucleotides
 
 #Filter quality
 if [ "$qual" = "loose" ]; then
-  maq=16 #maq=16 is equal to phred=20
-  phred=20
+  #maq=11 approximately filters out reads with average phred=15
+  #10^(-11/10)*250 > For a 250nt read, this equals 20 expected errors.
+  maq=11
+  phred=15
 fi
 if [ "$qual" = "default" ]; then
-  maq=18 #maq=18 is equal to phred=25
-  phred=25
+  #maq=16 approximately filters out reads with average phred=20
+  #10^(-16/10)*250 > For a 250nt read, this equals 6.3 expected errors.
+  maq=16
+  phred=20
 fi
 if [ "$qual" = "strict" ]; then
-  maq=21 #maq=21 is equal to phred=30
+  #maq=18 approximately filters out reads with average phred=25
+  #10^(-18/10)*250 > For a 250nt read, this equals 3.96 expected errors.
+  maq=18
+  phred=25
+fi
+if [ "$qual" = "superstrict" ]; then
+  #maq=21 approximately filters out reads with average phred=30
+  #10^(-21/10)*250 > For a 250nt read, this equals 1.98 expected errors.
+  maq=21
   phred=30
 fi
 

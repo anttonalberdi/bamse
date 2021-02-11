@@ -11,7 +11,8 @@ channels:
   - anaconda
 dependencies:
   - snakemake-minimal >=5.24.1
-  - adapterremoval
+  - setuptools
+  - biopython
   - ruamel.yaml
   - cutadapt =2.10
   - bbmap =38.87

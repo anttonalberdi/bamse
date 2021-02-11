@@ -37,7 +37,8 @@ parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required
 parser.add_argument('-a', help="Expected average amplicon length", dest="ampliconlength", required=True)
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
-parser.add_argument('-q', help="Quality filtering stringency. 'loose' (q=20), 'default' (q=25), 'strict' (q=30)", dest="qual", required=False)
+parser.add_argument('-e', help="Maximum number of expected errors per read", dest="mee", required=False)
+parser.add_argument('-o', help="Minimum overlap between reads for merging", dest="overlap", required=False)
 parser.add_argument('-m', help="Minimum fold to consider parent ASVs for chimera detection", dest="fold", required=False)
 parser.add_argument('-u', help="Whether to run LULU clustering", dest="lulu", required=False ,action='store_true')
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
@@ -85,10 +86,16 @@ else:
     log=args.log
 
 # Define quality filtering value
-if not (args.qual):
-    qual='default'
+if not (args.mee):
+    mee=2
 else:
-    qual=args.qual
+    mee=args.mee
+
+# Define overlap  value
+if not (args.overlap):
+    overlap=5
+else:
+    overlap=args.overlap
 
 # Define quality filtering value
 if not (args.fold):
@@ -102,10 +109,6 @@ if os.path.exists(param):
 
 curr_dir=os.path.dirname(sys.argv[0])
 bamsepath=os.path.abspath(curr_dir)
-
-#Calculate maximum and minimum lengths
-minlength = int(ampliconlength) - 50
-maxlength = int(ampliconlength) + 50
 
 ###################
 # Create log file #
@@ -140,15 +143,15 @@ f.write("projectpath:\n "+str(path)+"\n")
 f.write("parampath:\n "+str(param)+"\n")
 f.write("logpath:\n "+str(log)+"\n")
 f.write("taxonomy:\n "+str(tax)+"\n")
-f.write("fold:\n "+str(fold)+"\n")
 f.write("\n#Primers\n")
 f.write("primer1:\n "+str(primF)+"\n")
 f.write("primer2:\n "+str(primR)+"\n")
 f.write("\n#Trimming and filtering\n")
 f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
-f.write("minlength:\n "+str(minlength)+"\n")
-f.write("maxlength:\n "+str(maxlength)+"\n")
-f.write("qual:\n "+str(qual)+"\n")
+f.write("mee:\n "+str(mee)+"\n")
+f.write("overlap:\n "+str(overlap)+"\n")
+f.write("\n#Chimera filtering\n")
+f.write("fold:\n "+str(fold)+"\n")
 f.close()
 
 #Append information to the log file
@@ -166,9 +169,8 @@ logfile.write("\tprimer1: "+str(primF)+"\n")
 logfile.write("\tprimer2: "+str(primR)+"\n")
 logfile.write("#Parameters\n")
 logfile.write("\tampliconlength: "+str(ampliconlength)+"\n")
-logfile.write("\tminlength: "+str(minlength)+"\n")
-logfile.write("\tmaxlength: "+str(maxlength)+"\n")
-logfile.write("\t\qual: "+str(qual)+"\n")
+logfile.write("\tmee: "+str(mee)+"\n")
+logfile.write("\toverlap: "+str(overlap)+"\n")
 logfile.write("\tfold: "+str(fold)+"\n")
 logfile.close()
 
@@ -185,7 +187,8 @@ print("\tForward primer: "+str(primF))
 print("\tReverse primer: "+str(primR)+"\n")
 print("PARAMETERS")
 print("\tAmplicon length: "+str(ampliconlength))
-print("\tQuality filtering stringency: "+str(qual))
+print("\tMaximum Expected Error: "+str(mee))
+print("\tOverlap: "+str(overlap))
 print("\tfold: "+str(fold)+"\n")
 print("##########################################")
 
@@ -232,13 +235,6 @@ if not os.path.isfile(in_f):
 if not os.path.isfile(tax):
     logfile.write("\tERROR! The taxonomy database path is incorrect. \n")
     print("ERROR! The taxonomy database path is incorrect.")
-    sys.exit(0)
-
-if  qual != 'loose' and qual != 'default' and qual != 'strict':
-    logfile=open(log,"a+")
-    logfile.write("ERROR! The assigned quality parameter " + qual + " is incorrect.\n")
-    logfile.close()
-    print("\tERROR! The assigned quality parameter " + qual + " is incorrect")
     sys.exit(0)
 
 ###############################

@@ -46,12 +46,13 @@ rule filterandtim:
         read1="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
         read2="{projectpath}/2-Filtered/{run}/{sample}_2.fastq"
     params:
-        qual=expand("{qual}", qual=config['qual']),
-        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength'])
+        mee=expand("{mee}", mee=config['mee']),
+        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
+        overlap=expand("{overlap}", overlap=config['overlap'])
     shell:
         """
         echo "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
         echo "\tFiltering reads of {wildcards.sample}"
         mkdir -p {wildcards.projectpath}/2-Filtered
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-filter.sh -f {input.read1} -r {input.read2} -a {output.read1} -b {output.read2} -l {params.ampliconlength} -q {params.qual} -t 1 -o {rules.get_paths.input.logpath} 2>> {rules.get_paths.input.logpath}
+        python {rules.get_paths.input.bamsepath}/bin/bamse-filter.py -f {input.read1} -r {input.read2} -1 {output.read1} -2 {output.read2} -l {params.ampliconlength} -e {params.mee} -o {params.overlap} 2>> {rules.get_paths.input.logpath}
         """
