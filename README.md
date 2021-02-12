@@ -52,7 +52,7 @@ mkdir bamse_example
 # Move to the project directory
 cd bamse_example
 
-# Create the input data file using a text editor and save it in the project directory. The file must contain four columns separated by commas. It should look something like this:
+# Create the input data file using a text editor and save it in the project directory. The file must contain four columns separated by commas. Note the line ends need to be in LF (UNIX) and not in CRLF (Windows) format. It should look something like this:
 #Sample,#Run,#Forward_read,#Reverse_read
 SampleA,Run1,/mydir/sampleA_1.fastq,/mydir/sampleA_2.fastq
 SampleB,Run1,/mydir/sampleB_1.fastq,/mydir/sampleB_2.fastq

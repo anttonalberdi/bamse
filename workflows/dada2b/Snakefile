@@ -42,7 +42,9 @@ rule taxafilt:
         asvs="{projectpath}/ASVs.fasta",
         taxa="{projectpath}/ASV_taxa.txt",
         counts="{projectpath}/ASV_counts.csv"
+    params:
+        taxfilter=expand("{taxfilter}", taxfilter=config['taxfilter'])
     shell:
         """
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-taxonomyfilter.sh -a {input.asvs} -c {input.counts} -t {input.taxa} -f {output.filtlist} -s {output.filtasv} -u {output.asvs} -v {output.counts} -w {output.taxa}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-taxonomyfilter.sh -a {input.asvs} -c {input.counts} -t {input.taxa} -f {output.filtlist} -s {output.filtasv} -u {output.asvs} -v {output.counts} -w {output.taxa} -x {params.taxfilter}
         """

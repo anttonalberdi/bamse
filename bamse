@@ -39,6 +39,7 @@ parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="t
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
 parser.add_argument('-e', help="Maximum number of expected errors per read", dest="mee", required=False)
 parser.add_argument('-o', help="Minimum overlap between reads for merging", dest="overlap", required=False)
+parser.add_argument('-y', help="Taxonomy filtering threshold", dest="taxfilter", required=False)
 parser.add_argument('-m', help="Minimum fold to consider parent ASVs for chimera detection", dest="fold", required=False)
 parser.add_argument('-u', help="Whether to run LULU clustering", dest="lulu", required=False ,action='store_true')
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
@@ -84,6 +85,12 @@ if not (args.log):
     log=os.path.join(path,"bamse.log")
 else:
     log=args.log
+
+# Define quality filtering value
+if not (args.taxfilter):
+    taxfilter='kingdom'
+else:
+    taxfilter=args.taxfilter
 
 # Define quality filtering value
 if not (args.mee):
@@ -152,6 +159,8 @@ f.write("mee:\n "+str(mee)+"\n")
 f.write("overlap:\n "+str(overlap)+"\n")
 f.write("\n#Chimera filtering\n")
 f.write("fold:\n "+str(fold)+"\n")
+f.write("\n#Taxonomy filtering\n")
+f.write("taxfilter:\n "+str(taxfilter)+"\n")
 f.close()
 
 #Append information to the log file
@@ -172,6 +181,7 @@ logfile.write("\tampliconlength: "+str(ampliconlength)+"\n")
 logfile.write("\tmee: "+str(mee)+"\n")
 logfile.write("\toverlap: "+str(overlap)+"\n")
 logfile.write("\tfold: "+str(fold)+"\n")
+logfile.write("taxfilter:\n "+str(taxfilter)+"\n")
 logfile.close()
 
 #Print information on screen
@@ -189,7 +199,8 @@ print("PARAMETERS")
 print("\tAmplicon length: "+str(ampliconlength))
 print("\tMaximum Expected Error: "+str(mee))
 print("\tOverlap: "+str(overlap))
-print("\tfold: "+str(fold)+"\n")
+print("\tfold: "+str(fold))
+print("\ttaxfilter: "+str(taxfilter)+"\n")
 print("##########################################")
 
 ######################
@@ -235,6 +246,15 @@ if not os.path.isfile(in_f):
 if not os.path.isfile(tax):
     logfile.write("\tERROR! The taxonomy database path is incorrect. \n")
     print("ERROR! The taxonomy database path is incorrect.")
+    sys.exit(0)
+
+if not (taxfilter == 'kingdom') and (taxfilter == 'phylum') and (taxfilter == 'class') and (taxfilter == 'order') and (taxfilter == 'family') and (taxfilter == 'genus'):
+    logfile=open(log,"a+")
+    logfile.write("\tERROR! The assigned taxonomy filter " + taxfilter + " is incorrect.\n")
+    logfile.write("\tThe allowed values include: 'division', 'phylum', 'class', 'order', 'family' and 'genus'.\n")
+    logfile.close()
+    print("\tERROR! The assigned taxonomy parameter " + taxfilter + " is incorrect")
+    print("\tThe allowed values include: 'division', 'phylum', 'class', 'order', 'family' and 'genus.")
     sys.exit(0)
 
 ###############################
