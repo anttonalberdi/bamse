@@ -76,6 +76,8 @@ bamse -i /home/projects/bamse_example/inputdata.txt -d /home/projects/bamse_exam
 
 To date (February 2021), the pipeline consists of the following steps:
 
+![Steps figure](https://raw.githubusercontent.com/anttonalberdi/bamse/main/figures/figure1.png)
+
 **Step 1: Primer trimming**. BAMSE uses **Cutadapt** to trim the specified primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
 
 **Step 2: Read filtering**. BAMSE first uses a custom script that trims the 3'-end of the reads until the maximum expected error (cumulative from 5' end) is reached. Then, read pairs shorter than the length needed to achieve the required read overlap are filtered out. The default maximum expected errors per read is 2, and the minimum overlap is 5 nucleotides. These parameters can be modified through the flags -e and -o, respectivelly.
