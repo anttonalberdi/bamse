@@ -237,6 +237,7 @@ ASV sequences are binned into OTUs of 97% identity. The files required for the t
 - **ASV_counts.binned.csv**
 - **ASV_taxa.binned.txt**
 - **ASVs.binned.fasta**
+- **ASVs.binned.tre**
 
 ## References
 If you use BAMSE, please acknowledge the following publications:
