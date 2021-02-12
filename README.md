@@ -42,7 +42,7 @@ Once the software is installed, in order to run BAMSE you need the following:
 * A taxonomy database.
 * The length of the targeted marker (expected approximate length of ASVs)
 
-![Launching script figure](https://octodex.github.com/images/yaktocat.png)
+![Launching script figure](https://raw.githubusercontent.com/anttonalberdi/bamse/main/figures/figure2.png)
 
 ```shell
 # Check the current directory
