@@ -2,7 +2,7 @@
 
 **B**acterial **AM**plicon **Se**quencing data processing pipeline. BAMSE is a snakemake-based pipeline consisting of multiple concatenated workflows to prepare, generate, curate and analyse ASV-based processing of amplicon sequencing data. BAMSE includes a unique quality-filtering approach that ensures optimal quality filtering of sequences, as well as phylogeny-building and binning/clustering steps.
 
-## Quickstart (installation and running)
+## Install BAMSE
 
 BAMSE works on Python 3. In order to use BAMSE it is necessary to previously have installed miniconda3: https://docs.conda.io/en/latest/miniconda.html
 
