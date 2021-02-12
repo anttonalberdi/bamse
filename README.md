@@ -34,6 +34,14 @@ conda activate bamse-env
 ```
 
 ## Run BAMSE
+
+Once the software is installed, in order to run BAMSE you need the following:
+
+* A data input textfile specifying the name of the samples, their run group and the location of the fastq files.
+* Forward and reverse primer sequences.
+* A taxonomy database.
+* The length of the targeted marker (expected approximate length of ASVs)
+
 ```shell
 # Check the current directory
 pwd #in this example we will consider the command outputs: /home/projects
