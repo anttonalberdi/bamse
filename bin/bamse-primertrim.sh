@@ -48,8 +48,8 @@ primer2=$r
 # Trim primers
 #####
 
-cutadapt --pair-adapters -e 0.2 -g ^${primer1} -G ^${primer2} --discard-untrimmed -o ${filt1}_a -p ${filt2}_a ${read1} ${read2}
-cutadapt --pair-adapters -e 0.2 -g ^${primer2} -G ^${primer1} --discard-untrimmed -o ${filt1}_b -p ${filt2}_b ${read1} ${read2}
+cutadapt --pair-adapters -e 0.2 -g ^${primer1} -G ^${primer2} --discard-untrimmed -o ${filt1}_a -p ${filt2}_a ${read1} ${read2} 2>> /dev/null
+cutadapt --pair-adapters -e 0.2 -g ^${primer2} -G ^${primer1} --discard-untrimmed -o ${filt1}_b -p ${filt2}_b ${read1} ${read2} 2>> /dev/null
 
 #####
 # Output initial read number per sample to stats file
@@ -72,12 +72,12 @@ dir3to5=$(cat ${filt1}_b | wc -l)
 
 if [ "$dir3to5" -gt "$initial10" ]; then
 #It is ligation-based library; so dir3to5 reads need to be flipped (change read number in reversed)
-  cat ${filt1}_a ${filt2}_b | sed 's/2:N:0:/1:N:0:/g'> ${filt1}
+  cat ${filt1}_a ${filt2}_b | sed 's/2:N:0:/1:N:0:/g' > ${filt1}
   cat ${filt2}_a ${filt1}_b | sed 's/1:N:0:/2:N:0:/g' > ${filt2}
 else
 #It is PCR-based library, so all reads are at the same direction
-  mv ${filt1}_a ${filt1}
-  mv ${filt2}_a ${filt2}
+  cat ${filt1}_a > ${filt1}
+  cat ${filt2}_a > ${filt2}
 fi
 
 #Remove temporary files

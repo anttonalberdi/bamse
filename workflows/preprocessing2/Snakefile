@@ -1,0 +1,34 @@
+import time
+
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
+
+##
+# Filter and trim low-quality ends
+##
+
+rule filterandtim:
+    input:
+        read1="{projectpath}/0-Data/{run}/{sample}_1.fastq",
+        read2="{projectpath}/0-Data/{run}/{sample}_2.fastq"
+    threads: 1
+    output:
+        read1="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
+        read2="{projectpath}/2-Filtered/{run}/{sample}_2.fastq"
+    params:
+        mee=expand("{mee}", mee=config['mee']),
+        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
+        overlap=expand("{overlap}", overlap=config['overlap'])
+    shell:
+        """
+        echo "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tFiltering reads of {wildcards.sample}"
+        python {rules.get_paths.input.bamsepath}/bin/bamse-filter.py -f {input.read1} -r {input.read2} -1 {output.read1} -2 {output.read2} -l {params.ampliconlength} -e {params.mee} -o {params.overlap} 2>> {rules.get_paths.input.logpath}
+        """

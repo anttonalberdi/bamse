@@ -32,8 +32,8 @@ from shutil import which
 parser = argparse.ArgumentParser(description='Runs BAMSE pipeline.')
 parser.add_argument('-i', help="Data information file", dest="input", required=True)
 parser.add_argument('-d', help="Working directory of the project", dest="workdir", required=True)
-parser.add_argument('-f', help="Forward primer sequence", dest="primF", required=True)
-parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required=True)
+parser.add_argument('-f', help="Forward primer sequence", dest="primF", required=False)
+parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required=False)
 parser.add_argument('-a', help="Expected average amplicon length", dest="ampliconlength", required=True)
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
 parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
@@ -50,8 +50,6 @@ args = parser.parse_args()
 # Translate arguments
 in_f=args.input
 path=args.workdir
-primF=args.primF
-primR=args.primR
 ampliconlength=args.ampliconlength
 tax=args.tax
 fold=args.fold
@@ -73,6 +71,17 @@ if not os.path.exists(path):
 
 #Remove last / to the working directory (if necessary)
 path = re.sub('/$','',path)
+
+#Define primers
+if not (args.primF):
+    primF='noprimer'
+else:
+    primF=args.primF
+
+if not (args.primR):
+    primR='noprimer'
+else:
+    primR=args.primR
 
 # Define param file
 if not (args.param):
@@ -239,13 +248,13 @@ else:
 #########################################
 
 if not os.path.isfile(in_f):
-    logfile.write("\tERROR! The input data file does not exist. \n")
     print("ERROR! The input data file does not exist.")
+    logfile.write("\tERROR! The input data file does not exist. \n")
     sys.exit(0)
 
 if not os.path.isfile(tax):
-    logfile.write("\tERROR! The taxonomy database path is incorrect. \n")
     print("ERROR! The taxonomy database path is incorrect.")
+    logfile.write("\tERROR! The taxonomy database path is incorrect. \n")
     sys.exit(0)
 
 if not (taxfilter == 'kingdom') and (taxfilter == 'phylum') and (taxfilter == 'class') and (taxfilter == 'order') and (taxfilter == 'family') and (taxfilter == 'genus'):
@@ -282,9 +291,9 @@ if not os.path.exists(statsdir):
 # Output log to logfile
 logfile=open(log,"a+")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-logfile.write("\n{0} | Transferring data to the working directory \r\n".format(current_time))
+logfile.write("\n{0} | TRANSFERRING DATA TO THE WORKING DIRECTORY \r\n".format(current_time))
 logfile.close()
-print("\n{0} | Transferring data to the working directory".format(current_time))
+print("\n{0} | TRANSFERRING DATA TO THE WORKING DIRECTORY".format(current_time))
 
 
 ####
@@ -295,7 +304,9 @@ print("\n{0} | Transferring data to the working directory".format(current_time))
 inputfile = open(in_f, "r")
 
 #Declare empty output file list
-outlist = []
+primlist = []
+csvlist = []
+filtlist = []
 runlist = []
 
 ## Read input data row by row
@@ -325,6 +336,7 @@ for line in inputfile:
             run=linelist[1]
             in_for=linelist[2]
             in_rev=linelist[3]
+            print("\tTransferring sample: "+name)
 
             #Create run folder if it does not exist
             runpath=path+'/0-Data/'+run
@@ -350,7 +362,7 @@ for line in inputfile:
                         read1Cmd = 'gunzip -c '+in_for+' > '+runpath+'/'+name+'_1.fastq'
                         subprocess.Popen(read1Cmd, shell=True).wait()
                     else:
-                        read1Cmd = 'cp '+in_for+' '+runpath+'/'+name+'_1.fastq'
+                        read1Cmd = 'cat '+in_for+' > '+runpath+'/'+name+'_1.fastq'
                         subprocess.Popen(read1Cmd, shell=True).wait()
                 else:
                     logfile=open(log,"a+")
@@ -370,60 +382,173 @@ for line in inputfile:
                         read2Cmd = 'gunzip -c '+in_rev+' > '+runpath+'/'+name+'_2.fastq'
                         subprocess.Popen(read2Cmd, shell=True).wait()
                     else:
-                        read2Cmd = 'cp '+in_rev+' '+runpath+'/'+name+'_2.fastq'
+                        read2Cmd = 'cat '+in_rev+' > '+runpath+'/'+name+'_2.fastq'
                         subprocess.Popen(read2Cmd, shell=True).wait()
                 else:
                     logfile=open(log,"a+")
                     logfile.write("\tThe file " + in_rev + " does not exist.\n")
                     logfile.close()
 
-            #Create list of output files for preprocessing workflow
-            out_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
-            out_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
-            outlist.append(out_for)
-            outlist.append(out_rev)
+            #Create lists of output files
+            prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
+            prim_rev = path+'/1-Primertrimmed/'+run+'/'+name+'_2.fastq'
+            out_csv = path+'/2-Filtered/'+run+'/'+name+'.csv'
+            filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
+            filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
+
+            primlist.append(prim_for)
+            primlist.append(prim_rev)
+            csvlist.append(out_csv)
+            filtlist.append(filt_for)
+            filtlist.append(filt_rev)
 
 #####################################################
 ################## Begin workflows ##################
 #####################################################
 
 ##############################
-# Run preprocessing workflow #     Prepare data for DADA2 pipeline (trimming, quality filtering, etc.)
+# Primer clipping
 ##############################
 
-if all(list(map(os.path.isfile,outlist))):
+if not all(list(map(os.path.isfile,primlist))):
+       if (primF == 'noprimer') & (primR == 'noprimer'):
+           print("\n{0} | SKIPPING PRIMER CLIPPING.".format(current_time))
+           print("     As no primer sequence has been declared, BAMSE considers primers have been")
+           print("already clipped from the reads. If you want to clip primers from the read")
+           print("declare primer sequences in flags -f and -r :")
+           print("      e.g. -f CTANGGGNNGCANCAG -r GACTACNNGGGTATCTAAT.")
+           # Output log to logfile
+           logfile=open(log,"a+")
+           current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+           logfile.write("\n{0} | Output files of the preprocessing workflow exist. \r\n".format(current_time))
+           logfile.close()
+
+       else:
+           # Define snakefile
+           path_snkf = os.path.join(bamsepath,'workflows/primertrimming/Snakefile')
+           # Transform output file list into space-separated string (only for development)
+           out_primertrim = " ".join(primlist)
+           # Run snakemake
+           prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_primertrim+' --configfile '+param+' --cores '+cores+' -q'
+           subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+else:
        # Output log to logfile
        logfile=open(log,"a+")
        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
        logfile.write("\n{0} | Output files of the preprocessing workflow exist. \r\n".format(current_time))
        logfile.close()
-       print("\n{0} | SKIPPING PREPROCESSING WORKFLOW.".format(current_time))
+       print("\n{0} | SKIPPING PRIMER CLIPPING.".format(current_time))
        print("     The output files of the preprocessing workflow exist in the project")
-       print("directoy. If you want to re-run this step, remove the files in the directories")
-       print("'1-Primertrimmed' and '2-Filtered'.\n")
+       print("directory. If you want to re-run this step, remove the files in the directories")
+       print("'1-Primertrimmed' and '2-Filtered'.")
+
+##############################
+# Calculate optimal trimming scores, filter and trim
+##############################
+
+if not all(list(map(os.path.isfile,filtlist))):
+    if (primF == 'noprimer') & (primR == 'noprimer'):
+        #Calculate optimal trimming scores from primer-clipped files
+        print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES.".format(current_time))
+        print("     As no primer sequence has been declared, BAMSE will use the raw")
+        print("reads for calculating the optimal trimming scores with a minimum overlap")
+        print("value of "+str(overlap)+" and maximum expected error value of MEE="+str(mee)+".\n")
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES. \r\n".format(current_time))
+        logfile.close()
+
+        prepropath=path+'/2-Filtered/'
+        if not os.path.exists(prepropath):
+            os.makedirs(prepropath)
+
+        # Define snakefile
+        path_snkf = os.path.join(bamsepath,'workflows/findscores2/Snakefile')
+        #Transform output file list into space-separated string (only for development)
+        out_preprocessing = " ".join(csvlist)
+
+        # Run find scores snakemake
+        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+' -q'
+        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+
+        #### Find best score ####
+        bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
+        subprocess.Popen(bastscore_Cmd, shell=True).wait()
+
+        # Print best score
+        trimparameters = []
+        trimfile=path+'/2-Filtered/trim.txt'
+        with open(trimfile, 'r') as arch:
+            for line in arch:
+                trimparameters.append(eval(line.rstrip()))
+        forwardtrim=trimparameters[0]
+        reversetrim=trimparameters[1]
+
+        print("\nBased on the analysis to find the optimal trimming parameters:")
+        print("\tForward reads will be trimmed at positon "+str(forwardtrim)+".")
+        print("\tReverse reads will be trimmed at positon "+str(reversetrim)+".")
+
+        # Filter and trim
+        filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/0-Data/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+mee+''
+        subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
+
+    else:
+        #Calculate optimal trimming scores from original files
+        print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES.".format(current_time))
+        print("     BAMSE will use primer-clipped reads for calculating the optimal")
+        print("trimming scores with a minimum overlap value of "+str(overlap)+" and")
+        print("maximum expected error of MEE="+str(mee)+".\n")
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES. \r\n".format(current_time))
+        logfile.close()
+
+        prepropath=path+'/2-Filtered/'
+        if not os.path.exists(prepropath):
+            os.makedirs(prepropath)
+
+        path_snkf = os.path.join(bamsepath,'workflows/findscores1/Snakefile')
+        #Transform output file list into space-separated string (only for development)
+        out_preprocessing = " ".join(csvlist)
+
+        # Run snakemake
+        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+' -q'
+        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+
+        #### Find best score ####
+        bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
+        subprocess.Popen(bastscore_Cmd, shell=True).wait()
+
+        # Print best score
+        trimparameters = []
+        trimfile=path+'/2-Filtered/trim.txt'
+        with open(trimfile, 'r') as arch:
+            for line in arch:
+                trimparameters.append(eval(line.rstrip()))
+        forwardtrim=trimparameters[0]
+        reversetrim=trimparameters[1]
+
+        print("Based on the analysis to find the optimal trimmin parameters:")
+        print("\tForward reads will be trimmed at positon "+str(forwardtrim)+".")
+        print("\tReverse reads will be trimmed at positon "+str(reversetrim)+".")
+
+        # Filter and trim
+        print("     Performing read filtering and trimming")
+        filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/1-Primertrimmed/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+str(mee)+''
+        subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
+
 else:
        # Output log to logfile
+       print("\n{0} | SKIPPING CALCULATION OF OPTIMAL TRIMMING SCORES.".format(current_time))
+       print("     The output files of the read trimming and filtering step exist in the project")
+       print("directory. If you want to re-run this step, remove the files in the directory")
+       print("'2-Filtered'.\n")
        logfile=open(log,"a+")
        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-       logfile.write("\n{0} | Starting preprocessing workflow \r\n".format(current_time))
+       logfile.write("\n{0} | Output files of the trimming and filtering stepexist. \r\n".format(current_time))
        logfile.close()
-       print("\n{0} | STARTING PREPROCESSING WORKFLOW.".format(current_time))
-       print("     BAMSE will remove the primer sequences from both 5' ends of the forward")
-       print("and reverse read. It will automatically detect if all sequences are")
-       print("directional (output of PCR-based libraries) or not (output of ligation-based")
-       print("libraries), and it will flip the reversed reads in the case of the latter.")
-       print("Primer-trimmed files will be stored in the folder '1-Primertrimmed'.\n")
-       print("     BAMSE will then trim low-quality 3' ends of the reads and will filter out")
-       print("reads under the quality threshold specified. These preprocessed files will")
-       print("be stored in the folder '2-Filtered'.\n")
-
-       path_snkf = os.path.join(bamsepath,'workflows/preprocessing/Snakefile')
-       #Transform output file list into space-separated string (only for development)
-       out_preprocessing = " ".join(outlist)
-
-       # Run snakemake
-       prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+' -q'
-       subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ########################
 # Run DADA2 A workflow #     Error learning and dada2 of each run individually
@@ -635,8 +760,6 @@ else:
 ###################################
 # Merge stats files into one file #
 ###################################
-
-finalist=outlist+runlist2+out_dada2b_list+out_phylogeny_list+out_binning_list
 
 if all(list(map(os.path.isfile,out_binning_list))):
     # Output log to logfile

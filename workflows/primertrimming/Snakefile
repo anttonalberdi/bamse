@@ -32,27 +32,3 @@ rule trim:
         mkdir -p {wildcards.projectpath}/1-Primertrimmed
         sh {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.sh -a {input.read1} -b {input.read2} -c {output.read1} -d {output.read2} -f {params.primer1} -r {params.primer2} >> {rules.get_paths.input.logpath}
         """
-
-##
-# Filter and trim low-quality ends
-##
-
-rule filterandtim:
-    input:
-        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
-        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
-    threads: 1
-    output:
-        read1="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",
-        read2="{projectpath}/2-Filtered/{run}/{sample}_2.fastq"
-    params:
-        mee=expand("{mee}", mee=config['mee']),
-        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
-        overlap=expand("{overlap}", overlap=config['overlap'])
-    shell:
-        """
-        echo "\tFiltering reads of {wildcards.sample}" >> {rules.get_paths.input.logpath}
-        echo "\tFiltering reads of {wildcards.sample}"
-        mkdir -p {wildcards.projectpath}/2-Filtered/{run}
-        python {rules.get_paths.input.bamsepath}/bin/bamse-filter.py -f {input.read1} -r {input.read2} -1 {output.read1} -2 {output.read2} -l {params.ampliconlength} -e {params.mee} -o {params.overlap} 2>> {rules.get_paths.input.logpath}
-        """

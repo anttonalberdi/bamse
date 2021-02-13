@@ -12,6 +12,7 @@ library(dada2)
 option_list = list(
  make_option(c("-i", "--input"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-o", "--output"),type = "character",default = NULL, help = "Output R object",metavar = "character"),
+ make_option(c("-v", "--overlap"),type = "character",default = NULL, help = "Minimum overlap value",metavar = "character"),
  make_option(c("-l", "--log"),type = "character",default = NULL, help = "Log file",metavar = "character")
 );
 
@@ -19,6 +20,7 @@ opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 dir<-opt$input
 outputfile<-opt$output
+overlap<-opt$overlap
 logfile <- opt$log
 
 #####
@@ -108,13 +110,14 @@ errRs <- learnErrors(filtRs, multithread=TRUE)
 line="  Generating ASVs"
 write(line,file=logfile,append=TRUE)
 
-dadaFs <- dada(drpFs, err=errFs, multithread=TRUE)
-dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
+dadaFs <- dada(drpFs, err=errFs, multithread=TRUE,BAND_SIZE=30)
+dadaRs <- dada(drpRs, err=errRs, multithread=TRUE,BAND_SIZE=30)
 
 #####
 # Merge amplicons
 #####
-merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=5)
+
+merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=overlap, maxMismatch=round(as.numeric(overlap)/10))
 
 #####
 # Make sequence table

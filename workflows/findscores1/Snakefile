@@ -1,0 +1,52 @@
+import time
+
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
+
+##
+# Filter and trim low-quality ends
+##
+
+rule findscores:
+    input:
+        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
+        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
+    threads: 1
+    output:
+        csv="{projectpath}/2-Filtered/{run}/{sample}.csv"
+    params:
+        mee=expand("{mee}", mee=config['mee']),
+        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
+        overlap=expand("{overlap}", overlap=config['overlap'])
+    shell:
+        """
+        echo "\tComputing trimming scores of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tComputing trimming scores of {wildcards.sample}"
+        python {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.py -f {input.read1} -r {input.read2} -o {output.csv} -l {params.ampliconlength} -e {params.mee} -v {params.overlap} 2>> {rules.get_paths.input.logpath}
+        """
+
+rule bestscore:
+    input:
+        csvs="{projectpath}/2-Filtered/{run}/{sample}.csv"
+    threads: 1
+    output:
+        tmp="{projectpath}/2-Filtered/tmp"
+    params:
+        dir="{projectpath}/2-Filtered/",
+        mee=expand("{mee}", mee=config['mee']),
+        ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),
+        overlap=expand("{overlap}", overlap=config['overlap'])
+    shell:
+        """
+        echo "\tFinding trimming lengths with best score" >> {rules.get_paths.input.logpath}
+        echo "\tFinding trimming lengths with best score"
+        touch {output.tmp}
+        python {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.R -i {params.dir} -l {rules.get_paths.input.logpath} -p {rules.get_paths.input.parampath} 2>> {rules.get_paths.input.logpath}
+        """

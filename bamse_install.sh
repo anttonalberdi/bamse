@@ -20,6 +20,7 @@ dependencies:
   - R =4.0.0
   - bioconductor-dada2
   - r-dplyr
+  - r-stringr
   - r-devtools
   - r-optparse
   - r-gtools
