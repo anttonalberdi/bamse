@@ -25,11 +25,12 @@ reversetrim<-opt$reverse
 maxee<-opt$maxee
 
 #inputdir="/Users/anttonalberdi/MiSeq_SOP_bamse/0-Data/"
+#trimfile="/Users/anttonalberdi/bamse_evie/2-Filtered/trim.txt"
 
 triminfo <- read.table(trimfile,header=FALSE)
 
-forwardtrim=triminfo[1,]
-reversetrim=triminfo[2,]
+forwardtrim=as.numeric(triminfo[1,])
+reversetrim=as.numeric(triminfo[2,])
 
 read1_list <- list.files(path = inputdir, pattern = "_1.fastq", full.names=TRUE, recursive=TRUE)
 read2_list <- list.files(path = inputdir, pattern = "_2.fastq", full.names=TRUE, recursive=TRUE)
@@ -39,15 +40,14 @@ read1_out <- gsub(inputdir,outputdir,read1_list)
 read2_out <- gsub(inputdir,outputdir,read2_list)
 
 filterAndTrim(
-  fwd = read1_list,
-  rev = read2_list,
-  filt = read1_out,
-  filt.rev = read2_out,
-  compress = FALSE,,
-  truncLen = c(forwardtrim,reversetrim),
-  maxEE = c(maxee,maxee),
-  rm.phix = TRUE,
-  OMP = TRUE,
-  qualityType = "Auto",
-  verbose = FALSE
-)
+    fwd = read1_list,
+    rev = read2_list,
+    filt = read1_out,
+    filt.rev = read2_out,
+    compress = FALSE,,
+    truncLen = c(forwardtrim,reversetrim),
+    maxEE = c(maxee,maxee),
+    rm.phix = TRUE,
+    OMP = TRUE,
+    qualityType = "Auto",
+    verbose = FALSE)

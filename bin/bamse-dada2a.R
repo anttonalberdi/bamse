@@ -20,8 +20,10 @@ opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 dir<-opt$input
 outputfile<-opt$output
-overlap<-opt$overlap
+overlap<-as.numeric(opt$overlap)
 logfile <- opt$log
+
+#dir="/Users/anttonalberdi/bamse_evie/2-Filtered/B"
 
 #####
 # List files
@@ -110,14 +112,15 @@ errRs <- learnErrors(filtRs, multithread=TRUE)
 line="  Generating ASVs"
 write(line,file=logfile,append=TRUE)
 
-dadaFs <- dada(drpFs, err=errFs, multithread=TRUE,BAND_SIZE=30)
-dadaRs <- dada(drpRs, err=errRs, multithread=TRUE,BAND_SIZE=30)
+dadaFs <- dada(drpFs, err=errFs, multithread=TRUE)
+dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 
 #####
 # Merge amplicons
 #####
 
-merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=overlap, maxMismatch=round(as.numeric(overlap)/10))
+merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=overlap)
+print(merged_amplicons)
 
 #####
 # Make sequence table

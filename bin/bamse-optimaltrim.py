@@ -37,8 +37,13 @@ for read1, read2 in zip(fastq_parser1, fastq_parser2):
 	read1lenlist.append(read1len)
 	read2lenlist.append(read2len)
 
+#Average read length
 read1len=int(statistics.mean(read1lenlist))
 read2len=int(statistics.mean(read2lenlist))
+
+#Maximum read length
+read1lenmax=int(max(read1lenlist))
+read2lenmax=int(max(read2lenlist))
 
 minlength=int(length)+(int(overlap)*2)
 

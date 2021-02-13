@@ -30,15 +30,17 @@ trimtab = lapply(trimtablist, function(x){as.data.frame(read.csv(x, header=FALSE
 trimtabind = lapply(trimtab, function(x){cbind(score=x[,1],index=paste(x[,2],x[,3],sep="_"))})
 
 #If untrimmed
-if (nrow(trimtabind[[1]]) == 1){
+if (any(is.na(unlist(trimtab)))){
   vector <- unlist(trimtabind)
   vector <- vector[!is.na(vector)]
   vector <- str_split(vector,"_")
-  opt_read1 <- max(unlist(lapply(vector, `[`, 1)))
-  opt_read2 <- max(unlist(lapply(vector, `[`, 2)))
+  opt_read1 <- round(mean(as.numeric(unlist(lapply(vector, `[`, 1)))))
+  opt_read2 <- round(mean(as.numeric(unlist(lapply(vector, `[`, 2)))))
+  write.table(c(opt_read1,opt_read2,'average'),outputfile,quote=FALSE,row.names=FALSE,col.names=FALSE)
 
 #If trimmed
 }else{
+
   trimmatrix <- Reduce(function(x, y) merge(x, y, by = "index"), trimtabind)
   rownames(trimmatrix) <- trimmatrix[,1]
   trimmatrix <- trimmatrix[,-1]
@@ -46,11 +48,10 @@ if (nrow(trimtabind[[1]]) == 1){
   opt <- names(sort(rowMeans(trimmatrix),decreasing = TRUE)[1])
   opt_read1 <- str_split(opt,"_")[[1]][1]
   opt_read2 <- str_split(opt,"_")[[1]][2]
+  write.table(c(opt_read1,opt_read2,'optimised'),outputfile,quote=FALSE,row.names=FALSE,col.names=FALSE)
 }
 
 
 #Save to parameter file
 write(paste("read1_trim:\n",opt_read1,sep=" "),file=paramfile,append=TRUE)
 write(paste("read2_trim:\n",opt_read2,sep=" "),file=paramfile,append=TRUE)
-
-write.table(c(opt_read1,opt_read2),outputfile,quote=FALSE,row.names=FALSE,col.names=FALSE)
