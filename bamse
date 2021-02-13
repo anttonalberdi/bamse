@@ -424,6 +424,18 @@ if not all(list(map(os.path.isfile,primlist))):
            logfile.close()
 
        else:
+           print("\n{0} | CLIPPING PRIMERS.".format(current_time))
+           print("     BAMSE will use Cutadapt to clip the forward and reverse primers from")
+           print("the paired end reads. It will automatically detect if all sequences are")
+           print("directional (output of PCR-based libraries) or not (output of ligation-based")
+           print("libraries), and it will flip the reversed reads in the case of the latter.")
+           print("Primer-trimmed files will be stored in the folder '1-Primertrimmed'")
+           # Output log to logfile
+           logfile=open(log,"a+")
+           current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+           logfile.write("\n{0} | Output files of the preprocessing workflow exist. \r\n".format(current_time))
+           logfile.close()
+
            # Define snakefile
            path_snkf = os.path.join(bamsepath,'workflows/primertrimming/Snakefile')
            # Transform output file list into space-separated string (only for development)
