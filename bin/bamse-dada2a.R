@@ -120,7 +120,6 @@ dadaRs <- dada(drpRs, err=errRs, multithread=TRUE)
 #####
 
 merged_amplicons <- mergePairs(dadaFs, drpFs, dadaRs, drpRs, minOverlap=overlap)
-print(merged_amplicons)
 
 #####
 # Make sequence table
