@@ -3,6 +3,7 @@ import Bio
 from Bio import SeqIO
 import statistics
 import numpy as np
+import random
 
 #Argument parsing
 parser = argparse.ArgumentParser(description='Runs primer trimming script.')
@@ -11,6 +12,7 @@ parser.add_argument('-r', help="Reverse read", dest="reverse_input", required=Tr
 parser.add_argument('-l', help="Amplicon length", dest="length", required=True)
 parser.add_argument('-e', help="Maximum Expected Error per read", dest="maxEE", required=True)
 parser.add_argument('-v', help="Overlap value", dest="overlap", required=True)
+parser.add_argument('-m', help="Maximum number of reads to be analysed", dest="maxreads", required=True)
 parser.add_argument('-o', help="Output score file", dest="output", required=True)
 args = parser.parse_args()
 
@@ -20,6 +22,7 @@ length=int(args.length)
 maxEE=int(args.maxEE)
 overlap=int(args.overlap)
 output=args.output
+maxreads=int(args.maxreads)
 
 #forward_input="/Users/anttonalberdi/bamse_evie/1-Primertrimmed/B/GM4.P10_r2_1.fastq"
 #reverse_input="/Users/anttonalberdi/bamse_evie/1-Primertrimmed/B/GM4.P10_r2_2.fastq"
@@ -88,15 +91,23 @@ else:
 		return ee_vector
 
 	#Calculate error values per trimming length
-	fastq_parser1 = SeqIO.parse(forward_input, "fastq")
-	fastq_parser2 = SeqIO.parse(reverse_input, "fastq")
+	fastq_parser1 = list(SeqIO.parse(forward_input, "fastq"))
+	fastq_parser2 = list(SeqIO.parse(reverse_input, "fastq"))
 
-	maxit=100000
+	#Check if the maximum number of reads to be analysed is higher than the number of reads,
+	#and reduce to number of reads if so.
+	if maxreads > len(read1lenlist):
+		maxreads=len(read1lenlist)
+
+	#Create a random list of indices for subsampling reads
+	randomlist=random.sample(range(0, maxreads), maxreads)
 
 	readn=0
 	elist_read=[]
-	for read1, read2 in zip(fastq_parser1, fastq_parser2):
-		if readn < maxit:
+	for x in range(0, maxreads):
+		read1=fastq_parser1[x]
+		read2=fastq_parser2[x]
+		if readn < maxreads:
 			elist_pos=[]
 			for cut1, cut2 in zip(read1pottrim,read2pottrim):
 				read1trim=read1[0:cut1]

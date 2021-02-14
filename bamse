@@ -42,6 +42,7 @@ parser.add_argument('-e', help="Maximum number of expected errors per read", des
 parser.add_argument('-o', help="Minimum overlap between reads for merging", dest="overlap", required=False)
 parser.add_argument('-s', help="Trimming length of the forward reads", dest="trimfor", required=False)
 parser.add_argument('-z', help="Trimming length of the reverse reads", dest="trimrev", required=False)
+parser.add_argument('-n', help="Maximum number of reads to be analysed to find optimal trimming parameters", dest="maxreads", required=False)
 parser.add_argument('-y', help="Taxonomy filtering threshold", dest="taxfilter", required=False)
 parser.add_argument('-m', help="Minimum fold to consider parent ASVs for chimera detection", dest="fold", required=False)
 parser.add_argument('-u', help="Whether to run LULU clustering", dest="lulu", required=False ,action='store_true')
@@ -113,6 +114,12 @@ if not (args.trimrev):
     trimrev='auto'
 else:
     trimrev=args.trimrev
+
+#Define maximum number of reads
+if not (args.maxreads):
+    maxreads=20000
+else:
+    maxreads=args.maxreads
 
 # Define quality filtering value
 if not (args.taxfilter):
@@ -192,6 +199,7 @@ f.write("\n#Trimming and filtering\n")
 f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
 f.write("mee:\n "+str(mee)+"\n")
 f.write("overlap:\n "+str(overlap)+"\n")
+f.write("maxreads:\n "+str(maxreads)+"\n")
 f.write("\n#Chimera filtering\n")
 f.write("fold:\n "+str(fold)+"\n")
 f.write("\n#Taxonomy filtering\n")
@@ -215,6 +223,7 @@ logfile.write("#Parameters\n")
 logfile.write("\tampliconlength: "+str(ampliconlength)+"\n")
 logfile.write("\tmee: "+str(mee)+"\n")
 logfile.write("\toverlap: "+str(overlap)+"\n")
+logfile.write("\tmaxreads: "+str(maxreads)+"\n")
 logfile.write("\tfold: "+str(fold)+"\n")
 logfile.write("taxfilter:\n "+str(taxfilter)+"\n")
 logfile.close()
@@ -236,6 +245,7 @@ print("\tMaximum Expected Error: "+str(mee))
 print("\tMinimum read overlap: "+str(overlap))
 print("\tForward read trimming length: "+str(trimfor))
 print("\tReverse read trimming length: "+str(trimrev))
+print("\tMaximum number of reads for parameter optimisation: "+str(maxreads))
 print("\tChimera-assigning fold: "+str(fold))
 print("\tTaxonomic filtering level: "+str(taxfilter)+"\n")
 print("If you want to learn more about these parameters visit:")
@@ -502,6 +512,7 @@ if not all(list(map(os.path.isfile,filtlist))):
             print("     As no primer sequence has been declared, BAMSE will use the raw")
             print("reads for calculating the optimal trimming scores with a minimum overlap")
             print("value of "+str(overlap)+" and maximum expected error value of MEE="+str(mee)+".")
+            print("A random sample of "+str(maxreads)+" reads per sample will be used for the analysis.")
             print("This step can take a while if the size of the number and size of the files is large.\n")
             # Output log to logfile
             logfile=open(log,"a+")
@@ -574,7 +585,8 @@ if not all(list(map(os.path.isfile,filtlist))):
             print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES".format(current_time))
             print("     BAMSE will use primer-clipped reads for calculating the optimal")
             print("trimming scores with a minimum overlap value of "+str(overlap)+" and a maximum")
-            print("expected error of MEE="+str(mee)+". This step can take a while if the size")
+            print("expected error of MEE="+str(mee)+". A random sample of "+str(maxreads)+" reads.")
+            print("per sample will be used for the analysis. This step can take a while if the size")
             print("of the number and size of the files is large.\n")
             # Output log to logfile
             logfile=open(log,"a+")
