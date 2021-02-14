@@ -561,7 +561,8 @@ if not all(list(map(os.path.isfile,filtlist))):
             print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES".format(current_time))
             print("     BAMSE will use primer-clipped reads for calculating the optimal")
             print("trimming scores with a minimum overlap value of "+str(overlap)+" and a maximum")
-            print("expected error of MEE="+str(mee)+".\n")
+            print("expected error of MEE="+str(mee)+". This step can take a while if the size")
+            print("of the number and size of the files is large.\n")
             # Output log to logfile
             logfile=open(log,"a+")
             current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())

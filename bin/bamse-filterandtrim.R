@@ -8,7 +8,6 @@ library(dada2)
 # Parse arguments
 #####
 
-
 option_list = list(
  make_option(c("-i", "--input"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-o", "--output"),type = "character",default = NULL, help = "Output directory",metavar = "character"),
@@ -24,20 +23,31 @@ trimfile<-opt$trim
 reversetrim<-opt$reverse
 maxee<-opt$maxee
 
-#inputdir="/Users/anttonalberdi/MiSeq_SOP_bamse/0-Data/"
-#trimfile="/Users/anttonalberdi/bamse_evie/2-Filtered/trim.txt"
+#####
+# Prepare trimming information
+#####
 
 triminfo <- read.table(trimfile,header=FALSE)
-
 forwardtrim=as.numeric(triminfo[1,])
 reversetrim=as.numeric(triminfo[2,])
+
+#####
+# List input files
+#####
 
 read1_list <- list.files(path = inputdir, pattern = "_1.fastq", full.names=TRUE, recursive=TRUE)
 read2_list <- list.files(path = inputdir, pattern = "_2.fastq", full.names=TRUE, recursive=TRUE)
 
-#Generate output read list
+#####
+# List output files
+#####
+
 read1_out <- gsub(inputdir,outputdir,read1_list)
 read2_out <- gsub(inputdir,outputdir,read2_list)
+
+#####
+# Perform filtering
+#####
 
 filterAndTrim(
     fwd = read1_list,

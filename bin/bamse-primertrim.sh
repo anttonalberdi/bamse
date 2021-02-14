@@ -89,4 +89,4 @@ rm ${filt1}_a ${filt1}_b ${filt2}_a ${filt2}_b
 
 readnumber=$(cat ${filt1} | wc -l)
 readnumber2=$(( $readnumber / 4 ))
-echo 'Primers trimmed reads\t'$readnumber2 >> ${stats}
+echo 'Primer-trimmed reads\t'$readnumber2 >> ${stats}
