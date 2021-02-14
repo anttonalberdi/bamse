@@ -140,9 +140,16 @@ logfile.write("\t{0}\n".format(current_time))
 logfile.close()
 
 #Print on screen
-print("\n#####################")
-print("#### BAMSE v1.0 #####")
-print("#####################\n")
+print("\n#######################################################################\n")
+print("     (c).-.(c)      ██████╗  █████╗ ███╗   ███╗███████╗███████╗")
+print("      / ._. \       ██╔══██╗██╔══██╗████╗ ████║██╔════╝██╔════╝")
+print("    __\( u )/__     ██████╔╝███████║██╔████╔██║███████╗█████╗ ")
+print("   (__ /'-'\ __)    ██╔══██╗██╔══██║██║╚██╔╝██║╚════██║██╔══╝ ")
+print("      || o ||       ██████╔╝██║  ██║██║ ╚═╝ ██║███████║███████╗")
+print("     _/ '_' \_      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝")
+print("     `-´   `-´      Bacterial AMplicon SEquencing processing pipeline")
+print("    Version: 1.0    @Antton Alberdi & @Ostaizka Aizpurua\n")
+print("#######################################################################\n")
 print("BAMSE is starting at:")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
 print("\t{0}".format(current_time))
@@ -552,9 +559,9 @@ if not all(list(map(os.path.isfile,filtlist))):
 
         if (method == 'average'):
             print("\nWARNING! The analysis of optimal trimming parameters concluded that:")
-            print("\tPrimers cannot be trimmed because the read length is too short.")
+            print("\tOptimal trimming lengths cannot be calculated because the read length is too short.")
             print("\tTry shortening the read overlap length or manual trimming position assessment.")
-            print("\tBAMSE will continue without trimming reads and only filtering based on MEE values.")
+            print("\tBAMSE will continue  trimming the reads at their average read-length.")
 
             # Filter and trim
             print("\n{0} | FILTERING READS (WITHOUT TRIMMING)".format(current_time))
