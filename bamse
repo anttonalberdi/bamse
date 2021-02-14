@@ -36,9 +36,11 @@ parser.add_argument('-f', help="Forward primer sequence", dest="primF", required
 parser.add_argument('-r', help="Reverse primer sequence", dest="primR", required=False)
 parser.add_argument('-a', help="Expected average amplicon length", dest="ampliconlength", required=True)
 parser.add_argument('-x', help="Absolute path to the taxonomy database", dest="tax", required=True)
-parser.add_argument('-t', help="Number of threads", dest="threads", required=True)
+parser.add_argument('-t', help="Number of threads", dest="threads", required=False)
 parser.add_argument('-e', help="Maximum number of expected errors per read", dest="mee", required=False)
 parser.add_argument('-o', help="Minimum overlap between reads for merging", dest="overlap", required=False)
+parser.add_argument('-s', help="Trimming length of the forward reads", dest="trimfor", required=False)
+parser.add_argument('-z', help="Trimming length of the reverse reads", dest="trimrev", required=False)
 parser.add_argument('-y', help="Taxonomy filtering threshold", dest="taxfilter", required=False)
 parser.add_argument('-m', help="Minimum fold to consider parent ASVs for chimera detection", dest="fold", required=False)
 parser.add_argument('-u', help="Whether to run LULU clustering", dest="lulu", required=False ,action='store_true')
@@ -53,7 +55,6 @@ path=args.workdir
 ampliconlength=args.ampliconlength
 tax=args.tax
 fold=args.fold
-cores=args.threads
 overwrite=args.overwrite
 luluarg=args.lulu
 
@@ -94,6 +95,23 @@ if not (args.log):
     log=os.path.join(path,"bamse.log")
 else:
     log=args.log
+
+# Define number of cores
+if not (args.log):
+    cores=4
+else:
+    cores=args.threads
+
+# Define trimming parameters
+if not (args.trimfor):
+    trimfor='auto'
+else:
+    trimfor=args.trimfor
+
+if not (args.trimrev):
+    trimrev='auto'
+else:
+    trimrev=args.trimrev
 
 # Define quality filtering value
 if not (args.taxfilter):
@@ -141,9 +159,9 @@ logfile.close()
 
 #Print on screen
 print("\n#######################################################################\n")
-print("     (c).-.(c)      ██████╗  █████╗ ███╗   ███╗███████╗███████╗")
-print("      / ._. \       ██╔══██╗██╔══██╗████╗ ████║██╔════╝██╔════╝")
-print("    __\( u )/__     ██████╔╝███████║██╔████╔██║███████╗█████╗ ")
+print("     (^).-.(^)      ██████╗  █████╗ ███╗   ███╗███████╗███████╗")
+print("      / o_o \       ██╔══██╗██╔══██╗████╗ ████║██╔════╝██╔════╝")
+print("    __\(`-´)/__     ██████╔╝███████║██╔████╔██║███████╗█████╗ ")
 print("   (__ /'-'\ __)    ██╔══██╗██╔══██║██║╚██╔╝██║╚════██║██╔══╝ ")
 print("      || o ||       ██████╔╝██║  ██║██║ ╚═╝ ██║███████║███████╗")
 print("     _/ '_' \_      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝")
@@ -205,8 +223,8 @@ print("\nBAMSE is running with the following parameters:\n")
 print("PATHS")
 print("\tBamse path: "+str(curr_dir))
 print("\tProject path: "+str(path))
-print("\tParameters path: "+str(param))
-print("\tLog path: "+str(log))
+print("\tParameters file path: "+str(param))
+print("\tLog file path: "+str(log))
 print("\tTaxonomy database path: "+str(tax)+"\n")
 print("PRIMERS")
 print("\tForward primer: "+str(primF))
@@ -214,10 +232,12 @@ print("\tReverse primer: "+str(primR)+"\n")
 print("PARAMETERS")
 print("\tAmplicon length: "+str(ampliconlength))
 print("\tMaximum Expected Error: "+str(mee))
-print("\tOverlap: "+str(overlap))
-print("\tfold: "+str(fold))
-print("\ttaxfilter: "+str(taxfilter)+"\n")
-print("If you don't know what each of these parameters mean visit:")
+print("\tMinimum read overlap: "+str(overlap))
+print("\tForward read trimming length: "+str(trimfor))
+print("\tReverse read trimming length: "+str(trimrev))
+print("\tChimera-assigning fold: "+str(fold))
+print("\tTaxonomic filtering level: "+str(taxfilter)+"\n")
+print("If you want to learn more about these parameters visit:")
 print("\thttps://github.com/anttonalberdi/bamse\n")
 print("##########################################")
 
@@ -450,7 +470,7 @@ if not all(list(map(os.path.isfile,primlist))):
            # Transform output file list into space-separated string (only for development)
            out_primertrim = " ".join(primlist)
            # Run snakemake
-           prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_primertrim+' --configfile '+param+' --cores '+cores+' -q'
+           prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_primertrim+' --configfile '+param+' --cores '+str(cores)+' -q'
            subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 else:
        # Output log to logfile
@@ -461,123 +481,150 @@ else:
        print("\n{0} | SKIPPING PRIMER CLIPPING".format(current_time))
        print("     The output files of the preprocessing workflow exist in the project")
        print("directory. If you want to re-run this step, remove the files in the directories")
-       print("'1-Primertrimmed' and '2-Filtered'.")
+       print("'1-Primertrimmed' and '2-Filtered'.\n")
 
 ##############################
 # Calculate optimal trimming scores, filter and trim
 ##############################
 
 if not all(list(map(os.path.isfile,filtlist))):
+    prepropath=path+'/2-Filtered/'
+    if not os.path.exists(prepropath):
+        os.makedirs(prepropath)
+
     if (primF == 'noprimer') & (primR == 'noprimer'):
-        #Calculate optimal trimming scores from primer-clipped files
-        print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES".format(current_time))
-        print("     As no primer sequence has been declared, BAMSE will use the raw")
-        print("reads for calculating the optimal trimming scores with a minimum overlap")
-        print("value of "+str(overlap)+" and maximum expected error value of MEE="+str(mee)+".")
-        print("This step can take a while if the size of the number and size of the files is large.\n")
-        # Output log to logfile
-        logfile=open(log,"a+")
-        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-        logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES \r\n".format(current_time))
-        logfile.close()
+        if (trimfor == 'auto') & (trimrev == 'auto'):
+            #Calculate optimal trimming scores from primer-clipped files
+            print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES".format(current_time))
+            print("     As no primer sequence has been declared, BAMSE will use the raw")
+            print("reads for calculating the optimal trimming scores with a minimum overlap")
+            print("value of "+str(overlap)+" and maximum expected error value of MEE="+str(mee)+".")
+            print("This step can take a while if the size of the number and size of the files is large.\n")
+            # Output log to logfile
+            logfile=open(log,"a+")
+            current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+            logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES \r\n".format(current_time))
+            logfile.close()
 
-        prepropath=path+'/2-Filtered/'
-        if not os.path.exists(prepropath):
-            os.makedirs(prepropath)
+            # Define snakefile
+            path_snkf = os.path.join(bamsepath,'workflows/findscores2/Snakefile')
+            #Transform output file list into space-separated string (only for development)
+            out_preprocessing = " ".join(csvlist)
 
-        # Define snakefile
-        path_snkf = os.path.join(bamsepath,'workflows/findscores2/Snakefile')
-        #Transform output file list into space-separated string (only for development)
-        out_preprocessing = " ".join(csvlist)
+            # Run find scores snakemake
+            prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+str(cores)+' -q'
+            subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
-        # Run find scores snakemake
-        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+' -q'
-        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+            #### Find best score ####
+            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
+            subprocess.Popen(bastscore_Cmd, shell=True).wait()
 
-        #### Find best score ####
-        bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
-        subprocess.Popen(bastscore_Cmd, shell=True).wait()
+            # Print best score
+            trimparameters = []
+            trimfile=path+'/2-Filtered/trim.txt'
+            with open(trimfile, 'r') as arch:
+                for line in arch:
+                    trimparameters.append(eval(line.rstrip()))
+            forwardtrim=trimparameters[0]
+            reversetrim=trimparameters[1]
 
-        # Print best score
-        trimparameters = []
-        trimfile=path+'/2-Filtered/trim.txt'
-        with open(trimfile, 'r') as arch:
-            for line in arch:
-                trimparameters.append(eval(line.rstrip()))
-        forwardtrim=trimparameters[0]
-        reversetrim=trimparameters[1]
-
-        print("\nThe analysis of optimal trimming parameters concluded that:")
-        print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
-        print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
-
-        # Filter and trim
-        print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-        print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and reverse reads")
-        print("at position "+str(reversetrim)+", before calculating expected error values and filtering out")
-        print("the reads with MEE values under "+str(mee)+".\n")
-        filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/0-Data/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+mee+''
-        subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
-
-    else:
-        #Calculate optimal trimming scores from original files
-        print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES".format(current_time))
-        print("     BAMSE will use primer-clipped reads for calculating the optimal")
-        print("trimming scores with a minimum overlap value of "+str(overlap)+" and a maximum")
-        print("expected error of MEE="+str(mee)+".\n")
-        # Output log to logfile
-        logfile=open(log,"a+")
-        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-        logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES \r\n".format(current_time))
-        logfile.close()
-
-        prepropath=path+'/2-Filtered/'
-        if not os.path.exists(prepropath):
-            os.makedirs(prepropath)
-
-        path_snkf = os.path.join(bamsepath,'workflows/findscores1/Snakefile')
-        #Transform output file list into space-separated string (only for development)
-        out_preprocessing = " ".join(csvlist)
-
-        # Run snakemake
-        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+cores+' -q'
-        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
-
-        #### Find best score ####
-        bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
-        subprocess.Popen(bastscore_Cmd, shell=True).wait()
-
-        # Print best score
-        trimparameters = []
-        trimfile=path+'/2-Filtered/trim.txt'
-        with open(trimfile) as f:
-            content = f.readlines()
-        trimparameters = [x.strip() for x in content]
-        forwardtrim=trimparameters[0]
-        reversetrim=trimparameters[1]
-        method=trimparameters[2]
-
-        if (method == 'average'):
-            print("\nWARNING! The analysis of optimal trimming parameters concluded that:")
-            print("\tOptimal trimming lengths cannot be calculated because the read length is too short.")
-            print("\tTry shortening the read overlap length or manual trimming position assessment.")
-            print("\tBAMSE will continue  trimming the reads at their average read-length.")
-
-            # Filter and trim
-            print("\n{0} | FILTERING READS (WITHOUT TRIMMING)".format(current_time))
-            print("     BAMSE will calculatEexpected error values and filter out ")
-            print("the reads with MEE values under "+str(mee)+".\n")
-
-        else:
             print("\nThe analysis of optimal trimming parameters concluded that:")
             print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
             print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
 
+            print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+            print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and reverse reads")
+            print("at position "+str(reversetrim)+", before calculating expected error values and filtering out")
+            print("the reads with MEE values under "+str(mee)+".\n")
+        else:
             # Filter and trim
             print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-            print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and")
-            print("reverse reads at position "+str(reversetrim)+", before calculating expected error values")
-            print("and filtering out the reads with MEE values under "+str(mee)+".\n")
+            print("     BAMSE will trim the forward reads at position "+str(trimfor)+" and reverse")
+            print("reads at position "+str(trimrev)+", before calculating expected error values")
+            print("and filtering out the reads with MEE values under "+str(mee)+". Trimming parameters have")
+            print("been specified by the user. If you want to find the optimal values automatically")
+            print("do not specify the -s and -z flags.\n")
+            trimfile=path+'/2-Filtered/trim.txt'
+            trimlist=[trimfor,trimrev]
+            f=open(trimfile,'w')
+            for ele in trimlist:
+                f.write(ele+'\n')
+            f.close()
+
+        # Filter and trim
+        filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/0-Data/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+mee+''
+        subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
+
+    else:
+        if (trimfor == 'auto') & (trimrev == 'auto'):
+            #Calculate optimal trimming scores from original files
+            print("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES".format(current_time))
+            print("     BAMSE will use primer-clipped reads for calculating the optimal")
+            print("trimming scores with a minimum overlap value of "+str(overlap)+" and a maximum")
+            print("expected error of MEE="+str(mee)+".\n")
+            # Output log to logfile
+            logfile=open(log,"a+")
+            current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+            logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES \r\n".format(current_time))
+            logfile.close()
+
+            path_snkf = os.path.join(bamsepath,'workflows/findscores1/Snakefile')
+            #Transform output file list into space-separated string (only for development)
+            out_preprocessing = " ".join(csvlist)
+
+            # Run snakemake
+            prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+str(cores)+' -q'
+            subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+
+            #### Find best score ####
+            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
+            subprocess.Popen(bastscore_Cmd, shell=True).wait()
+
+            # Print best score
+            trimparameters = []
+            trimfile=path+'/2-Filtered/trim.txt'
+            with open(trimfile) as f:
+                content = f.readlines()
+            trimparameters = [x.strip() for x in content]
+            forwardtrim=trimparameters[0]
+            reversetrim=trimparameters[1]
+            method=trimparameters[2]
+
+            if (method == 'average'):
+                print("\nWARNING! The analysis of optimal trimming parameters concluded that:")
+                print("\tOptimal trimming lengths cannot be calculated because the read length is too short.")
+                print("\tTry shortening the read overlap length or manual trimming position assessment.")
+                print("\tBAMSE will continue  trimming the reads at their average read-length.")
+
+                # Filter and trim
+                print("\n{0} | FILTERING READS (WITHOUT TRIMMING)".format(current_time))
+                print("     BAMSE will calculatEexpected error values and filter out ")
+                print("the reads with MEE values under "+str(mee)+".\n")
+
+            else:
+                print("\nThe analysis of optimal trimming parameters concluded that:")
+                print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
+                print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
+
+                # Filter and trim
+                print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+                print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and")
+                print("reverse reads at position "+str(reversetrim)+", before calculating expected error values")
+                print("and filtering out the reads with MEE values under "+str(mee)+".\n")
+        else:
+            # Filter and trim
+            print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+            print("     BAMSE will trim the forward reads at position "+str(trimfor)+" and reverse")
+            print("reads at position "+str(trimrev)+", before calculating expected error values")
+            print("and filtering out the reads with MEE values under "+str(mee)+". Trimming parameters have")
+            print("been specified by the user. If you want to find the optimal values automatically")
+            print("do not specify the -s and -z flags.\n")
+            trimfile=path+'/2-Filtered/trim.txt'
+            trimlist=[trimfor,trimrev]
+            f=open(trimfile,'w')
+            for ele in trimlist:
+                f.write(ele+'\n')
+            f.close()
 
         filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/1-Primertrimmed/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+str(mee)+''
         subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
@@ -627,7 +674,7 @@ else:
 
 
 # Run snakemake
-prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2a+' --configfile '+param+' --cores '+cores+' -q'
+prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2a+' --configfile '+param+' --cores '+str(cores)+' -q'
 subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ########################
@@ -668,7 +715,7 @@ else:
         os.makedirs(taxonfilterpath)
 
     # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2b+' --configfile '+param+' --cores '+cores+' -q'
+    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2b+' --configfile '+param+' --cores '+str(cores)+' -q'
     subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 #####################
@@ -698,7 +745,7 @@ if luluarg == True:
     path_snkf = os.path.join(bamsepath,'workflows/lulu/Snakefile')
 
     # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_lulu+' --configfile '+param+' --cores '+cores+' -q'
+    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_lulu+' --configfile '+param+' --cores '+str(cores)+' -q'
     subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 
@@ -752,7 +799,7 @@ else:
         os.makedirs(phylopath)
 
     # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_phylogeny+' --configfile '+param+' --cores '+cores+' -q'
+    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_phylogeny+' --configfile '+param+' --cores '+str(cores)+' -q'
     subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ############################
@@ -792,7 +839,7 @@ else:
         os.makedirs(binpath)
 
     # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_binning+' --configfile '+param+' --cores '+cores+' -q'
+    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_binning+' --configfile '+param+' --cores '+str(cores)+' -q'
     subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 
