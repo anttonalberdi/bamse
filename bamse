@@ -120,7 +120,7 @@ else:
 
 #Define maximum number of reads
 if not (args.maxreads):
-    maxreads=20000
+    maxreads=10000
 else:
     maxreads=args.maxreads
 
