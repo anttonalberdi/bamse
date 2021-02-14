@@ -91,24 +91,29 @@ else:
 	fastq_parser1 = SeqIO.parse(forward_input, "fastq")
 	fastq_parser2 = SeqIO.parse(reverse_input, "fastq")
 
+	maxit=30000
+
 	readn=0
 	elist_read=[]
 	for read1, read2 in zip(fastq_parser1, fastq_parser2):
-		elist_pos=[]
-		for cut1, cut2 in zip(read1pottrim,read2pottrim):
-			read1trim=read1[0:cut1]
-			read2trim=read2[0:cut2]
-			e1=round(EE(read1trim.letter_annotations["phred_quality"]),5)
-			e2=round(EE(read2trim.letter_annotations["phred_quality"]),5)
-			e=e1+e2
-			if e1 < maxEE or e2 < maxEE:
-				keep=1
-			else:
-				keep=0
-			eunit=[readn,cut1,cut2,e1,e2,e,keep]
-			elist_pos.append(eunit)
-		elist_read.append(elist_pos)
-		readn += 1
+		if readn < maxit:
+			elist_pos=[]
+			for cut1, cut2 in zip(read1pottrim,read2pottrim):
+				read1trim=read1[0:cut1]
+				read2trim=read2[0:cut2]
+				e1=round(EE(read1trim.letter_annotations["phred_quality"]),5)
+				e2=round(EE(read2trim.letter_annotations["phred_quality"]),5)
+				e=e1+e2
+				if e1 < maxEE or e2 < maxEE:
+					keep=1
+				else:
+					keep=0
+				eunit=[readn,cut1,cut2,e1,e2,e,keep]
+				elist_pos.append(eunit)
+			elist_read.append(elist_pos)
+			readn += 1
+		else:
+			break
 
 	#Transform nested least into Numpy array
 	earray_read = np.array(elist_read)

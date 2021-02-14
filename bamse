@@ -2,6 +2,7 @@
 
 import os
 import sys
+import glob
 
 ####################
 # Check if conda environment bamse-env is active #
@@ -337,6 +338,7 @@ primlist = []
 csvlist = []
 filtlist = []
 dadalist = []
+namelist = []
 
 ## Read input data row by row
 for line in inputfile:
@@ -425,6 +427,7 @@ for line in inputfile:
             filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
             filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
 
+            namelist.append(name)
             primlist.append(prim_for)
             primlist.append(prim_rev)
             csvlist.append(out_csv)
@@ -555,6 +558,16 @@ if not all(list(map(os.path.isfile,filtlist))):
         filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/0-Data/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+mee+''
         subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
 
+        #Calculate number of reads after filtering and save to stats file
+        for samplefile in filtlist:
+            if samplefile.endswith("_1.fastq"):
+                print(samplefile)
+                samplename=re.search('2-Filtered/(.*)/(.*)_1.fastq', samplefile).group(2)
+                readnum=sum(1 for line in open(samplefile)) / 4
+                statfile=path+'/0-Stats/'+samplename+'.txt'
+                with open(statfile,'a') as f:
+                    f.write('Filtered reads: '+str(int(readnum))+'\n')
+
     else:
         if (trimfor == 'auto') & (trimrev == 'auto'):
             #Calculate optimal trimming scores from original files
@@ -630,9 +643,19 @@ if not all(list(map(os.path.isfile,filtlist))):
         filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/1-Primertrimmed/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+str(mee)+''
         subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
 
+        #Calculate number of reads after filtering and save to stats file
+        for samplefile in filtlist:
+            if samplefile.endswith("_1.fastq"):
+                print(samplefile)
+                samplename=re.search('2-Filtered/(.*)/(.*)_1.fastq', samplefile).group(2)
+                readnum=sum(1 for line in open(samplefile)) / 4
+                statfile=path+'/0-Stats/'+samplename+'.txt'
+                with open(statfile,'a') as f:
+                    f.write('Filtered reads: '+str(int(readnum))+'\n')
+
 else:
        # Output log to logfile
-       print("\n{0} | SKIPPING CALCULATION OF OPTIMAL TRIMMING SCORES".format(current_time))
+       print("\n{0} | SKIPPING READ FILTERING AND TRIMMING".format(current_time))
        print("     The output files of the read trimming and filtering step exist in the project")
        print("directory. If you want to re-run this step, remove the files in the directory")
        print("'2-Filtered'.\n")
@@ -640,6 +663,7 @@ else:
        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
        logfile.write("\n{0} | Output files of the trimming and filtering stepexist. \r\n".format(current_time))
        logfile.close()
+
 
 ########################
 # Run DADA2 A workflow #     Error learning and dada2 of each run individually
