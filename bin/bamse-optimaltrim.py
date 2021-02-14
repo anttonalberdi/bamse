@@ -91,7 +91,7 @@ else:
 	fastq_parser1 = SeqIO.parse(forward_input, "fastq")
 	fastq_parser2 = SeqIO.parse(reverse_input, "fastq")
 
-	maxit=30000
+	maxit=100000
 
 	readn=0
 	elist_read=[]
