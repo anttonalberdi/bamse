@@ -1,3 +1,4 @@
+<div>
     _     _
    (c).-.(c)
     / ._. \
@@ -7,7 +8,7 @@
    _/ '_' \_
   (   / \   )
    `-´   `-´
-
+</div>
 # BAMSE
 
 **B**acterial **AM**plicon **Se**quencing data processing pipeline. BAMSE is a snakemake-based pipeline consisting of multiple concatenated workflows to prepare, generate, curate and analyse ASV-based processing of amplicon sequencing data. BAMSE includes a unique quality-filtering approach that ensures optimal quality filtering of sequences, as well as phylogeny-building and binning/clustering steps.
