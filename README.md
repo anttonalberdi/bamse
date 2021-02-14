@@ -151,12 +151,12 @@ The data input file must be a simple text file with the information correspondin
 
 | Sample | Run | Forward read | Reverse read |
 | ----------- | ----------- | ----------- | ----------- |
-| Sample1 | Run1 | Sample1_Rep1_1.fq.gz | Sample1_Rep1_2.fq.gz |
-| Sample1 | Run1 | Sample1_Rep2_1.fq.gz | Sample1_Rep2_2.fq.gz |
-| Sample2 | Run1 | Sample2_Rep1_1.fq.gz | Sample2_Rep1_2.fq.gz |
-| Sample2 | Run1 | Sample2_Rep2_1.fq.gz | Sample2_Rep2_2.fq.gz |
-| Sample3 | Run2 | Sample3_Rep1_1.fq.gz | Sample3_Rep1_2.fq.gz |
-| Sample3 | Run2 | Sample3_Rep2_1.fq.gz | Sample3_Rep2_2.fq.gz |
+| Sample1 | Run1 | /project/rawdata/Sample1_Rep1_1.fq.gz | /project/rawdata/Sample1_Rep1_2.fq.gz |
+| Sample1 | Run1 | /project/rawdata/Sample1_Rep2_1.fq.gz | /project/rawdata/Sample1_Rep2_2.fq.gz |
+| Sample2 | Run1 | /project/rawdata/Sample2_Rep1_1.fq.gz | /project/rawdata/Sample2_Rep1_2.fq.gz |
+| Sample2 | Run1 | /project/rawdata/Sample2_Rep2_1.fq.gz | /project/rawdata/Sample2_Rep2_2.fq.gz |
+| Sample3 | Run2 | /project/rawdata/Sample3_Rep1_1.fq.gz | /project/rawdata/Sample3_Rep1_2.fq.gz |
+| Sample3 | Run2 | /project/rawdata/Sample3_Rep2_1.fq.gz | /project/rawdata/Sample3_Rep2_2.fq.gz |
 
 An example data input file can be found in example/inputfile.txt
 
@@ -197,9 +197,11 @@ This folder contains the quality-trimmed and length-filtered paired reads. Files
 
 - 2-Filtered
   - 2-Filtered/RUN1
+    - 2-Filtered/RUN1/SAMPLEA.csv
     - 2-Filtered/RUN1/SAMPLEA_1.fastq
     - 2-Filtered/RUN1/SAMPLEA_2.fastq
   - 2-Filtered/RUN2
+    - 2-Filtered/RUN2/SAMPLEB.csv
     - 2-Filtered/RUN2/SAMPLEB_1.fastq
     - 2-Filtered/RUN2/SAMPLEB_2.fastq
 
