@@ -3,6 +3,7 @@
 import os
 import sys
 import glob
+from glob import glob
 
 ####################
 # Check if conda environment bamse-env is active #
@@ -26,6 +27,7 @@ import time
 from shutil import which
 import Bio
 from Bio import SeqIO
+import numpy as np
 import statistics
 
 ####################
@@ -380,7 +382,6 @@ for line in inputfile:
             run=linelist[1]
             in_for=linelist[2]
             in_rev=linelist[3]
-            print("\tTransferring sample: "+name)
 
             #Create run folder if it does not exist
             runpath=path+'/0-Data/'+run
@@ -457,9 +458,10 @@ for line in inputfile:
             readnum=sum(1 for line in open(out1)) / 4
             statfile=path+'/0-Stats/'+name+'.txt'
             with open(statfile,'w') as f:
-                f.write('Number of initial reads: '+str(int(readnum))+'\n')
-                f.write('Average forward read length: '+str(int(read1len))+'\n')
-                f.write('Average reverse read length: '+str(int(read2len))+'\n')
+                f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
+                f.write('Average forward read length:\t'+str(int(read1len))+'\n')
+                f.write('Average reverse read length:\t'+str(int(read2len))+'\n')
+            print("\t"+name+"\t"+str(int(readnum))+" reads of average length "+str(int(read1len))+" (F) and "+str(int(read2len))+" (R) nucleotides.")
 
             #Create lists of output files
             prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
@@ -474,6 +476,67 @@ for line in inputfile:
             csvlist.append(out_csv)
             filtlist.append(filt_for)
             filtlist.append(filt_rev)
+
+#####################################################
+################## Data assessment ##################
+#####################################################
+
+print("\n{0} | PERFORMING DATA AND PARAMETER ASSESSMENT".format(current_time))
+
+statfiles = glob(path+'/0-Stats/*.txt')
+statsdata = [np.loadtxt(f, delimiter='\t', usecols=1) for f in statfiles]
+
+numbersamples=len(statsdata)
+avgreads=np.average(statsdata,axis=0)[0]
+avgreadlen1=np.average(statsdata,axis=0)[1]
+avgreadlen2=np.average(statsdata,axis=0)[2]
+avgreads=avgreadlen1+avgreadlen2
+
+print("\tNumber of samples: " + str(numbersamples))
+print("\tAverage number of reads: " + str(avgreads))
+print("\tAverage length of forward reads: " + str(avgreadlen1))
+print("\tAverage length of reverse reads: " + str(avgreadlen2))
+
+#primF='CTANGGGNNGCANCAG'
+#primR='GACTACNNGGGTATCTAAT'
+#overlap=20
+
+#Subtract primer length if these are provided
+if (primF != 'noprimer') & (primR != 'noprimer'):
+    avgreads = avgreads - len(primF) - len(primR)
+    print("\tLength of forward primer: " + str(len(primF)))
+    print("\tLength of reverse primer: " +  str(len(primR)))
+
+#Calculate whether the length of the reads + overlap are sufficient for covering the amplicon length
+
+print("\n\tBAMSE will know calculate the excess of nucleotides after subtracting the amplicon length and the")
+print("\tminimum number of overlapping nucleotides to assess whether the analysis can continue:")
+print("\t\tExcess = (READ1+READ2-(OVERLAP*2))-AMPLICONLENGTH")
+print("\t\tExcess = ("+str(avgreadlen1)+"+"+str(avgreadlen2)+"-("+str(overlap)+"*2))-"+str(ampliconlength))
+
+lengthstat = int(avgreads) - (int(overlap)*2) - int(ampliconlength)
+print("\nASSESSMENT:")
+
+#Data are correct
+if (lengthstat > 10):
+    print("\tOPTIMAL!")
+    print("\tThe excess of nucleotides after considering amplicon, read, primer and overlap lengths is: " + str(lengthstat))
+    print("\tTherefore, the parameters look correct to proceed with the analysis.\n")
+#Data are in the edge
+elif (lengthstat < 10) & (lengthstat >= 0):
+    print("\tWARNING!")
+    print("\tThe excess of nucleotides after considering amplicon, read, primer and overlap lengths is: " + str(lengthstat))
+    print("\tThis means that the parameters are in the borderline for correct data processing. BAMSE will")
+    print("\tcontinue with the pipeline, yet you should carefully analyse each step, and consider reducing")
+    print("\toverlap and increasing MEE values if too many reads are lost in the data pre-processing.\n")
+#Data are incorrect
+else:
+    print("\tERROR!")
+    print("\tThere is no excess of nucleotides after considering amplicon, read, primer and overlap lengths,")
+    print("\twhich means that the data cannot be processed with the current parameters, because there is no")
+    print("\toverlap between forward and reverse reads. Doublecheck the introduced data (amplicon length, overlap)")
+    print("\tare correct and run BAMSE again.\n")
+    sys.exit(0)
 
 #####################################################
 ################## Begin workflows ##################
@@ -607,7 +670,7 @@ if not all(list(map(os.path.isfile,filtlist))):
                 readnum=sum(1 for line in open(samplefile)) / 4
                 statfile=path+'/0-Stats/'+samplename+'.txt'
                 with open(statfile,'a') as f:
-                    f.write('Filtered reads: '+str(int(readnum))+'\n')
+                    f.write('Filtered reads:\t'+str(int(readnum))+'\n')
 
     else:
         if (trimfor == 'auto') & (trimrev == 'auto'):
@@ -693,7 +756,7 @@ if not all(list(map(os.path.isfile,filtlist))):
                 readnum=sum(1 for line in open(samplefile)) / 4
                 statfile=path+'/0-Stats/'+samplename+'.txt'
                 with open(statfile,'a') as f:
-                    f.write('Filtered reads: '+str(int(readnum))+'\n')
+                    f.write('Filtered reads:\t'+str(int(readnum))+'\n')
 
 else:
        # Output log to logfile
