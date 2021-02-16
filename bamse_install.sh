@@ -13,6 +13,7 @@ dependencies:
   - snakemake-minimal >=5.24.1
   - setuptools
   - biopython
+  - numpy
   - ruamel.yaml
   - cutadapt =2.10
   - bbmap =38.87
