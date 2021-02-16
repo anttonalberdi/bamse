@@ -428,14 +428,28 @@ for line in inputfile:
 
             # Transfer, rename and decompress data
 
-            #Check if the file is already in the working directory
+            #Declare output files
             out1=runpath+'/'+name+'_1.fastq'
-            if os.path.isfile(out1):
-                logfile=open(log,"a+")
-                logfile.write("\tThe file " + out1 + " is already in the working directory.\n")
-                logfile.close()
+            out2=runpath+'/'+name+'_2.fastq'
+            #Check if the file is already in the working directory
+
+            if os.path.isfile(out1) and os.path.isfile(out2):
+                print("\t"+name+"\tThe files are already in the project directory.")
+                #Create lists of output files
+                prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
+                prim_rev = path+'/1-Primertrimmed/'+run+'/'+name+'_2.fastq'
+                out_csv = path+'/2-Filtered/'+run+'/'+name+'.csv'
+                filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
+                filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
+
+                namelist.append(name)
+                primlist.append(prim_for)
+                primlist.append(prim_rev)
+                csvlist.append(out_csv)
+                filtlist.append(filt_for)
+                filtlist.append(filt_rev)
             else:
-                #If the file is not in the working directory, transfer it
+                #If the forward file is not in the working directory, transfer it
                 if os.path.isfile(in_for):
                     if in_for.endswith('.gz'):
                         read1Cmd = 'gunzip -c '+in_for+' > '+runpath+'/'+name+'_1.fastq'
@@ -452,14 +466,7 @@ for line in inputfile:
                     logfile.write("\tThe file " + in_for + " does not exist.\n")
                     logfile.close()
 
-            #Check if the file is already in the working directory
-            out2=runpath+'/'+name+'_2.fastq'
-            if os.path.isfile(out2):
-                logfile=open(log,"a+")
-                logfile.write("\tThe file " + out2 + " is already in the working directory.\n")
-                logfile.close()
-            else:
-                #If the file is not in the working directory, transfer it
+                #If the reverse file is not in the working directory, transfer it
                 if os.path.isfile(in_rev):
                     if in_for.endswith('.gz'):
                         read2Cmd = 'gunzip -c '+in_rev+' > '+runpath+'/'+name+'_2.fastq'
@@ -476,58 +483,59 @@ for line in inputfile:
                     logfile.write("\tThe file " + in_rev + " does not exist.\n")
                     logfile.close()
 
-            if os.path.isfile(in_for) and os.path.isfile(in_rev) and (os.stat(in_for).st_size > 0) and (os.stat(in_rev).st_size > 0):
-                #Calculate read number
-                readnum=sum(1 for line in open(out1)) / 4
+                if os.path.isfile(out1) and os.path.isfile(out2) and (os.stat(out1).st_size > 0) and (os.stat(out2).st_size > 0):
+                    #Calculate read number
+                    readnum=sum(1 for line in open(out1)) / 4
 
-                if readnum > 0:
-                    #Calculate read lengths
-                    fastq_parser1 = SeqIO.parse(out1, "fastq")
-                    fastq_parser2 = SeqIO.parse(out2, "fastq")
+                    if readnum > 0:
+                        #Calculate read lengths
+                        fastq_parser1 = SeqIO.parse(out1, "fastq")
+                        fastq_parser2 = SeqIO.parse(out2, "fastq")
 
-                    #Calculate read length
-                    read1lenlist=[]
-                    read2lenlist=[]
-                    iter=0
-                    for read1, read2 in zip(fastq_parser1, fastq_parser2):
-                        if iter < 5000:
-                        	read1len=len(read1)
-                        	read2len=len(read2)
-                        	read1lenlist.append(read1len)
-                        	read2lenlist.append(read2len)
-                        	iter += 1
-                        else:
-                            break
+                        #Calculate read length
+                        read1lenlist=[]
+                        read2lenlist=[]
+                        iter=0
+                        for read1, read2 in zip(fastq_parser1, fastq_parser2):
+                            if iter < 5000:
+                            	read1len=len(read1)
+                            	read2len=len(read2)
+                            	read1lenlist.append(read1len)
+                            	read2lenlist.append(read2len)
+                            	iter += 1
+                            else:
+                                break
 
-                    #Number of reads and read length
-                    read1len=int(statistics.mean(read1lenlist))
-                    read2len=int(statistics.mean(read2lenlist))
-                    statfile=path+'/0-Stats/'+name+'.txt'
-                    with open(statfile,'w') as f:
-                        f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
-                        f.write('Average forward read length:\t'+str(int(read1len))+'\n')
-                        f.write('Average reverse read length:\t'+str(int(read2len))+'\n')
-                    print("\t"+name+"\t"+str(int(readnum))+" reads of average length "+str(int(read1len))+" (F) and "+str(int(read2len))+" (R) nucleotides.")
+                        #Number of reads and read length
+                        read1len=int(statistics.mean(read1lenlist))
+                        read2len=int(statistics.mean(read2lenlist))
+                        statfile=path+'/0-Stats/'+name+'.txt'
+                        with open(statfile,'w') as f:
+                            f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
+                            f.write('Average forward read length:\t'+str(int(read1len))+'\n')
+                            f.write('Average reverse read length:\t'+str(int(read2len))+'\n')
+                        print("\t"+name+"\t"+str(int(readnum))+" reads of average length "+str(int(read1len))+" (F) and "+str(int(read2len))+" (R) nucleotides.")
+                    else:
+                        with open(statfile,'w') as f:
+                            f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
+
+                    #Create lists of output files
+                    prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
+                    prim_rev = path+'/1-Primertrimmed/'+run+'/'+name+'_2.fastq'
+                    out_csv = path+'/2-Filtered/'+run+'/'+name+'.csv'
+                    filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
+                    filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
+
+                    namelist.append(name)
+                    primlist.append(prim_for)
+                    primlist.append(prim_rev)
+                    csvlist.append(out_csv)
+                    filtlist.append(filt_for)
+                    filtlist.append(filt_rev)
                 else:
-                    with open(statfile,'w') as f:
-                        f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
+                    print("\t"+name+"\tERROR! The files are not available or are empty.")
 
-                #Create lists of output files
-                prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
-                prim_rev = path+'/1-Primertrimmed/'+run+'/'+name+'_2.fastq'
-                out_csv = path+'/2-Filtered/'+run+'/'+name+'.csv'
-                filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
-                filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
-
-                namelist.append(name)
-                primlist.append(prim_for)
-                primlist.append(prim_rev)
-                csvlist.append(out_csv)
-                filtlist.append(filt_for)
-                filtlist.append(filt_rev)
-            else:
-                print("\t"+name+"\tERROR! The files are not available or are empty.")
-
+print(filtlist)
 #####################################################
 ################## Data assessment ##################
 #####################################################
