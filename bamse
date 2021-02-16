@@ -4,6 +4,7 @@ import os
 import sys
 import glob
 from glob import glob
+import shutil
 
 ####################
 # Check if conda environment bamse-env is active #
@@ -68,10 +69,6 @@ luluarg=args.lulu
 # Retrieve current directory
 file = os.path.dirname(sys.argv[0])
 curr_dir = os.path.abspath(file)
-
-# Remove contents in the directory
-#if overwrite == True:
-    #Add removing commands
 
 # Create workign directory if does not exist
 if not os.path.exists(path):
@@ -157,6 +154,43 @@ if os.path.exists(param):
 curr_dir=os.path.dirname(sys.argv[0])
 bamsepath=os.path.abspath(curr_dir)
 
+# Remove contents in the directory
+if overwrite == True:
+    if os.path.isdir(path+"/0-Data"):
+        shutil.rmtree(path+"/0-Data")
+    if os.path.isdir(path+"/0-Stats"):
+        shutil.rmtree(path+"/0-Stats")
+    if os.path.isdir(path+"/1-Primertrimmed"):
+        shutil.rmtree(path+"/1-Primertrimmed")
+    if os.path.isdir(path+"/2-Filtered"):
+        shutil.rmtree(path+"/2-Filtered")
+    if os.path.isdir(path+"/3-DADA2"):
+        shutil.rmtree(path+"/3-DADA2")
+    if os.path.isdir(path+"/4-Taxonomyfilter"):
+        shutil.rmtree(path+"/4-Taxonomyfilter")
+    if os.path.isdir(path+"/6-Phylogeny"):
+        shutil.rmtree(path+"/6-Phylogeny")
+    if os.path.isdir(path+"/7-Binning"):
+        shutil.rmtree(path+"/7-Binning")
+    if os.path.isfile(path+"/ASV_counts.binned.csv"):
+        os.remove(path+"/ASV_counts.binned.csv")
+    if os.path.isfile(path+"/ASV_counts.csv"):
+        os.remove(path+"/ASV_counts.csv")
+    if os.path.isfile(path+"/ASV_taxa.txt"):
+        os.remove(path+"/ASV_taxa.txt")
+    if os.path.isfile(path+"/ASVs.binned.fasta"):
+        os.remove(path+"/ASVs.binned.fasta")
+    if os.path.isfile(path+"/ASVs.binned.tre"):
+        os.remove(path+"/ASVs.binned.tre")
+    if os.path.isfile(path+"/ASVs.fasta"):
+        os.remove(path+"/ASVs.fasta")
+    if os.path.isfile(path+"/ASVs.tre"):
+        os.remove(path+"/ASVs.tre")
+    if os.path.isfile(path+"/bamse.log"):
+        os.remove(path+"/bamse.log")
+    if os.path.isfile(path+"/bamse.yaml"):
+        os.remove(path+"/bamse.yaml")
+
 ###################
 # Create log file #
 ###################
@@ -179,7 +213,7 @@ print("   (__ /'-'\ __)    ██╔══██╗██╔══██║█�
 print("      || o ||       ██████╔╝██║  ██║██║ ╚═╝ ██║███████║███████╗")
 print("     _/ '_' \_      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝")
 print("     `-´   `-´      Bacterial AMplicon SEquence processing pipeline")
-print("    Version: 1.0    @Antton Alberdi & @Ostaizka Aizpurua\n")
+print("    Version: 1.0    By @Antton Alberdi & @Ostaizka Aizpurua\n")
 print("#######################################################################\n")
 print("BAMSE is starting at:")
 current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
@@ -434,34 +468,41 @@ for line in inputfile:
                     logfile.write("\tThe file " + in_rev + " does not exist.\n")
                     logfile.close()
 
-            #Calculate read lengths
-            fastq_parser1 = SeqIO.parse(out1, "fastq")
-            fastq_parser2 = SeqIO.parse(out2, "fastq")
-
-            #Calculate read length
-            read1lenlist=[]
-            read2lenlist=[]
-            iter=0
-            for read1, read2 in zip(fastq_parser1, fastq_parser2):
-                if iter < 5000:
-                	read1len=len(read1)
-                	read2len=len(read2)
-                	read1lenlist.append(read1len)
-                	read2lenlist.append(read2len)
-                	iter += 1
-                else:
-                    break
-
-            #Number of reads and read length
-            read1len=int(statistics.mean(read1lenlist))
-            read2len=int(statistics.mean(read2lenlist))
+            #Calculate read number
             readnum=sum(1 for line in open(out1)) / 4
-            statfile=path+'/0-Stats/'+name+'.txt'
-            with open(statfile,'w') as f:
-                f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
-                f.write('Average forward read length:\t'+str(int(read1len))+'\n')
-                f.write('Average reverse read length:\t'+str(int(read2len))+'\n')
-            print("\t"+name+"\t"+str(int(readnum))+" reads of average length "+str(int(read1len))+" (F) and "+str(int(read2len))+" (R) nucleotides.")
+
+            if readnum > 0:
+                #Calculate read lengths
+                fastq_parser1 = SeqIO.parse(out1, "fastq")
+                fastq_parser2 = SeqIO.parse(out2, "fastq")
+
+                #Calculate read length
+                read1lenlist=[]
+                read2lenlist=[]
+                iter=0
+                for read1, read2 in zip(fastq_parser1, fastq_parser2):
+                    if iter < 5000:
+                    	read1len=len(read1)
+                    	read2len=len(read2)
+                    	read1lenlist.append(read1len)
+                    	read2lenlist.append(read2len)
+                    	iter += 1
+                    else:
+                        break
+
+                #Number of reads and read length
+                read1len=int(statistics.mean(read1lenlist))
+                read2len=int(statistics.mean(read2lenlist))
+                statfile=path+'/0-Stats/'+name+'.txt'
+                with open(statfile,'w') as f:
+                    f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
+                    f.write('Average forward read length:\t'+str(int(read1len))+'\n')
+                    f.write('Average reverse read length:\t'+str(int(read2len))+'\n')
+                print("\t"+name+"\t"+str(int(readnum))+" reads of average length "+str(int(read1len))+" (F) and "+str(int(read2len))+" (R) nucleotides.")
+            else:
+                print("\t"+name+"\tERROR! This samples has no reads.")
+                with open(statfile,'w') as f:
+                    f.write('Number of initial reads:\t'+str(int(readnum))+'\n')
 
             #Create lists of output files
             prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
@@ -509,7 +550,7 @@ if (primF != 'noprimer') & (primR != 'noprimer'):
 
 #Calculate whether the length of the reads + overlap are sufficient for covering the amplicon length
 
-print("\n\tBAMSE will know calculate the excess of nucleotides after subtracting the amplicon length and the")
+print("\n\tBAMSE will now calculate the excess of nucleotides after subtracting the amplicon length and the")
 print("\tminimum number of overlapping nucleotides to assess whether the analysis can continue:")
 print("\t\tExcess = (READ1+READ2-(OVERLAP*2))-AMPLICONLENGTH")
 print("\t\tExcess = ("+str(avgreadlen1)+"+"+str(avgreadlen2)+"-("+str(overlap)+"*2))-"+str(ampliconlength))
