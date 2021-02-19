@@ -823,12 +823,16 @@ if not all(list(map(os.path.isfile,filtlist))):
         #Calculate number of reads after filtering and save to stats file
         for samplefile in filtlist:
             if samplefile.endswith("_1.fastq"):
-                print(samplefile)
                 samplename=re.search('2-Filtered/(.*)/(.*)_1.fastq', samplefile).group(2)
-                readnum=sum(1 for line in open(samplefile)) / 4
                 statfile=path+'/0-Stats/'+samplename+'.txt'
-                with open(statfile,'a') as f:
-                    f.write('Filtered reads:\t'+str(int(readnum))+'\n')
+                if os.path.exists(samplefile):
+                    readnum=sum(1 for line in open(samplefile)) / 4
+                    with open(statfile,'a') as f:
+                        f.write('Filtered reads:\t'+str(int(readnum))+'\n')
+                else:
+                    readnum=0
+                    with open(statfile,'a') as f:
+                        f.write('Filtered reads:\t'+str(int(readnum))+'\n')
 
 else:
        # Output log to logfile

@@ -27,7 +27,13 @@ rule trimming:
         mee=expand("{mee}", mee=config['mee'])
     shell:
         """
-        echo "\tTrimming sample {wildcards.sample}" >> {rules.get_paths.input.logpath}
-        echo "\tTrimming sample {wildcards.sample}"
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filterandtrim.R -f {input.read1} -r {input.read2} -o {output.read1} -u {output.read2} -t {input.trim} -e {params.mee} >> {rules.get_paths.input.logpath}
+        if [ -s {input.read1} ]; then
+            echo "\tTrimming sample {wildcards.sample}" >> {rules.get_paths.input.logpath}
+            echo "\tTrimming sample {wildcards.sample}"
+            Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filterandtrim.R -f {input.read1} -r {input.read2} -o {output.read1} -u {output.read2} -t {input.trim} -e {params.mee} >> {rules.get_paths.input.logpath}
+        else
+            echo "\tSample {wildcards.sample} does not have valid reads for trimming"
+            touch {output.read1}
+            touch {output.read2}
+        fi
         """
