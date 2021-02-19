@@ -84,4 +84,6 @@ statsfile=$(echo ${read1} | sed 's/.*0-Data\///' | sed 's/.*\///' | sed 's/_1.fa
 stats=$(echo "${statpath}/${statsfile}")
 readnumber=$(cat ${filt1} | wc -l)
 readnumber2=$(( $readnumber / 4 ))
-echo 'Primer-trimmed reads\t'$readnumber2 >> ${stats}
+if (readnumber2 > 0){
+echo 'Primer-trimmed reads:\t'$readnumber2 >> ${stats}
+}

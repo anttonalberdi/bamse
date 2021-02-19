@@ -11,10 +11,10 @@ rule get_paths:
         logpath=expand("{logpath}", logpath=config['logpath'])
 
 ##
-# Primer trimming
+# Primer clipping
 ##
 
-rule trim:
+rule clip:
     input:
         read1="{projectpath}/0-Data/{run}/{sample}_1.fastq",
         read2="{projectpath}/0-Data/{run}/{sample}_2.fastq"
