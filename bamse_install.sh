@@ -21,6 +21,7 @@ dependencies:
   - R =4.0.0
   - bioconductor-dada2
   - boto3
+  - smart_open
   - r-dplyr
   - r-stringr
   - r-devtools
