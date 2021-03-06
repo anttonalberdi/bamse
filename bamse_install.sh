@@ -20,6 +20,7 @@ dependencies:
   - libcurl =7.71.1
   - R =4.0.0
   - bioconductor-dada2
+  - boto3
   - r-dplyr
   - r-stringr
   - r-devtools

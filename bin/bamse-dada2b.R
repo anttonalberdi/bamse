@@ -29,6 +29,8 @@ taxafile <- opt$taxa
 fold <- opt$fold
 logfile <- opt$log
 
+#dir="/Users/anttonalberdi/bamse_evie/3-DADA2"
+
 #####
 # Read rds files
 #####
