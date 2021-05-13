@@ -110,6 +110,8 @@ To date (February 2021), the pipeline consists of the following steps:
 
 ## Parameters
 
+### Mandatory
+
 **-i:** Data information file.
 
 **-d:** Working directory of the project.
@@ -124,13 +126,15 @@ To date (February 2021), the pipeline consists of the following steps:
 
 **-t:** Number of threads (e.g. 8).
 
-Optional:
+### Optional
 
 **-e:** Maximum expected error per read (default 2).
 
 **-o:** Minimum overlap for merging reads (default 5).
 
 **-q:** Desired quality filtering mode, either **loose** (q=20, 1 error expected every 100 nucleotides), **default** (q=25, 1 error expected every 500 nucleotides) or **strict** (q=30, 1 error expected every 1000 nucleotides).
+
+**-c:** Relative minimum copy number threshold to consider an ASV in a sample. Default is 0.0001 (0.01%), which entails that for a sample characterised with 10,000 (10,000 x 0.0001 = 1) reads singletones will be removed, while for a sample characterised with 100,000 (100,000 x 0.0001 = 10) reads ASVs below 10 reads will be removed. The filtering parameter can be modified or disabled using 0.
 
 **-m:** Stringency level of the DADA2 chimera filtering (default is 1). The higher then number the looser the definition of chimeras (more final ASVs retrieved).
 
@@ -140,7 +144,7 @@ Optional:
 
 **-u:** BAMSE runs LULU polishing.
 
-#### Data information file
+## Data input file
 The data input file must be a simple text file with the information corresponding to each dataset specified in a different row and **separated by commas**. The minimum information required is:
 
 **Data unit:** Name of the minimum data unit. If no replicates (either biological or technical) have been used data unit and sample should be identical. If replicates have been used, data units with identical sample names will be merged by BAMSE.
