@@ -30,5 +30,5 @@ rule clip:
         echo "\tClipping primers from {wildcards.sample}" >> {rules.get_paths.input.logpath}
         echo "\tClipping primers from {wildcards.sample}"
         mkdir -p {wildcards.projectpath}/1-Primertrimmed
-        sh {rules.get_paths.input.bamsepath}/bin/bamse-primertrim.sh -a {input.read1} -b {input.read2} -c {output.read1} -d {output.read2} -f {params.primer1} -r {params.primer2} >> {rules.get_paths.input.logpath}
+        sh {rules.get_paths.input.bamsepath}/bin/bamse-primerclip.sh -a {input.read1} -b {input.read2} -c {output.read1} -d {output.read2} -f {params.primer1} -r {params.primer2} >> {rules.get_paths.input.logpath}
         """

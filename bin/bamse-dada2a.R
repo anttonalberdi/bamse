@@ -12,6 +12,7 @@ library(dada2)
 option_list = list(
  make_option(c("-i", "--input"),type = "character",default = NULL, help = "Input directory",metavar = "character"),
  make_option(c("-o", "--output"),type = "character",default = NULL, help = "Output R object",metavar = "character"),
+ make_option(c("-p", "--pattern"),type = "character",default = NULL, help = "Suffix pattern",metavar = "character"),
  make_option(c("-v", "--overlap"),type = "character",default = NULL, help = "Minimum overlap value",metavar = "character"),
  make_option(c("-l", "--log"),type = "character",default = NULL, help = "Log file",metavar = "character")
 );
@@ -19,6 +20,7 @@ option_list = list(
 opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 dir<-opt$input
+pattern<-opt$pattern
 outputfile<-opt$output
 overlap<-as.numeric(opt$overlap)
 logfile <- opt$log
@@ -31,15 +33,14 @@ logfile <- opt$log
 #This step has been updated in February 2021 to avoid forward and reverse read to be sorted differently
 #if there are names that interfere with the _1 and _2 suffixes.
 
-filtFs_list <- gsub("_1.fastq","",list.files(path = dir, pattern = "_1.fastq", full.names=TRUE))
-filtRs_list <- gsub("_2.fastq","",list.files(path = dir, pattern = "_2.fastq", full.names=TRUE))
+filtFs_list <- gsub(paste("_1.",pattern,sep=""),"",list.files(path = dir, pattern = paste("_1.",pattern,sep=""), full.names=TRUE))
+filtRs_list <- gsub(paste("_2.",pattern,sep=""),"",list.files(path = dir, pattern = paste("_2.",pattern,sep=""), full.names=TRUE))
 
 #Check if both vectors contain the same elements
 if (setequal(filtFs_list, filtRs_list) == TRUE){
-  filtFs <- paste(filtFs_list,"_1.fastq",sep="")
-  filtRs <- paste(filtFs_list,"_2.fastq",sep="")
+  filtFs <- paste(filtFs_list,paste("_1.",pattern,sep=""),sep="")
+  filtRs <- paste(filtFs_list,paste("_2.",pattern,sep=""),sep="")
 }else{
-  write("ERROR! The forward and reverse reads do not match",file=statsfile,append=TRUE)
   print("ERROR! The forward and reverse reads do not match")
 }
 

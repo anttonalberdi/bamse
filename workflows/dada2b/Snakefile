@@ -21,10 +21,11 @@ rule dada2b:
         counts="{projectpath}/3-DADA2/ASV_counts.csv"
     params:
         taxonomy=expand("{taxonomy}", taxonomy=config['taxonomy']),
-        fold=expand("{fold}", fold=config['fold'])
+        fold=expand("{fold}", fold=config['fold']),
+        threshold=expand("{threshold}", threshold=config['threshold'])
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2b.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa} -f {params.fold} -l {rules.get_paths.input.logpath}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2b.R -d {input.dir} -t {params.taxonomy} -a {output.asvs} -c {output.counts} -x {output.taxa} -f {params.fold} -r {params.threshold} -l {rules.get_paths.input.logpath}
         """
 
 ##

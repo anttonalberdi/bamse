@@ -18,9 +18,25 @@ rule dada2a:
     output:
         rds="{projectpath}/3-DADA2/{run}.rds"
     params:
+        pattern="fastq",
         overlap=expand("{overlap}", overlap=config['overlap'])
     shell:
         """
         mkdir -p {wildcards.projectpath}/3-DADA2
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -v {params.overlap} -l {rules.get_paths.input.logpath}
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -p {params.pattern} -v {params.overlap} -l {rules.get_paths.input.logpath}
+        """
+
+rule dada2a_rev:
+    input:
+        dir="{projectpath}/2-Filtered/{run}"
+    threads: 40
+    output:
+        rds="{projectpath}/3-DADA2/{run}.rev.rds"
+    params:
+        pattern="rev.fastq",
+        overlap=expand("{overlap}", overlap=config['overlap'])
+    shell:
+        """
+        mkdir -p {wildcards.projectpath}/3-DADA2
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -p {params.pattern} -v {params.overlap} -l {rules.get_paths.input.logpath}
         """

@@ -15,6 +15,7 @@ option_list = list(
  make_option(c("-a", "--asvfile"),type = "character",default = NULL, help = "Output ASV sequence file",metavar = "character"),
  make_option(c("-c", "--count"),type = "character",default = NULL, help = "Output count table",metavar = "character"),
  make_option(c("-x", "--taxa"),type = "character",default = NULL, help = "Taxonomy database path",metavar = "character"),
+ make_option(c("-r", "--threshold"),type = "character",default = NULL, help = "Relative copy number filtering threshold",metavar = "character"),
  make_option(c("-f", "--fold"),type = "character",default = NULL, help = "Min Fold Parent Over Abundance",metavar = "character"),
  make_option(c("-l", "--log"),type = "character",default = NULL, help = "Log file",metavar = "character")
 );
@@ -26,7 +27,8 @@ taxonomy <- opt$taxonomy
 asvfile <- opt$asvfile
 countfile <- opt$count
 taxafile <- opt$taxa
-fold <- opt$fold
+threshold <- as.numeric(opt$threshold)
+fold <- as.numeric(opt$fold)
 logfile <- opt$log
 
 #dir="/Users/anttonalberdi/bamse_evie/3-DADA2"
@@ -39,26 +41,36 @@ filelist <- list.files(path = dir, pattern = ".rds", full.names=TRUE)
 SequenceTableList <- lapply(filelist,readRDS)
 
 #####
-# Merge different run
+# Merge different runs
 #####
 
 if(length(SequenceTableList) == 1){
-seqtab <- as.matrix(SequenceTableList[[1]])
+seqtab <- as.data.frame(SequenceTableList[[1]])
 }else{
-seqtab <- as.matrix(mergeSequenceTables(tables=SequenceTableList))
+seqtab <- as.data.frame(mergeSequenceTables(tables=SequenceTableList))
 }
+
+#####
+# Aggregate samples with split from primer trimming
+#####
+
+seqtab$sample <- gsub("_1.fastq$","",(gsub("_1.rev.fastq$","",rownames(seqtab))))
+seqtab_aggregated <- aggregate(seqtab[,-ncol(seqtab)],by=list(seqtab$sample),FUN=sum)
+rownames(seqtab_aggregated) <- seqtab_aggregated[,1]
+seqtab_aggregated <- seqtab_aggregated[,-1]
 
 # Output ASVs before chimera filtering to stats file
 path <- sub("3-DADA2","",dir)
 
-loop <- c(1:nrow(seqtab))
+loop <- c(1:nrow(seqtab_aggregated))
 for (i in loop){
-  name <- rownames(seqtab)[i]
+  name <- rownames(seqtab_aggregated)[i]
   name2 <- sub("_1.fastq","",name)
-  asvs <- rowSums(seqtab!=0)[i]
+  asvs <- rowSums(seqtab_aggregated!=0)[i]
   statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
   write(paste("ASVs before chimera filtering",asvs,sep="\t"),file=statsfile,append=TRUE)
 }
+message(paste("\n",ncol(seqtab_aggregated)," ASVs have been generated before chimera filtering.",sep=""))
 
 #####
 # Chimera filtering
@@ -67,7 +79,7 @@ for (i in loop){
 line="  Filtering chimeras"
 write(line,file=logfile,append=TRUE)
 
-seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE, minFoldParentOverAbundance=as.numeric(fold))
+seqtab.nochim <- removeBimeraDenovo(as.matrix(seqtab_aggregated), method="consensus", multithread=TRUE, verbose=TRUE, minFoldParentOverAbundance=fold)
 asv_tab <- t(seqtab.nochim)
 
 # Output ASVs before chimera filtering to stats file
@@ -81,11 +93,26 @@ for (i in loop){
   statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
   write(paste("ASVs after chimera filtering",asvs,sep="\t"),file=statsfile,append=TRUE)
 }
+message(paste(ncol(seqtab.nochim)," ASVs have been kept after chimera filtering.",sep=""))
+
+#####
+# Filter count table
+#####
+
+#Convert values below relative copy number threshold in each sample to 0
+if(threshold != 0){
+  invisible(sapply(1:ncol(asv_tab), function(colnum){temp = asv_tab[,colnum]
+      rownums = which(temp < sum(temp)*threshold)
+      asv_tab[rownums, colnum] <<- 0}))
+}
+
+#Filter all-zero ASVs
+asv_tab <- asv_tab[!apply(asv_tab, 1, function(x) all(x == 0)), ]
+message(paste(nrow(asv_tab)," ASVs have been kept after relative copy number threshold filtering.",sep=""))
 
 #####
 # Output ASV fasta
 #####
-
 asv_seqs <- rownames(asv_tab)
 asv_headers <- vector(dim(asv_tab)[1], mode="character")
 for (i in 1:dim(asv_tab)[1]) {
@@ -95,10 +122,9 @@ asv_fasta <- c(rbind(asv_headers, asv_seqs))
 write(asv_fasta, asvfile)
 
 #####
-# Output count table
+# Output raw count table
 #####
 
-colnames(asv_tab) <- sub("_1.fastq", "", colnames(asv_tab))
 rownames(asv_tab) <- sub(">", "", asv_headers)
 write.table(asv_tab, countfile, sep=",", quote=F, col.names=NA)
 
@@ -108,9 +134,8 @@ path <- sub("3-DADA2","",dir)
 loop <- c(1:ncol(asv_tab))
 for (i in loop){
   name <- colnames(asv_tab)[i]
-  name2 <- sub("_1.fastq","",name)
   counts <- sum(asv_tab[,i])
-  statsfile <- paste(path,"0-Stats/",name2,".txt",sep="")
+  statsfile <- paste(path,"0-Stats/",name,".txt",sep="")
   write(paste("Reads represented by ASVs",counts,sep="\t"),file=statsfile,append=TRUE)
 }
 
@@ -118,6 +143,7 @@ for (i in loop){
 # Assign taxonomy
 #####
 
+message("Assigning taxonomy... (this step will probably take a while)")
 line="  Assigning taxonomy"
 write(line,file=logfile,append=TRUE)
 

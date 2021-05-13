@@ -2,6 +2,7 @@
 
 import os
 import sys
+from sys import exit
 import glob
 from glob import glob
 import shutil
@@ -51,6 +52,7 @@ parser.add_argument('-z', help="Trimming length of the reverse reads", dest="tri
 parser.add_argument('-n', help="Maximum number of reads to be analysed to find optimal trimming parameters", dest="maxreads", required=False)
 parser.add_argument('-y', help="Taxonomy filtering threshold", dest="taxfilter", required=False)
 parser.add_argument('-m', help="Minimum fold to consider parent ASVs for chimera detection", dest="fold", required=False)
+parser.add_argument('-c', help="Relative copy number threshold to consider an ASV in a sample", dest="threshold", required=False)
 parser.add_argument('-u', help="Whether to run LULU clustering", dest="lulu", required=False ,action='store_true')
 parser.add_argument('-p', help="Absolute path to the parameters file that BAMSE will create", dest="param", required=False)
 parser.add_argument('-l', help="Absolute path to the log file that BAMSE will create", dest="log", required=False)
@@ -147,6 +149,15 @@ if not (args.fold):
 else:
     fold=args.fold
 
+# Define copy number threshold value
+if not (args.threshold):
+    threshold=0.0001
+else:
+    threshold=args.threshold
+    if threshold >= 1:
+        print("\nThe copy number threshold needs to be between 0 and 1, typically 0.001 or 0.0001\n")
+        sys.exit(0)
+
 #Remove param file if exists
 if os.path.exists(param):
     os.remove(param)
@@ -239,9 +250,9 @@ f.write("ampliconlength:\n "+str(ampliconlength)+"\n")
 f.write("mee:\n "+str(mee)+"\n")
 f.write("overlap:\n "+str(overlap)+"\n")
 f.write("maxreads:\n "+str(maxreads)+"\n")
-f.write("\n#Chimera filtering\n")
+f.write("\n#ASV filtering\n")
 f.write("fold:\n "+str(fold)+"\n")
-f.write("\n#Taxonomy filtering\n")
+f.write("threshold:\n "+str(threshold)+"\n")
 f.write("taxfilter:\n "+str(taxfilter)+"\n")
 f.close()
 
@@ -264,7 +275,8 @@ logfile.write("\tmee: "+str(mee)+"\n")
 logfile.write("\toverlap: "+str(overlap)+"\n")
 logfile.write("\tmaxreads: "+str(maxreads)+"\n")
 logfile.write("\tfold: "+str(fold)+"\n")
-logfile.write("taxfilter:\n "+str(taxfilter)+"\n")
+logfile.write("\tthreshold: "+str(threshold)+"\n")
+logfile.write("\ttaxfilter: "+str(taxfilter)+"\n")
 logfile.close()
 
 #Print information on screen
@@ -286,6 +298,7 @@ print("\tForward read trimming length: "+str(trimfor))
 print("\tReverse read trimming length: "+str(trimrev))
 print("\tMaximum number of reads for parameter optimisation: "+str(maxreads))
 print("\tChimera-assigning fold: "+str(fold))
+print("\tRelative copy number threshold: "+str(threshold))
 print("\tTaxonomic filtering level: "+str(taxfilter)+"\n")
 print("If you want to learn more about these parameters visit:")
 print("\thttps://github.com/anttonalberdi/bamse\n")
@@ -385,8 +398,11 @@ inputfile = open(in_f, "r")
 #Declare empty output file list
 primlist = []
 csvlist = []
+csv2list = []
 filtlist = []
+filtrevlist = []
 dadalist = []
+dadarevlist = []
 namelist = []
 
 ## Read input data row by row
@@ -424,7 +440,9 @@ for line in inputfile:
 
             #Create list of final files for workflow DADA2 A
             dada_run = path+'/3-DADA2/'+run+'.rds'
+            dadarev_run = path+'/3-DADA2/'+run+'.rev.rds'
             dadalist.append(dada_run)
+            dadarevlist.append(dadarev_run)
 
             # Transfer, rename and decompress data
 
@@ -439,15 +457,21 @@ for line in inputfile:
                 prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
                 prim_rev = path+'/1-Primertrimmed/'+run+'/'+name+'_2.fastq'
                 out_csv = path+'/2-Filtered/'+run+'/'+name+'.csv'
+                out_csv2 = path+'/2-Filtered/'+run+'/'+name+'.rev.csv'
                 filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
                 filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
+                filtrev_for = path+'/2-Filtered/'+run+'/'+name+'_1.rev.fastq'
+                filtrev_rev = path+'/2-Filtered/'+run+'/'+name+'_2.rev.fastq'
 
                 namelist.append(name)
                 primlist.append(prim_for)
                 primlist.append(prim_rev)
                 csvlist.append(out_csv)
+                csv2list.append(out_csv2)
                 filtlist.append(filt_for)
                 filtlist.append(filt_rev)
+                filtrevlist.append(filtrev_for)
+                filtrevlist.append(filtrev_rev)
             else:
                 #If the forward file is not in the working directory, transfer it
                 if os.path.isfile(in_for):
@@ -523,6 +547,7 @@ for line in inputfile:
                     prim_for = path+'/1-Primertrimmed/'+run+'/'+name+'_1.fastq'
                     prim_rev = path+'/1-Primertrimmed/'+run+'/'+name+'_2.fastq'
                     out_csv = path+'/2-Filtered/'+run+'/'+name+'.csv'
+                    out_csv2 = path+'/2-Filtered/'+run+'/'+name+'.rev.csv'
                     filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
                     filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
 
@@ -530,8 +555,11 @@ for line in inputfile:
                     primlist.append(prim_for)
                     primlist.append(prim_rev)
                     csvlist.append(out_csv)
+                    csv2list.append(out_csv2)
                     filtlist.append(filt_for)
                     filtlist.append(filt_rev)
+                    filtrevlist.append(filtrev_for)
+                    filtrevlist.append(filtrev_rev)
                 else:
                     print("\t"+name+"\tERROR! The files are not available or are empty.")
 
@@ -624,8 +652,10 @@ if not all(list(map(os.path.isfile,primlist))):
            print("     BAMSE will use Cutadapt to clip the forward and reverse primers from")
            print("the paired end reads. It will automatically detect if all sequences are")
            print("directional (output of PCR-based libraries) or not (output of ligation-based")
-           print("libraries), and it will flip the reversed reads in the case of the latter.")
-           print("Primer-trimmed files will be stored in the folder '1-Primertrimmed'.\n")
+           print("libraries). In the latter case, it will split each data for correct error")
+           print("learning by DADA2, and it will automatically flip the reversed reads to")
+           print("enable DADA2 merging ASVs properly. Primer-trimmed files will be")
+           print("stored in the folder '1-Primertrimmed'.\n")
            # Output log to logfile
            logfile=open(log,"a+")
            current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
@@ -677,14 +707,14 @@ if not all(list(map(os.path.isfile,filtlist))):
             # Define snakefile
             path_snkf = os.path.join(bamsepath,'workflows/findscores2/Snakefile')
             #Transform output file list into space-separated string (only for development)
-            out_preprocessing = " ".join(csvlist)
+            out_preprocessing = " ".join(csvlist + csv2list)
 
             # Run find scores snakemake
             prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+str(cores)+' -q'
             subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
             #### Find best score ####
-            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
+            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
             subprocess.Popen(bastscore_Cmd, shell=True).wait()
 
             # Print best score
@@ -755,14 +785,14 @@ if not all(list(map(os.path.isfile,filtlist))):
 
             path_snkf = os.path.join(bamsepath,'workflows/findscores1/Snakefile')
             #Transform output file list into space-separated string (only for development)
-            out_preprocessing = " ".join(csvlist)
+            out_preprocessing = " ".join(csvlist + csv2list)
 
             # Run snakemake
             prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+str(cores)+' -q'
             subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
             #### Find best score ####
-            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/trim.txt -p '+param+' -l '+log+' 2>> /dev/null'
+            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
             subprocess.Popen(bastscore_Cmd, shell=True).wait()
 
             # Print best score
@@ -816,7 +846,8 @@ if not all(list(map(os.path.isfile,filtlist))):
 
         path_snkf = os.path.join(bamsepath,'workflows/readtrimming1/Snakefile')
         filtlist2 = list(dict.fromkeys(filtlist))
-        filtlist3 = " ".join(filtlist2)
+        filtrevlist2 = list(dict.fromkeys(filtrevlist))
+        filtlist3 = " ".join(filtlist2+filtrevlist2)
         prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+filtlist3+' --configfile '+param+' --cores '+str(cores)+' -q'
         subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
@@ -852,7 +883,8 @@ else:
 
 # Define output names
 dadalist2 = list(dict.fromkeys(dadalist))
-out_dada2a = " ".join(dadalist2)
+dadarevlist2 = list(dict.fromkeys(dadarevlist))
+out_dada2a = " ".join(dadalist2+dadarevlist2)
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
 path_snkf = os.path.join(bamsepath,'workflows/dada2a/Snakefile')
@@ -865,7 +897,7 @@ if all(list(map(os.path.isfile,dadalist2))):
     logfile.close()
     print("\n{0} | SKIPPING DADA2 ERROR LEARNING AND ASV GENERATION WORKFLOW.".format(current_time))
     print("     The output files of the DADA2 error learning and ASV generation workflow")
-    print("exist in the project directoy. If you want to re-run this step, remove the files ")
+    print("exist in the project directory. If you want to re-run this step, remove the files ")
     print("in the directory '3-DADA2'.\n")
 else:
     # Output log to logfile
@@ -887,72 +919,76 @@ subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 # Run DADA2 B workflow #      Merge the different runs, and output results
 ########################
 
-# Define output names
-out_dada2b = path+'/ASV_counts.csv '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
-out_dada2b_list = out_dada2b.split(' ')
-curr_dir = os.path.dirname(sys.argv[0])
-bamsepath = os.path.abspath(curr_dir)
-path_snkf = os.path.join(bamsepath,'workflows/dada2b/Snakefile')
-
-if all(list(map(os.path.isfile,out_dada2b_list))):
-    # Output log to logfile
-    logfile=open(log,"a+")
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-    logfile.write("\n{0} | Output files of the DADA2 B workflow exist. \r\n".format(current_time))
-    logfile.close()
-    print("\n{0} | SKIPPING DADA2 CHIMERA FILTERING AND TAXONOMY ANNOTATION WORKFLOW.".format(current_time))
-    print("     The output files of the DADA2 chimera filtering and taxonomy annotation workflow")
-    print("exist in the project directoy. If you want to re-run this step, remove the files ")
-    print("in the directory '4-Taxonomyfilter', as well as the files 'ASVs.fasta', 'ASV_counts.csv'")
-    print("and 'ASV_taxa.txt'.\n")
-else:
-    # Output log to logfile
-    logfile=open(log,"a+")
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-    logfile.write("\n{0} | Running DADA2 chimera filtering and taxonomy annotation \r\n".format(current_time))
-    logfile.close()
-    print("\n{0} | STARTING DADA2 CHIMERA FILTERING AND TAXONOMY ANNOTATION WORKFLOW.".format(current_time))
-    print("     BAMSE will run DADA2 for filtering chimeric sequences and assigning")
-    print("taxonomy to the ASVs. BAMSE will only retain ASVs assigned at least to a")
-    print("Bacteria/Archaea Phylum level. In large datasets this step might take a while.\n")
-
-    taxonfilterpath=path+'/4-Taxonomyfilter/'
-    if not os.path.exists(taxonfilterpath):
-        os.makedirs(taxonfilterpath)
-
-    # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2b+' --configfile '+param+' --cores '+str(cores)+' -q'
-    subprocess.Popen(prep_snk_Cmd, shell=True).wait()
-
-#####################
-# Run LULU workflow #      Curate ASV list and resulting ASV table
-#####################
-
-if luluarg == True:
-
-    lulupath=path+'/5-LULU/'
-    if not os.path.exists(taxonfilterpath):
-        os.makedirs(taxonfilterpath)
-
-    # Output log to logfile
-    logfile=open(log,"a+")
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-    logfile.write("\n{0} | Running the LULU curation \r\n".format(current_time))
-    logfile.close()
-    print("\n{0} | RUNNING LULU CURATION.".format(current_time))
-    print("     BAMSE will run LULU, because you have specified the flag -u.")
-    print("Filtered ASV sequence document and tables will be named as")
-    print("ASVs.lulu.fasta and ASV_counts.lulu.csv, respectively.\n")
+#If RDS files exist
+dadapath=path+"/3-DADA2"
+if len(list(filter(lambda k: 'rds' in k, os.listdir(dadapath)))) >= 1:
 
     # Define output names
-    out_lulu = path+'/ASV_counts.lulu.csv '+path+'/ASVs.lulu.fasta'
+    out_dada2b = path+'/ASV_counts.csv '+path+'/ASVs.fasta '+path+'/ASV_taxa.txt'
+    out_dada2b_list = out_dada2b.split(' ')
     curr_dir = os.path.dirname(sys.argv[0])
     bamsepath = os.path.abspath(curr_dir)
-    path_snkf = os.path.join(bamsepath,'workflows/lulu/Snakefile')
+    path_snkf = os.path.join(bamsepath,'workflows/dada2b/Snakefile')
 
-    # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_lulu+' --configfile '+param+' --cores '+str(cores)+' -q'
-    subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+    if all(list(map(os.path.isfile,out_dada2b_list))):
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | Output files of the DADA2 B workflow exist. \r\n".format(current_time))
+        logfile.close()
+        print("\n{0} | SKIPPING DADA2 CHIMERA FILTERING AND TAXONOMY ANNOTATION WORKFLOW.".format(current_time))
+        print("     The output files of the DADA2 chimera filtering and taxonomy annotation workflow")
+        print("exist in the project directoy. If you want to re-run this step, remove the files ")
+        print("in the directory '4-Taxonomyfilter', as well as the files 'ASVs.fasta', 'ASV_counts.csv'")
+        print("and 'ASV_taxa.txt'.\n")
+    else:
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | Running DADA2 chimera filtering and taxonomy annotation \r\n".format(current_time))
+        logfile.close()
+        print("\n{0} | STARTING DADA2 CHIMERA FILTERING AND TAXONOMY ANNOTATION WORKFLOW.".format(current_time))
+        print("     BAMSE will run DADA2 for filtering chimeric sequences and assigning")
+        print("taxonomy to the ASVs. BAMSE will only retain ASVs assigned at least to a")
+        print("Bacteria/Archaea Phylum level. In large datasets this step might take a while.\n")
+
+        taxonfilterpath=path+'/4-Taxonomyfilter/'
+        if not os.path.exists(taxonfilterpath):
+            os.makedirs(taxonfilterpath)
+
+        # Run snakemake
+        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2b+' --configfile '+param+' --cores '+str(cores)+' -q'
+        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+
+    #####################
+    # Run LULU workflow #      Curate ASV list and resulting ASV table
+    #####################
+
+    if luluarg == True:
+
+        lulupath=path+'/5-LULU/'
+        if not os.path.exists(taxonfilterpath):
+            os.makedirs(taxonfilterpath)
+
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | Running the LULU curation \r\n".format(current_time))
+        logfile.close()
+        print("\n{0} | RUNNING LULU CURATION.".format(current_time))
+        print("     BAMSE will run LULU, because you have specified the flag -u.")
+        print("Filtered ASV sequence document and tables will be named as")
+        print("ASVs.lulu.fasta and ASV_counts.lulu.csv, respectively.\n")
+
+        # Define output names
+        out_lulu = path+'/ASV_counts.lulu.csv '+path+'/ASVs.lulu.fasta'
+        curr_dir = os.path.dirname(sys.argv[0])
+        bamsepath = os.path.abspath(curr_dir)
+        path_snkf = os.path.join(bamsepath,'workflows/lulu/Snakefile')
+
+        # Run snakemake
+        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_lulu+' --configfile '+param+' --cores '+str(cores)+' -q'
+        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 
 #########################################
@@ -972,81 +1008,89 @@ if luluarg == True:
 # Run ASV phylogeny #
 #####################
 
-# Define output names
-out_phylogeny = path+'/6-Phylogeny/ASVs.align.fasta '+path+'/ASVs.tre'
-out_phylogeny_list = out_phylogeny.split(' ')
-curr_dir = os.path.dirname(sys.argv[0])
-bamsepath = os.path.abspath(curr_dir)
-path_snkf = os.path.join(bamsepath,'workflows/phylogeny/Snakefile')
+#If ASV fasta file exists
+fastapath=path+"/ASVs.fasta"
+if os.path.isfile(fastapath):
 
-if all(list(map(os.path.isfile,out_phylogeny_list))):
-    # Output log to logfile
-    logfile=open(log,"a+")
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-    logfile.write("\n{0} | Output files of the ASV phylogeny generation workflow exist. \r\n".format(current_time))
-    logfile.close()
-    print("\n{0} | SKIPPING ASV PHYLOGENY GENERATION WORKFLOW.".format(current_time))
-    print("     The output files of the ASV phylogeny generation workflow exist. If you want to")
-    print("re-run this step, remove the files in the directory '6-Phylogeny', as well as the")
-    print("file 'ASVs.tre'.\n")
-else:
-    # Output log to logfile
-    logfile=open(log,"a+")
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-    logfile.write("\n{0} | Running ASV phylogeny \r\n".format(current_time))
-    logfile.close()
-    print("\n{0} | STARTING ASV PHYLOGENY GENERATION WORKFLOW.".format(current_time))
-    print("     BAMSE will first align the ASV sequences to then generate a Maximum")
-    print("Likelihood phylogenetic tree. This step might take several hours when the")
-    print("number of ASVs is high.\n")
+    # Define output names
+    out_phylogeny = path+'/6-Phylogeny/ASVs.align.fasta '+path+'/ASVs.tre'
+    out_phylogeny_list = out_phylogeny.split(' ')
+    curr_dir = os.path.dirname(sys.argv[0])
+    bamsepath = os.path.abspath(curr_dir)
+    path_snkf = os.path.join(bamsepath,'workflows/phylogeny/Snakefile')
 
-    phylopath=path+'/6-Phylogeny/'
-    if not os.path.exists(phylopath):
-        os.makedirs(phylopath)
+    if all(list(map(os.path.isfile,out_phylogeny_list))):
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | Output files of the ASV phylogeny generation workflow exist. \r\n".format(current_time))
+        logfile.close()
+        print("\n{0} | SKIPPING ASV PHYLOGENY GENERATION WORKFLOW.".format(current_time))
+        print("     The output files of the ASV phylogeny generation workflow exist. If you want to")
+        print("re-run this step, remove the files in the directory '6-Phylogeny', as well as the")
+        print("file 'ASVs.tre'.\n")
+    else:
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | Running ASV phylogeny \r\n".format(current_time))
+        logfile.close()
+        print("\n{0} | STARTING ASV PHYLOGENY GENERATION WORKFLOW.".format(current_time))
+        print("     BAMSE will first align the ASV sequences to then generate a Maximum")
+        print("Likelihood phylogenetic tree. This step might take several hours when the")
+        print("number of ASVs is high.\n")
 
-    # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_phylogeny+' --configfile '+param+' --cores '+str(cores)+' -q'
-    subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+        phylopath=path+'/6-Phylogeny/'
+        if not os.path.exists(phylopath):
+            os.makedirs(phylopath)
+
+        # Run snakemake
+        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_phylogeny+' --configfile '+param+' --cores '+str(cores)+' -q'
+        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 ############################
 # Run OTU binning workflow #
 ############################
 
-# Define output names
-out_binning = path+'/7-Binning/binmap.txt '+path+'/7-Binning/ASVs.counts.fasta '+path+'/7-Binning/ASVs.sorted.fasta '+path+'/7-Binning/bintable.txt '+path+'/ASVs.binned.fasta '+path+'/ASV_counts.binned.csv '+path+'/ASVs.binned.tre'
-out_binning_list = out_binning.split(' ')
-curr_dir = os.path.dirname(sys.argv[0])
-bamsepath = os.path.abspath(curr_dir)
-path_snkf = os.path.join(bamsepath,'workflows/binning/Snakefile')
+#If ASV counts file exists
+fastapath=path+"/ASV_counts.csv"
+if os.path.isfile(fastapath):
 
-if all(list(map(os.path.isfile,out_binning_list))):
-    # Output log to logfile
-    logfile=open(log,"a+")
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-    logfile.write("\n{0} | Output files of the ASV binning workflow exist. \r\n".format(current_time))
-    logfile.close()
-    print("\n{0} | SKIPPING ASV BINNING WORKFLOW.".format(current_time))
-    print("     The output files of the ASV binning workflow exist. If you want to re-run")
-    print("this step, remove the files in the directory '7-Binning', as well as the")
-    print("files 'ASVs.binned.fasta', 'ASV_counts.binned.csv' and 'ASVs.binned.tre'.\n")
-else:
-    # Output log to logfile
-    logfile=open(log,"a+")
-    current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
-    logfile.write("\n{0} | Running ASV binning \r\n".format(current_time))
-    logfile.close()
-    print("\n{0} | STARTING ASV BINNING WORKFLOW.".format(current_time))
-    print("     BAMSE will bin ASVs with sequence identity of >97%. The binned ASV ")
-    print("sequence file, ASV count table and ASV phylogenetic tree will be named")
-    print("ASVs.binned.fasta, ASV_counts.binned.csv and ASV.binned.tre, respectively.\n")
+    # Define output names
+    out_binning = path+'/7-Binning/binmap.txt '+path+'/7-Binning/ASVs.counts.fasta '+path+'/7-Binning/ASVs.sorted.fasta '+path+'/7-Binning/bintable.txt '+path+'/ASVs.binned.fasta '+path+'/ASV_counts.binned.csv '+path+'/ASVs.binned.tre'
+    out_binning_list = out_binning.split(' ')
+    curr_dir = os.path.dirname(sys.argv[0])
+    bamsepath = os.path.abspath(curr_dir)
+    path_snkf = os.path.join(bamsepath,'workflows/binning/Snakefile')
 
-    binpath=path+'/7-Binning/'
-    if not os.path.exists(binpath):
-        os.makedirs(binpath)
+    if all(list(map(os.path.isfile,out_binning_list))):
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | Output files of the ASV binning workflow exist. \r\n".format(current_time))
+        logfile.close()
+        print("\n{0} | SKIPPING ASV BINNING WORKFLOW.".format(current_time))
+        print("     The output files of the ASV binning workflow exist. If you want to re-run")
+        print("this step, remove the files in the directory '7-Binning', as well as the")
+        print("files 'ASVs.binned.fasta', 'ASV_counts.binned.csv' and 'ASVs.binned.tre'.\n")
+    else:
+        # Output log to logfile
+        logfile=open(log,"a+")
+        current_time = time.strftime("%m.%d.%y %H:%M", time.localtime())
+        logfile.write("\n{0} | Running ASV binning \r\n".format(current_time))
+        logfile.close()
+        print("\n{0} | STARTING ASV BINNING WORKFLOW.".format(current_time))
+        print("     BAMSE will bin ASVs with sequence identity of >97%. The binned ASV ")
+        print("sequence file, ASV count table and ASV phylogenetic tree will be named")
+        print("ASVs.binned.fasta, ASV_counts.binned.csv and ASV.binned.tre, respectively.\n")
 
-    # Run snakemake
-    prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_binning+' --configfile '+param+' --cores '+str(cores)+' -q'
-    subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+        binpath=path+'/7-Binning/'
+        if not os.path.exists(binpath):
+            os.makedirs(binpath)
+
+        # Run snakemake
+        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_binning+' --configfile '+param+' --cores '+str(cores)+' -q'
+        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
 
 ###################################
