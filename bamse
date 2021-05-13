@@ -397,12 +397,15 @@ inputfile = open(in_f, "r")
 
 #Declare empty output file list
 primlist = []
+runlist = []
 csvlist = []
 csv2list = []
 filtlist = []
 filtrevlist = []
 dadalist = []
 dadarevlist = []
+trimlist = []
+trimrevlist = []
 namelist = []
 
 ## Read input data row by row
@@ -433,16 +436,30 @@ for line in inputfile:
             in_for=linelist[2]
             in_rev=linelist[3]
 
+            #Create run list
+            if run not in runlist:
+                runlist.append(run)
+
             #Create run folder if it does not exist
             runpath=path+'/0-Data/'+run
             if not os.path.exists(runpath):
                 os.makedirs(runpath)
 
+            #Create list of final files for optimal trimming parameters
+            optimaltrim_run = path+'/2-Filtered/'+run+'/trim.txt'
+            optimalrevtrim_run = path+'/2-Filtered/'+run+'/trim.rev.txt'
+            if optimaltrim_run not in trimlist:
+                trimlist.append(optimaltrim_run)
+            if optimalrevtrim_run not in trimrevlist:
+                trimrevlist.append(optimalrevtrim_run)
+
             #Create list of final files for workflow DADA2 A
             dada_run = path+'/3-DADA2/'+run+'.rds'
             dadarev_run = path+'/3-DADA2/'+run+'.rev.rds'
-            dadalist.append(dada_run)
-            dadarevlist.append(dadarev_run)
+            if dada_run not in dadalist:
+                dadalist.append(dada_run)
+            if dadarev_run not in dadarevlist:
+                dadarevlist.append(dadarev_run)
 
             # Transfer, rename and decompress data
 
@@ -734,55 +751,53 @@ if not all(list(map(os.path.isfile,filtlist))):
             logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES \r\n".format(current_time))
             logfile.close()
 
-            # Define snakefile
+            # Calculate scores
             path_snkf = os.path.join(bamsepath,'workflows/findscores2/Snakefile')
-            #Transform output file list into space-separated string (only for development)
             out_preprocessing = " ".join(csvlist + csv2list)
-
-            # Run find scores snakemake
             prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+str(cores)+' -q'
             subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
-            #### Find best score ####
-            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
+            # Find best score
+            path_snkf = os.path.join(bamsepath,'workflows/optimaltrim/Snakefile')
+            out_optimaltrim = " ".join(trimlist + trimrevlist)
+            bastscore_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrim+' --configfile '+param+' --cores '+str(cores)+' -q'
+            #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
             subprocess.Popen(bastscore_Cmd, shell=True).wait()
 
             # Print best score
-            trimparameters = []
-            trimfile=path+'/2-Filtered/trim.txt'
-            with open(trimfile, 'r') as arch:
-                for line in arch:
-                    trimparameters.append(eval(line.rstrip()))
-            forwardtrim=trimparameters[0]
-            reversetrim=trimparameters[1]
-
-            print("\nThe analysis of optimal trimming parameters concluded that:")
-            print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
-            print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
-
-            trimrevfile=path+"/2-Filtered/trim.rev.txt"
-            if not os.path.isfile(trimrevfile):
-                print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-                print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and reverse reads")
-                print("at position "+str(reversetrim)+", before calculating expected error values and filtering out")
-                print("the reads with MEE values under "+str(mee)+".\n")
-
-            else:
-                trimrevparameters = []
-                with open(trimrevfile, 'r') as arch:
+            for x in range(len(trimlist)):
+                trimparameters = []
+                trimfile=trimlist[x]
+                with open(trimfile, 'r') as arch:
                     for i in range(2):
-                        trimrevparameters.append(next(arch).strip())
-                forwardtrimrev=trimrevparameters[0]
-                reversetrimrev=trimrevparameters[1]
+                        trimparameters.append(next(arch).strip())
+                forwardtrim=trimparameters[0]
+                reversetrim=trimparameters[1]
 
-                print("\tThe optimal position to trim reversed Forward reads is at position "+str(forwardtrimrev)+".")
-                print("\tThe optimal position to trim reversed Reverse reads is at position "+str(reversetrimrev)+".")
+                print("\nThe analysis of optimal trimming parameters of run "+runlist[x]+" concluded that:")
+                print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
+                print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
 
-                print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-                print("     BAMSE will trim the properly oriented forward reads at position "+str(forwardtrim)+" and reverse reads")
-                print("at position "+str(reversetrim)+". Reverse-oriented forward reads will be trimmed at position  "+str(forwardtrimrev))
-                print("and reverse reads at "+str(reversetrimrev)+". Expected error values will be calculated separately and the reads with MEE")
-                print("values under "+str(mee)+" will be filtered out.\n")
+                trimrevfile=trimrevlist[x]
+                if not os.path.isfile(trimrevfile):
+                    print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+                    print("     BAMSE will trim the forward and reverse reads from the optimal positions before calculating")
+                    print("expected error values and filtering out the reads with MEE values under "+str(mee)+".\n")
+
+                else:
+                    trimrevparameters = []
+                    with open(trimrevfile, 'r') as arch:
+                        for i in range(2):
+                            trimrevparameters.append(next(arch).strip())
+                    forwardtrimrev=trimrevparameters[0]
+                    reversetrimrev=trimrevparameters[1]
+
+                    print("\tThe optimal position to trim reversed Forward reads is at position "+str(forwardtrimrev)+".")
+                    print("\tThe optimal position to trim reversed Reverse reads is at position "+str(reversetrimrev)+".")
+
+            print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+            print("     BAMSE will trim the forward and reverse reads from the optimal positions before calculating")
+            print("expected error values and filtering out the reads with MEE values under "+str(mee)+".\n")
 
         else:
             # Filter and trim
@@ -792,12 +807,14 @@ if not all(list(map(os.path.isfile,filtlist))):
             print("and filtering out the reads with MEE values under "+str(mee)+". Trimming parameters have")
             print("been specified by the user. If you want to find the optimal values automatically")
             print("do not specify the -s and -z flags.\n")
-            trimfile=path+'/2-Filtered/trim.txt'
-            trimlist=[trimfor,trimrev]
-            f=open(trimfile,'w')
-            for ele in trimlist:
-                f.write(ele+'\n')
-            f.close()
+            for x in range(len(trimlist)):
+                trimparameters = []
+                trimfile=trimlist[x]
+                trimlist=[trimfor,trimrev]
+                f=open(trimfile,'w')
+                for ele in trimlist:
+                    f.write(ele+'\n')
+                f.close()
 
         # Filter and trim
         #filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/0-Data/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+mee+''
@@ -833,67 +850,66 @@ if not all(list(map(os.path.isfile,filtlist))):
             logfile.write("\n{0} | CALCULATING OPTIMAL TRIMMING SCORES \r\n".format(current_time))
             logfile.close()
 
+            # Calculate scores
             path_snkf = os.path.join(bamsepath,'workflows/findscores1/Snakefile')
-            #Transform output file list into space-separated string (only for development)
             out_preprocessing = " ".join(csvlist + csv2list)
-
-            # Run snakemake
             prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+str(cores)+' -q'
             subprocess.Popen(prep_snk_Cmd, shell=True).wait()
 
-            #### Find best score ####
-            bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
+            # Find best score
+            path_snkf = os.path.join(bamsepath,'workflows/optimaltrim/Snakefile')
+            out_optimaltrim = " ".join(trimlist + trimrevlist)
+            bastscore_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrim+' --configfile '+param+' --cores '+str(cores)+' -q'
+            #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
             subprocess.Popen(bastscore_Cmd, shell=True).wait()
 
             # Print best score
-            trimparameters = []
-            trimfile=path+'/2-Filtered/trim.txt'
-            with open(trimfile) as f:
-                content = f.readlines()
-            trimparameters = [x.strip() for x in content]
-            forwardtrim=trimparameters[0]
-            reversetrim=trimparameters[1]
-            method=trimparameters[2]
+            for x in range(len(trimlist)):
+                trimparameters = []
+                trimfile=trimlist[x]
+                with open(trimfile, 'r') as arch:
+                    for i in range(3):
+                        trimparameters.append(next(arch).strip())
+                forwardtrim=trimparameters[0]
+                reversetrim=trimparameters[1]
+                method=trimparameters[2]
 
-            if (method == 'average'):
-                print("\nWARNING! The analysis of optimal trimming parameters concluded that:")
-                print("\tOptimal trimming lengths cannot be calculated because the read length is too short.")
-                print("\tTry shortening the read overlap length or manual trimming position assessment.")
-                print("\tBAMSE will continue  trimming the reads at their average read-length.")
+                if (method == 'average'):
+                    print("\nWARNING! The analysis of optimal trimming parameters for run "+runlist[x]+" concluded that:")
+                    print("\tOptimal trimming lengths cannot be calculated because the read length is too short.")
+                    print("\tTry shortening the read overlap length or manual trimming position assessment.")
+                    print("\tBAMSE will continue  trimming the reads at their average read-length.")
 
-                # Filter and trim
-                print("\n{0} | FILTERING READS (WITHOUT TRIMMING)".format(current_time))
-                print("     BAMSE will calculatEexpected error values and filter out ")
-                print("the reads with MEE values under "+str(mee)+".\n")
-
-            else:
-                print("\nThe analysis of optimal trimming parameters concluded that:")
-                print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
-                print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
-
-                trimrevfile=path+"/2-Filtered/trim.rev.txt"
-                if not os.path.isfile(trimrevfile):
-                    print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-                    print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and reverse reads")
-                    print("at position "+str(reversetrim)+", before calculating expected error values and filtering out")
+                    # Filter and trim
+                    print("\n{0} | FILTERING READS (WITHOUT TRIMMING)".format(current_time))
+                    print("     BAMSE will calculatEexpected error values and filter out ")
                     print("the reads with MEE values under "+str(mee)+".\n")
 
                 else:
-                    trimrevparameters = []
-                    with open(trimrevfile, 'r') as arch:
-                        for i in range(2):
-                            trimrevparameters.append(next(arch).strip())
-                    forwardtrimrev=trimrevparameters[0]
-                    reversetrimrev=trimrevparameters[1]
+                    print("\nThe analysis of optimal trimming parameters of run "+runlist[x]+" concluded that:")
+                    print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
+                    print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
 
-                    print("\tThe optimal position to trim reversed Forward reads is at position "+str(forwardtrimrev)+".")
-                    print("\tThe optimal position to trim reversed Reverse reads is at position "+str(reversetrimrev)+".")
+                    trimrevfile=trimrevlist[x]
+                    if not os.path.isfile(trimrevfile):
+                        print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+                        print("     BAMSE will trim the forward and reverse reads from the optimal positions before calculating")
+                        print("expected error values and filtering out the reads with MEE values under "+str(mee)+".\n")
 
-                    print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-                    print("     BAMSE will trim the properly oriented forward reads at position "+str(forwardtrim)+" and reverse reads")
-                    print("at position "+str(reversetrim)+". Reverse-oriented forward reads will be trimmed at position  "+str(forwardtrimrev))
-                    print("and reverse reads at "+str(reversetrimrev)+". Expected error values will be calculated separately and the reads with MEE")
-                    print("values under "+str(mee)+" will be filtered out.\n")
+                    else:
+                        trimrevparameters = []
+                        with open(trimrevfile, 'r') as arch:
+                            for i in range(2):
+                                trimrevparameters.append(next(arch).strip())
+                        forwardtrimrev=trimrevparameters[0]
+                        reversetrimrev=trimrevparameters[1]
+
+                        print("\tThe optimal position to trim reversed Forward reads is at position "+str(forwardtrimrev)+".")
+                        print("\tThe optimal position to trim reversed Reverse reads is at position "+str(reversetrimrev)+".")
+
+            print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+            print("     BAMSE will trim the forward and reverse reads from the optimal positions before calculating")
+            print("expected error values and filtering out the reads with MEE values under "+str(mee)+".\n")
 
         else:
             # Filter and trim
@@ -903,12 +919,14 @@ if not all(list(map(os.path.isfile,filtlist))):
             print("and filtering out the reads with MEE values under "+str(mee)+". Trimming parameters have")
             print("been specified by the user. If you want to find the optimal values automatically")
             print("do not specify the -s and -z flags.\n")
-            trimfile=path+'/2-Filtered/trim.txt'
-            trimlist=[trimfor,trimrev]
-            f=open(trimfile,'w')
-            for ele in trimlist:
-                f.write(ele+'\n')
-            f.close()
+            for x in range(len(trimlist)):
+                trimparameters = []
+                trimfile=trimlist[x]
+                trimlist=[trimfor,trimrev]
+                f=open(trimfile,'w')
+                for ele in trimlist:
+                    f.write(ele+'\n')
+                f.close()
 
         #filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/1-Primertrimmed/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+str(mee)+''
         #subprocess.Popen(filterandtrim_Cmd, shell=True).wait()

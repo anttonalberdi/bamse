@@ -18,7 +18,7 @@ rule trimming:
     input:
         read1="{projectpath}/0-Data/{run}/{sample}_1.fastq",
         read2="{projectpath}/0-Data/{run}/{sample}_2.fastq",
-        trim="{projectpath}/2-Filtered/trim.txt"
+        trim="{projectpath}/2-Filtered/{run}/trim.txt"
     threads: 1
     output:
         read1="{projectpath}/2-Filtered/{run}/{sample}_1.fastq",

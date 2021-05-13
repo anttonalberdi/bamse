@@ -198,6 +198,15 @@ This folder contains the primer-trimmed files. Files are organised by run as spe
     - 1-Primertrimmed/RUN2/SAMPLEB_1.fastq
     - 1-Primertrimmed/RUN2/SAMPLEB_2.fastq
 
+In the case of adaptor-based libraries, the split files will look like this:
+
+- 1-Primertrimmed
+  - 1-Primertrimmed/RUN1
+    - 1-Primertrimmed/RUN1/SAMPLEA_1.fastq
+    - 1-Primertrimmed/RUN1/SAMPLEA_1.rev.fastq
+    - 1-Primertrimmed/RUN1/SAMPLEA_2.fastq
+    - 1-Primertrimmed/RUN1/SAMPLEA_2.rev.fastq
+
 #### Filtered folder
 This folder contains the quality-trimmed and length-filtered paired reads. Files are organised by run as specified in the input file. Note that if the project has many samples this folder can occupy considerable space in the computer.
 
@@ -211,11 +220,23 @@ This folder contains the quality-trimmed and length-filtered paired reads. Files
     - 2-Filtered/RUN2/SAMPLEB_1.fastq
     - 2-Filtered/RUN2/SAMPLEB_2.fastq
 
+In the case of adaptor-based libraries, the split files will look like this:
+
+- 2-Filtered
+  - 2-Filtered/RUN1
+    - 2-Filtered/RUN1/SAMPLEA.csv
+    - 2-Filtered/RUN1/SAMPLEA.rev.csv
+    - 2-Filtered/RUN1/SAMPLEA_1.fastq
+    - 2-Filtered/RUN1/SAMPLEA_1.rev.fastq
+    - 2-Filtered/RUN1/SAMPLEA_2.fastq
+    - 2-Filtered/RUN1/SAMPLEA_2.rev.fastq
+
 #### DADA2 folder
 The DADA2 step is split in two parts. In the initial part error correction and ASV generation is carried out, and the resulting data are stored as *.rds (Rdata) files. BAMSE will generate one *.rds file per run, as specified in the input file. In the second step, chimeras will be filtered before annotating the taxonomy. This second step will create three files containing, the ASV sequences (ASVs.fasta), taxonomy annotations (ASV_taxa.txt) and the ASV:sample table (ASV_counts.csv).
 
 - 3-DADA2
   - 3-DADA2/RUN1.rds
+  - 3-DADA2/RUN1.rev.rds
   - 3-DADA2/RUN2.rds
   - 3-DADA2/ASV_counts.csv
   - 3-DADA2/ASV_taxa.txt
