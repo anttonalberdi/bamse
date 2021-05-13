@@ -147,6 +147,19 @@ message("Assigning taxonomy... (this step will probably take a while)")
 line="  Assigning taxonomy"
 write(line,file=logfile,append=TRUE)
 
-taxa <- assignTaxonomy(seqtab.nochim, taxonomy, tryRC=T, multithread=TRUE)
+#Filter chimera-filtered file
+seqtab.nochim.filt <- seqtab.nochim[,colnames(seqtab.nochim) %in% asv_seqs]
+
+#Assign taxonomy
+taxa <- assignTaxonomy(seqtab.nochim.filt, taxonomy, tryRC=T, multithread=TRUE)
 row.names(taxa) <- sub(">", "", asv_headers)
+
+#Get taxonomy stats
+phyla <- taxa[,2]
+annotated <- length(phyla[!is.na(phyla)])
+total <- nrow(taxa)
+percentage <- round(annotated/total*100,2)
+
+message(paste(annotated," (",percentage,"%)"," ASVs have been annotated at at least Phylum level.",sep=""))
+
 write.table(taxa, taxafile, sep=",", quote=F, col.names=NA)
