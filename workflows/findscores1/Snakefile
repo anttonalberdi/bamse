@@ -47,7 +47,7 @@ rule findscores2:
         maxreads=expand("{maxreads}", maxreads=config['maxreads'])
     shell:
         """
-        echo "\tComputing trimming scores of {wildcards.sample}" >> {rules.get_paths.input.logpath}
-        echo "\tComputing trimming scores of {wildcards.sample}"
+        echo "\tComputing trimming scores of reversed {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tComputing trimming scores of reversed {wildcards.sample}"
         python {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.py -f {input.read1} -r {input.read2} -o {output.csv} -l {params.ampliconlength} -e {params.mee} -v {params.overlap} -m {params.maxreads} 2>> {rules.get_paths.input.logpath}
         """

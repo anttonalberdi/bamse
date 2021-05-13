@@ -550,6 +550,8 @@ for line in inputfile:
                     out_csv2 = path+'/2-Filtered/'+run+'/'+name+'.rev.csv'
                     filt_for = path+'/2-Filtered/'+run+'/'+name+'_1.fastq'
                     filt_rev = path+'/2-Filtered/'+run+'/'+name+'_2.fastq'
+                    filtrev_for = path+'/2-Filtered/'+run+'/'+name+'_1.rev.fastq'
+                    filtrev_rev = path+'/2-Filtered/'+run+'/'+name+'_2.rev.fastq'
 
                     namelist.append(name)
                     primlist.append(prim_for)
@@ -680,6 +682,34 @@ else:
        print("directory. If you want to re-run this step, remove the files in the directories")
        print("'1-Primertrimmed' and '2-Filtered'.\n")
 
+#Print explanation if files have been split
+
+#Declare function to recover all files recursively
+def getListOfFiles(dirName):
+    # create a list of file and sub directories
+    # names in the given directory
+    listOfFile = os.listdir(dirName)
+    allFiles = list()
+    # Iterate over all the entries
+    for entry in listOfFile:
+        # Create full path
+        fullPath = os.path.join(dirName, entry)
+        # If entry is a directory then get the list of files in this directory
+        if os.path.isdir(fullPath):
+            allFiles = allFiles + getListOfFiles(fullPath)
+        else:
+            allFiles.append(fullPath)
+    return allFiles
+
+clippath=path+"/1-Primertrimmed"
+clipfiles = getListOfFiles(clippath)
+if len(list(filter(lambda k: 'rev.fastq' in k, clipfiles))) >= 1:
+    print("\n\tBAMSE detected that your sequencing libraries were built using adaptor-ligation.")
+    print("\tIn consequence, BAMSE has split each data file to enable DADA2 to perform error")
+    print("\tlearning properly. The files in the folder '1-Primertrimmed' with the suffix '.rev.fastq'")
+    print("\tcontain the reads that were sequenced in the opposite direction. You don't need to")
+    print("\tworry about this, BAMSE will take care these sequences are appropriately processed.")
+
 ##############################
 # Calculate optimal trimming scores, filter and trim
 ##############################
@@ -730,10 +760,30 @@ if not all(list(map(os.path.isfile,filtlist))):
             print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
             print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
 
-            print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-            print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and reverse reads")
-            print("at position "+str(reversetrim)+", before calculating expected error values and filtering out")
-            print("the reads with MEE values under "+str(mee)+".\n")
+            trimrevfile=path+"/2-Filtered/trim.rev.txt"
+            if not os.path.isfile(trimrevfile):
+                print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+                print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and reverse reads")
+                print("at position "+str(reversetrim)+", before calculating expected error values and filtering out")
+                print("the reads with MEE values under "+str(mee)+".\n")
+
+            else:
+                trimrevparameters = []
+                with open(trimrevfile, 'r') as arch:
+                    for i in range(2):
+                        trimrevparameters.append(next(arch).strip())
+                forwardtrimrev=trimrevparameters[0]
+                reversetrimrev=trimrevparameters[1]
+
+                print("\tThe optimal position to trim reversed Forward reads is at position "+str(forwardtrimrev)+".")
+                print("\tThe optimal position to trim reversed Reverse reads is at position "+str(reversetrimrev)+".")
+
+                print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+                print("     BAMSE will trim the properly oriented forward reads at position "+str(forwardtrim)+" and reverse reads")
+                print("at position "+str(reversetrim)+". Reverse-oriented forward reads will be trimmed at position  "+str(forwardtrimrev))
+                print("and reverse reads at "+str(reversetrimrev)+". Expected error values will be calculated separately and the reads with MEE")
+                print("values under "+str(mee)+" will be filtered out.\n")
+
         else:
             # Filter and trim
             print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
@@ -821,11 +871,30 @@ if not all(list(map(os.path.isfile,filtlist))):
                 print("\tThe optimal position to trim Forward reads is at position "+str(forwardtrim)+".")
                 print("\tThe optimal position to trim Reverse reads is at position "+str(reversetrim)+".")
 
-                # Filter and trim
-                print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
-                print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and")
-                print("reverse reads at position "+str(reversetrim)+", before calculating expected error values")
-                print("and filtering out the reads with MEE values under "+str(mee)+".\n")
+                trimrevfile=path+"/2-Filtered/trim.rev.txt"
+                if not os.path.isfile(trimrevfile):
+                    print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+                    print("     BAMSE will trim the forward reads at position "+str(forwardtrim)+" and reverse reads")
+                    print("at position "+str(reversetrim)+", before calculating expected error values and filtering out")
+                    print("the reads with MEE values under "+str(mee)+".\n")
+
+                else:
+                    trimrevparameters = []
+                    with open(trimrevfile, 'r') as arch:
+                        for i in range(2):
+                            trimrevparameters.append(next(arch).strip())
+                    forwardtrimrev=trimrevparameters[0]
+                    reversetrimrev=trimrevparameters[1]
+
+                    print("\tThe optimal position to trim reversed Forward reads is at position "+str(forwardtrimrev)+".")
+                    print("\tThe optimal position to trim reversed Reverse reads is at position "+str(reversetrimrev)+".")
+
+                    print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
+                    print("     BAMSE will trim the properly oriented forward reads at position "+str(forwardtrim)+" and reverse reads")
+                    print("at position "+str(reversetrim)+". Reverse-oriented forward reads will be trimmed at position  "+str(forwardtrimrev))
+                    print("and reverse reads at "+str(reversetrimrev)+". Expected error values will be calculated separately and the reads with MEE")
+                    print("values under "+str(mee)+" will be filtered out.\n")
+
         else:
             # Filter and trim
             print("\n{0} | TRIMMING AND FILTERING READS".format(current_time))
