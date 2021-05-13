@@ -6,33 +6,27 @@
 cat > bamse-environment.yaml <<EOL
 name: bamse-env
 channels:
-  - bioconda
   - conda-forge
-  - anaconda
+  - bioconda
 dependencies:
-  - snakemake-minimal =5.32.1
-  - setuptools =49.6.0
-  - biopython =1.70
-  - numpy =1.12.1
-  - ruamel.yaml =0.16.12
-  - cutadapt =2.10
-  - bbmap =38.87
-  - libcurl =7.71.1
-  - R =4.0.0
-  - bioconductor-dada2 =1.18.0
-  - boto3 =1.9.66
-  - smart_open
-  - r-dplyr =1.0.4
-  - r-stringr =1.4.0
-  - r-devtools =2.3.2
-  - r-optparse =1.6.6
-  - r-gtools =3.8.2
-  - r-ape =5.4_1
-  - perl-statistics-descriptive =3.0702
-  - gawk =5.1.0
-  - vsearch =2.15.2
-  - clustalo =1.2.4
-  - iqtree =2.0.3
+  - conda-forge::snakemake-minimal=6.3.0
+  - conda-forge::biopython=1.78
+  - conda-forge::ruamel.yaml=0.16.12
+  - conda-forge::cutadapt=2.10
+  - conda-forge::bbmap=38.87
+  - conda-forge::r=4.0.0
+  - conda-forge::r-devtools=2.4.1
+  - conda-forge::bioconductor-dada2=1.18.0
+  - conda-forge::r-dplyr=1.0.6
+  - conda-forge::r-stringr=1.4.0
+  - conda-forge::r-optparse=1.6.6
+  - conda-forge::r-gtools=3.8.2
+  - conda-forge::r-ape=5.5
+  - conda-forge::perl-statistics-descriptive=3.0702
+  - conda-forge::gawk=5.1.0
+  - conda-forge::vsearch=2.15.2
+  - conda-forge::clustalo=1.2.4
+  - conda-forge::iqtree=2.0.3
 EOL
 
 echo ""
@@ -45,7 +39,7 @@ echo ""
 echo "Creating bamse-env conda environment"
 echo "  This step can take a few minutes..."
 echo ""
-conda env create --file bamse-environment.yaml python=3.7.4
+conda env create --file bamse-environment.yaml python=3.8.0
 
 #Get conda path and source it
 CONDA_PATH=$(which python | sed 's/bin\/python/etc\/profile.d\/conda.sh/')

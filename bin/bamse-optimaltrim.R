@@ -57,5 +57,6 @@ if (all(is.na(unlist(trimtab)))){
 }
 
 #Save to parameter file
-write(paste("read1_trim:\n",opt_read1,sep=" "),file=paramfile,append=TRUE)
-write(paste("read2_trim:\n",opt_read2,sep=" "),file=paramfile,append=TRUE)
+#write(paste("read1_trim:\n",opt_read1,sep=" "),file=paramfile,append=TRUE)
+#write(paste("read2_trim:\n",opt_read2,sep=" "),file=paramfile,append=TRUE)
+#Not in use anymore
