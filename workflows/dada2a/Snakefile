@@ -23,6 +23,8 @@ rule dada2a:
     shell:
         """
         mkdir -p {wildcards.projectpath}/3-DADA2
+        echo "\tLearning error rates from samples in run {wildcards.run}" >> {rules.get_paths.input.logpath}
+        echo "\nLearning error rates from samples in run {wildcards.run}"
         Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -p {params.pattern} -v {params.overlap} -l {rules.get_paths.input.logpath}
         """
 
@@ -38,5 +40,7 @@ rule dada2a_rev:
     shell:
         """
         mkdir -p {wildcards.projectpath}/3-DADA2
+        echo "\tLearning error rates from reversed samples in run {wildcards.run}" >> {rules.get_paths.input.logpath}
+        echo "\nLearning error rates from reversed samples in run {wildcards.run}"
         Rscript {rules.get_paths.input.bamsepath}/bin/bamse-dada2a.R -i {input.dir} -o {output.rds} -p {params.pattern} -v {params.overlap} -l {rules.get_paths.input.logpath}
         """
