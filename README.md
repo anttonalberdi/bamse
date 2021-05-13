@@ -147,8 +147,6 @@ To date (February 2021), the pipeline consists of the following steps:
 ## Data input file
 The data input file must be a simple text file with the information corresponding to each dataset specified in a different row and **separated by commas**. The minimum information required is:
 
-**Data unit:** Name of the minimum data unit. If no replicates (either biological or technical) have been used data unit and sample should be identical. If replicates have been used, data units with identical sample names will be merged by BAMSE.
-
 **Sample:** String that specifies the sample name. This is the name that the ASV tables will get.
 
 **Run:** String specifying the sequencing run. If all samples were sequences in the same flowcell or lane, use the same string for all samples.
