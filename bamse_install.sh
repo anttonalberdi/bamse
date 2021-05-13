@@ -10,29 +10,29 @@ channels:
   - conda-forge
   - anaconda
 dependencies:
-  - snakemake-minimal >=5.24.1
-  - setuptools
-  - biopython
-  - numpy
-  - ruamel.yaml
+  - snakemake-minimal =5.32.1
+  - setuptools =49.6.0
+  - biopython =1.70
+  - numpy =1.12.1
+  - ruamel.yaml =0.16.12
   - cutadapt =2.10
   - bbmap =38.87
   - libcurl =7.71.1
   - R =4.0.0
-  - bioconductor-dada2
-  - boto3
+  - bioconductor-dada2 =1.18.0
+  - boto3 =1.9.66
   - smart_open
-  - r-dplyr
-  - r-stringr
-  - r-devtools
-  - r-optparse
-  - r-gtools
-  - r-ape
-  - perl-statistics-descriptive
+  - r-dplyr =1.0.4
+  - r-stringr =1.4.0
+  - r-devtools =2.3.2
+  - r-optparse =1.6.6
+  - r-gtools =3.8.2
+  - r-ape =5.4_1
+  - perl-statistics-descriptive =3.0702
   - gawk =5.1.0
-  - vsearch
-  - clustalo
-  - iqtree
+  - vsearch =2.15.2
+  - clustalo =1.2.4
+  - iqtree =2.0.3
 EOL
 
 echo ""
