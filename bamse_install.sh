@@ -9,24 +9,24 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::snakemake-minimal=6.3.0
+  - bioconda::snakemake-minimal=6.3.0
   - conda-forge::biopython=1.78
   - conda-forge::ruamel.yaml=0.16.12
-  - conda-forge::cutadapt=2.10
-  - conda-forge::bbmap=38.87
+  - bioconda::cutadapt=2.10
+  - bioconda::bbmap=38.87
   - conda-forge::r=4.0.0
   - conda-forge::r-devtools=2.4.1
-  - conda-forge::bioconductor-dada2=1.18.0
+  - bioconda::bioconductor-dada2=1.18.0
   - conda-forge::r-dplyr=1.0.6
   - conda-forge::r-stringr=1.4.0
   - conda-forge::r-optparse=1.6.6
   - conda-forge::r-gtools=3.8.2
   - conda-forge::r-ape=5.5
-  - conda-forge::perl-statistics-descriptive=3.0702
+  - bioconda::perl-statistics-descriptive=3.0702
   - conda-forge::gawk=5.1.0
-  - conda-forge::vsearch=2.15.2
-  - conda-forge::clustalo=1.2.4
-  - conda-forge::iqtree=2.0.3
+  - bioconda::vsearch=2.15.2
+  - bioconda::clustalo=1.2.4
+  - bioconda::iqtree=2.0.3
 EOL
 
 echo ""
