@@ -38,7 +38,7 @@ rule trimming:
         fi
         """
 
-rule trimming2:
+rule trimming_rev:
     input:
         read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.rev.fastq",
         read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.rev.fastq",
