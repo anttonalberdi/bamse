@@ -14,7 +14,7 @@ rule get_paths:
 rule dada2a:
     input:
         dir="{projectpath}/2-Filtered/{run}"
-    threads: 40
+    threads: 8
     output:
         rds="{projectpath}/3-DADA2/{run}.rds"
     params:
@@ -31,7 +31,7 @@ rule dada2a:
 rule dada2a_rev:
     input:
         dir="{projectpath}/2-Filtered/{run}"
-    threads: 40
+    threads: 8
     output:
         rds="{projectpath}/3-DADA2/{run}.rev.rds"
     params:

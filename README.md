@@ -1,6 +1,6 @@
 # BAMSE
 
-**B**acterial **AM**plicon **Se**quencing data processing pipeline. BAMSE is a snakemake-based pipeline consisting of multiple concatenated workflows to prepare, generate, curate and analyse ASV-based processing of amplicon sequencing data. BAMSE includes a unique quality-filtering approach that ensures optimal quality filtering of sequences, as well as phylogeny-building and binning/clustering steps.
+**B**acterial **AM**plicon **Se**quencing data processing pipeline. BAMSE is a snakemake-based pipeline consisting of multiple concatenated workflows to prepare, generate, curate and analyse ASV-based processing of amplicon sequencing data. BAMSE includes a unique quality-filtering approach that ensures optimal quality filtering of sequencing reads generated through adaptor ligation, as well as phylogeny-building and binning/clustering steps.
 
 ## Install BAMSE
 
@@ -78,11 +78,11 @@ To date (February 2021), the pipeline consists of the following steps:
 
 ![Steps figure](https://raw.githubusercontent.com/anttonalberdi/bamse/main/figures/figure1.png)
 
-**Step 1: Primer trimming**. BAMSE uses **Cutadapt** to trim the specified primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries), and flips the reversed reads in the case of the latter.
+**Step 1: Primer trimming**. BAMSE uses **Cutadapt** to trim the specified primer sequences from forward and reverse reads. It automatically detects whether all sequences are directional (output of PCR-based libraries) or not (output of ligation-based libraries). In the latter case, sequencing read files are split into properly oriented and reverse-oriented sequences, which are processed independently until the ASV table formation. This ensures error learning of DADA2 is conducted appropriately.
 
-**Step 2: Optimal trimming and filtering**. BAMSE first uses a custom script to identify the optimal parameters for read trimming considering amplicon length, read length, overlap and maximum expected error. Then, BAMSE proceeds with optimal read trimming and filtering. The default maximum expected errors per read is 2, and the default minimum overlap is 20 nucleotides. These parameters can be modified through the flags -e and -o, respectively.
+**Step 2: Optimal trimming and filtering**. BAMSE first uses a custom script to identify the optimal parameters for read trimming considering amplicon length, read length, overlap and maximum expected error. In the case of ligation-based libraries, optimal trimming parameters are calculated separately for properly oriented and reverse-oriented sequences. Then, BAMSE proceeds with optimal read trimming and filtering. The default maximum expected errors per read is 2, and the default minimum overlap is 20 nucleotides. These parameters can be modified through the flags -e and -o, respectively.
 
-**Step 3: Error Learning**. BAMSE uses the **DADA2** error learning algorithm to learn the error patterns in the analysed dataset.
+**Step 3: Error Learning**. BAMSE uses the **DADA2** error learning algorithm to learn the error patterns in the analysed dataset. When samples from multiple sequencing runs are analysed together, BAMSE will conduct error learning independently for each run. In the case of ligation-based libraries, error learning will also be conducted independently for properly oriented and reverse-oriented sequences.
 
 **Step 4: Dereplication**.  BAMSE uses the **DADA2** dereplication script.
 
@@ -90,7 +90,11 @@ To date (February 2021), the pipeline consists of the following steps:
 
 **Step 6: Read merging**. BAMSE merges forward and reverse reads using **DADA2**.
 
-**Step 7: Chimera filtering**. BAMSE uses the **DADA2** chimera filtering algorithm to filter out chimeric sequences.
+**Step 7: Sample aggregation**. In the case of ligation-based libraries, BAMSE aggregates the count reads from the two data sets, containing properly oriented and reverse-oriented sequences, respectively, which were independently processed until this point. BAMSE also merges data from different sequencing runs as specified in the input file.
+
+**Step 8: Chimera filtering**. BAMSE uses the **DADA2** chimera filtering algorithm to filter out chimeric sequences.
+
+**Step 9: Copy number threshold filtering**. BAMSE filters ASVs by relative number of copies in each sample. The default parameter is 0.0001 (0.01%), which entails that any ASV with a representation below 0.01% of the total number of reads for a given sample will be converted into zero. For example, for a sample characterised with 10,000 reads, this will imply removing singletones, while for a sample characterised with 100,000 reads will entail removing ASVs below 10 reads. The filtering parameter can be modified or disabled using 0.
 
 **Step 10: Taxonomy assignment**. BAMSE uses the **DADA2** taxonomy assignment algorithm.
 
