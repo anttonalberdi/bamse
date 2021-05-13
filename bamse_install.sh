@@ -39,7 +39,7 @@ echo ""
 echo "Creating bamse-env conda environment"
 echo "  This step can take a few minutes..."
 echo ""
-conda env create --file bamse-environment.yaml python=3.8.0
+conda env create --file bamse-environment.yaml python=3.8.10
 
 #Get conda path and source it
 CONDA_PATH=$(which python | sed 's/bin\/python/etc\/profile.d\/conda.sh/')
