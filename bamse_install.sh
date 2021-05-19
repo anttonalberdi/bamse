@@ -28,6 +28,7 @@ dependencies:
   - bioconda::clustalo=1.2.4
   - bioconda::iqtree=2.0.3
 EOL
+#bbmap not necessary anymore
 
 echo ""
 echo "############################"

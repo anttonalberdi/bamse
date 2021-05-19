@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#2021/05/14 - BAMSE 1.0
 
 import os
 import sys
