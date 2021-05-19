@@ -21,5 +21,7 @@ rule optimaltrim_rev:
         pattern="rev.csv"
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.R -i {input.dir} -o {output.trim} -p {rules.get_paths.input.parampath} -n {params.pattern} -l {rules.get_paths.input.logpath}
+        echo "\tComputing optimal trimming scores of reversed reads" >> {rules.get_paths.input.logpath}
+        echo "\tComputing optimal trimming scores of reversed reads"
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.R -i {input.dir} -o {output.trim} -p {rules.get_paths.input.parampath} -n {params.pattern} -l {rules.get_paths.input.logpath} 2>> /dev/null
         """

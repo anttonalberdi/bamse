@@ -21,5 +21,7 @@ rule optimaltrim:
         pattern="csv"
     shell:
         """
-        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.R -i {input.dir} -o {output.trim} -p {rules.get_paths.input.parampath} -n {params.pattern} -l {rules.get_paths.input.logpath}
+        echo "\tComputing optimal trimming scores" >> {rules.get_paths.input.logpath}
+        echo "\tComputing optimal trimming scores"
+        Rscript {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.R -i {input.dir} -o {output.trim} -p {rules.get_paths.input.parampath} -n {params.pattern} -l {rules.get_paths.input.logpath} 2>> /dev/null
         """

@@ -1,0 +1,39 @@
+import time
+
+##
+# Global
+##
+
+rule get_paths:
+    input:
+        bamsepath=expand("{bamsepath}", bamsepath=config['bamsepath']),
+        parampath=expand("{parampath}", parampath=config['parampath']),
+        logpath=expand("{logpath}", logpath=config['logpath'])
+
+##
+# Read trimming
+##
+
+rule trimming_rev:
+    input:
+        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.rev.fastq",
+        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.rev.fastq",
+        trim="{projectpath}/2-Filtered/{run}/trim.rev.txt"
+    threads: 1
+    output:
+        read1="{projectpath}/2-Filtered/{run}/{sample}_1.rev.fastq",
+        read2="{projectpath}/2-Filtered/{run}/{sample}_2.rev.fastq"
+    params:
+        mee=expand("{mee}", mee=config['mee'])
+    shell:
+        """
+        if [ -s {input.read1} ]; then
+            echo "\tTrimming reversed sample {wildcards.sample}" >> {rules.get_paths.input.logpath}
+            echo "\tTrimming reversed sample {wildcards.sample}"
+            Rscript {rules.get_paths.input.bamsepath}/bin/bamse-filterandtrim.R -f {input.read1} -r {input.read2} -o {output.read1} -u {output.read2} -t {input.trim} -e {params.mee} >> {rules.get_paths.input.logpath}
+        else
+            echo "\tSample {wildcards.sample} does not have valid reads for trimming"
+            touch {output.read1}
+            touch {output.read2}
+        fi
+        """

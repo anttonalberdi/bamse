@@ -761,19 +761,19 @@ if not all(list(map(os.path.isfile,filtlist))):
             # Find best score
             path_snkf = os.path.join(bamsepath,'workflows/optimaltrim/Snakefile')
             out_optimaltrim = " ".join(trimlist)
-            bastscore_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrim+' --configfile '+param+' --cores '+str(cores)+' -q'
+            bestscore_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrim+' --configfile '+param+' --cores '+str(cores)+' -q'
             #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
-            subprocess.Popen(bastscore_Cmd, shell=True).wait()
+            subprocess.Popen(bestscore_Cmd, shell=True).wait()
 
             #If reversed files exist, also find best score for reversed files
             filteredpath=path+"/2-Filtered"
             filteredfiles = getListOfFiles(filteredpath)
-            if len(list(filter(lambda k: 'rev.fastq' in k, filteredfiles))) >= 1:
+            if len(list(filter(lambda k: 'rev.csv' in k, filteredfiles))) >= 1:
+                print("Optimaltrimrev running")
                 path_snkf = os.path.join(bamsepath,'workflows/optimaltrimrev/Snakefile')
                 out_optimaltrimrev = " ".join(trimrevlist)
-                bastscorerev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrimrev+' --configfile '+param+' --cores '+str(cores)+' -q'
-                #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
-                subprocess.Popen(bastscorerev_Cmd, shell=True).wait()
+                bestscorerev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrimrev+' --configfile '+param+' --cores '+str(cores)+' -q'
+                subprocess.Popen(bestscorerev_Cmd, shell=True).wait()
 
             # Print best score
             for x in range(len(trimlist)):
@@ -887,7 +887,7 @@ if not all(list(map(os.path.isfile,filtlist))):
             #If reversed files exist, also find best score for reversed files
             filteredpath=path+"/2-Filtered"
             filteredfiles = getListOfFiles(filteredpath)
-            if len(list(filter(lambda k: 'rev.fastq' in k, filteredfiles))) >= 1:
+            if len(list(filter(lambda k: 'rev.csv' in k, filteredfiles))) >= 1:
                 path_snkf = os.path.join(bamsepath,'workflows/optimaltrimrev/Snakefile')
                 out_optimaltrimrev = " ".join(trimrevlist)
                 bastscorerev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrimrev+' --configfile '+param+' --cores '+str(cores)+' -q'
@@ -962,12 +962,22 @@ if not all(list(map(os.path.isfile,filtlist))):
         #filterandtrim_Cmd = 'Rscript '+bamsepath+'/bin/bamse-filterandtrim.R -i '+path+'/1-Primertrimmed/ -o '+path+'/2-Filtered/ -t '+path+'/2-Filtered/trim.txt -e '+str(mee)+''
         #subprocess.Popen(filterandtrim_Cmd, shell=True).wait()
 
+        #Trim reads
         path_snkf = os.path.join(bamsepath,'workflows/readtrimming1/Snakefile')
         filtlist2 = list(dict.fromkeys(filtlist))
-        filtrevlist2 = list(dict.fromkeys(filtrevlist))
-        filtlist3 = " ".join(filtlist2+filtrevlist2)
-        prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+filtlist3+' --configfile '+param+' --cores '+str(cores)+' -q'
-        subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+        out_trimreads = " ".join(filtlist2)
+        trimreads_Cmd = 'snakemake -s '+path_snkf+' -k '+out_trimreads+' --configfile '+param+' --cores '+str(cores)+' -q'
+        subprocess.Popen(trimreads_Cmd, shell=True).wait()
+
+            #If reversed files exist, calculate scores for reversed files
+        clippath=path+"/1-Primertrimmed"
+        clipfiles = getListOfFiles(clippath)
+        if len(list(filter(lambda k: 'rev.fastq' in k, clipfiles))) >= 1:
+            path_snkf = os.path.join(bamsepath,'workflows/readtrimming1rev/Snakefile')
+            filtrevlist2 = list(dict.fromkeys(filtrevlist))
+            out_trimreadsrev = " ".join(filtrevlist2)
+            trimreadsrev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_trimreadsrev+' --configfile '+param+' --cores '+str(cores)+' -q'
+            subprocess.Popen(trimreadsrev_Cmd, shell=True).wait()
 
         #Calculate number of reads after filtering and save to stats file
         for samplefile in filtlist:

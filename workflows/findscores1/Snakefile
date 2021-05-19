@@ -14,7 +14,7 @@ rule get_paths:
 # Filter and trim low-quality ends
 ##
 
-rule findscoresrev:
+rule findscores:
     input:
         read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
         read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
@@ -28,7 +28,7 @@ rule findscoresrev:
         maxreads=expand("{maxreads}", maxreads=config['maxreads'])
     shell:
         """
-        echo "\tComputing trimming scores of reversed {wildcards.sample}" >> {rules.get_paths.input.logpath}
-        echo "\tComputing trimming scores of reversed {wildcards.sample}"
+        echo "\tComputing trimming scores of {wildcards.sample}" >> {rules.get_paths.input.logpath}
+        echo "\tComputing trimming scores of {wildcards.sample}"
         python {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.py -f {input.read1} -r {input.read2} -o {output.csv} -l {params.ampliconlength} -e {params.mee} -v {params.overlap} -m {params.maxreads} 2>> {rules.get_paths.input.logpath}
         """
