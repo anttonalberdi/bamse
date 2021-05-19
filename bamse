@@ -760,10 +760,20 @@ if not all(list(map(os.path.isfile,filtlist))):
 
             # Find best score
             path_snkf = os.path.join(bamsepath,'workflows/optimaltrim/Snakefile')
-            out_optimaltrim = " ".join(trimlist + trimrevlist)
+            out_optimaltrim = " ".join(trimlist)
             bastscore_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrim+' --configfile '+param+' --cores '+str(cores)+' -q'
             #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
             subprocess.Popen(bastscore_Cmd, shell=True).wait()
+
+            #If reversed files exist, also find best score for reversed files
+            filteredpath=path+"/2-Filtered"
+            filteredfiles = getListOfFiles(filteredpath)
+            if len(list(filter(lambda k: 'rev.fastq' in k, filteredfiles))) >= 1:
+                path_snkf = os.path.join(bamsepath,'workflows/optimaltrimrev/Snakefile')
+                out_optimaltrimrev = " ".join(trimrevlist)
+                bastscorerev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrimrev+' --configfile '+param+' --cores '+str(cores)+' -q'
+                #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
+                subprocess.Popen(bastscorerev_Cmd, shell=True).wait()
 
             # Print best score
             for x in range(len(trimlist)):
@@ -853,16 +863,36 @@ if not all(list(map(os.path.isfile,filtlist))):
 
             # Calculate scores
             path_snkf = os.path.join(bamsepath,'workflows/findscores1/Snakefile')
-            out_preprocessing = " ".join(csvlist + csv2list)
-            prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_preprocessing+' --configfile '+param+' --cores '+str(cores)+' -q'
-            subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+            out_calculatescore = " ".join(csvlist)
+            calculatescore_Cmd = 'snakemake -s '+path_snkf+' -k '+out_calculatescore+' --configfile '+param+' --cores '+str(cores)+' -q'
+            subprocess.Popen(calculatescore_Cmd, shell=True).wait()
+
+            #If reversed files exist, calculate scores for reversed files
+            clippath=path+"/1-Primertrimmed"
+            clipfiles = getListOfFiles(clippath)
+            if len(list(filter(lambda k: 'rev.fastq' in k, clipfiles))) >= 1:
+                path_snkf = os.path.join(bamsepath,'workflows/findscores1rev/Snakefile')
+                out_calculatescorerev = " ".join(csv2list)
+                calculatescorerev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_calculatescorerev+' --configfile '+param+' --cores '+str(cores)+' -q'
+                #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
+                subprocess.Popen(calculatescorerev_Cmd, shell=True).wait()
 
             # Find best score
             path_snkf = os.path.join(bamsepath,'workflows/optimaltrim/Snakefile')
-            out_optimaltrim = " ".join(trimlist + trimrevlist)
+            out_optimaltrim = " ".join(trimlist)
             bastscore_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrim+' --configfile '+param+' --cores '+str(cores)+' -q'
             #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
             subprocess.Popen(bastscore_Cmd, shell=True).wait()
+
+            #If reversed files exist, also find best score for reversed files
+            filteredpath=path+"/2-Filtered"
+            filteredfiles = getListOfFiles(filteredpath)
+            if len(list(filter(lambda k: 'rev.fastq' in k, filteredfiles))) >= 1:
+                path_snkf = os.path.join(bamsepath,'workflows/optimaltrimrev/Snakefile')
+                out_optimaltrimrev = " ".join(trimrevlist)
+                bastscorerev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_optimaltrimrev+' --configfile '+param+' --cores '+str(cores)+' -q'
+                #bastscore_Cmd = 'Rscript '+bamsepath+'/bin/bamse-optimaltrim.R -i '+path+'/2-Filtered/ -o '+path+'/2-Filtered/ -p '+param+' -l '+log+' 2>> /dev/null'
+                subprocess.Popen(bastscorerev_Cmd, shell=True).wait()
 
             # Print best score
             for x in range(len(trimlist)):

@@ -16,11 +16,11 @@ rule get_paths:
 
 rule findscoresrev:
     input:
-        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.fastq",
-        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.fastq"
+        read1="{projectpath}/1-Primertrimmed/{run}/{sample}_1.rev.fastq",
+        read2="{projectpath}/1-Primertrimmed/{run}/{sample}_2.rev.fastq"
     threads: 1
     output:
-        csv="{projectpath}/2-Filtered/{run}/{sample}.csv"
+        csv="{projectpath}/2-Filtered/{run}/{sample}.rev.csv"
     params:
         mee=expand("{mee}", mee=config['mee']),
         ampliconlength=expand("{ampliconlength}", ampliconlength=config['ampliconlength']),

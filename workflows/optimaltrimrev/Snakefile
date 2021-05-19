@@ -8,17 +8,17 @@ rule get_paths:
         parampath=expand("{parampath}", parampath=config['parampath']),
         logpath=expand("{logpath}", logpath=config['logpath'])
 ##
-# Optimal trimming of reads
+# Optimal trimming of reversed reads
 ##
 
-rule optimaltrim:
+rule optimaltrim_rev:
     input:
         dir="{projectpath}/2-Filtered/{run}"
     threads: 1
     output:
-        trim="{projectpath}/2-Filtered/{run}/trim.txt"
+        trim="{projectpath}/2-Filtered/{run}/trim.rev.txt"
     params:
-        pattern="csv"
+        pattern="rev.csv"
     shell:
         """
         Rscript {rules.get_paths.input.bamsepath}/bin/bamse-optimaltrim.R -i {input.dir} -o {output.trim} -p {rules.get_paths.input.parampath} -n {params.pattern} -l {rules.get_paths.input.logpath}
