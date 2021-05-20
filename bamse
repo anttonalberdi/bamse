@@ -1012,10 +1012,10 @@ else:
 # Define output names
 dadalist2 = list(dict.fromkeys(dadalist))
 dadarevlist2 = list(dict.fromkeys(dadarevlist))
-out_dada2a = " ".join(dadalist2+dadarevlist2)
+out_dada2a = " ".join(dadalist2)
+out_dada2arev = " ".join(dadarevlist2)
 curr_dir = os.path.dirname(sys.argv[0])
 bamsepath = os.path.abspath(curr_dir)
-path_snkf = os.path.join(bamsepath,'workflows/dada2a/Snakefile')
 
 if all(list(map(os.path.isfile,dadalist2))):
     # Output log to logfile
@@ -1040,8 +1040,16 @@ else:
 
 
 # Run snakemake
-prep_snk_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2a+' --configfile '+param+' --cores '+str(cores)+' -q'
-subprocess.Popen(prep_snk_Cmd, shell=True).wait()
+path_snkf = os.path.join(bamsepath,'workflows/dada2a/Snakefile')
+dada2a_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2a+' --configfile '+param+' --cores '+str(cores)+' -q'
+subprocess.Popen(dada2a_Cmd, shell=True).wait()
+
+filteredpath=path+"/2-Filtered"
+filteredfiles = getListOfFiles(filteredpath)
+if len(list(filter(lambda k: 'rev.fastq' in k, filteredfiles))) >= 1:
+    path_snkf = os.path.join(bamsepath,'workflows/dada2arev/Snakefile')
+    dada2arev_Cmd = 'snakemake -s '+path_snkf+' -k '+out_dada2arev+' --configfile '+param+' --cores '+str(cores)+' -q'
+    subprocess.Popen(dada2arev_Cmd, shell=True).wait()
 
 ########################
 # Run DADA2 B workflow #      Merge the different runs, and output results
